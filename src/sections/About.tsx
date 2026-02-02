@@ -70,7 +70,7 @@ export default function About() {
                                     className="w-20 h-20 rounded-2xl bg-gradient-to-br from-accent to-accent-secondary flex items-center justify-center text-3xl font-bold text-background shrink-0"
                                     whileHover={{ rotate: 5, scale: 1.05 }}
                                 >
-                                    ∑
+                                    ∭
                                 </motion.div>
                                 <div>
                                     <h3 className="text-2xl font-bold mb-1">M. Wildan Nuril Akmal</h3>

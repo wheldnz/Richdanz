@@ -42,8 +42,7 @@ export default function Navigation() {
                         className="flex items-center gap-2 font-bold text-lg"
                         whileHover={{ scale: 1.05 }}
                     >
-                        <span className="text-2xl">∑</span>
-                        <span className="gradient-text hidden sm:inline">Portfolio</span>
+                        <span className="text-3xl">∭</span>
                     </motion.a>
 
                     {/* Desktop Nav */}
