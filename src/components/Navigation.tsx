@@ -33,20 +33,22 @@ export default function Navigation() {
         >
             <div className="max-w-6xl mx-auto px-6">
                 <div
-                    className={`flex items-center justify-between ${isScrolled ? 'glass-card px-6 py-3' : ''
+                    className={`grid grid-cols-3 items-center ${isScrolled ? 'glass-card px-6 py-3' : ''
                         }`}
                 >
-                    {/* Logo */}
-                    <motion.a
-                        href="#"
-                        className="flex items-center gap-2 font-bold text-lg"
-                        whileHover={{ scale: 1.05 }}
-                    >
-                        <span className="text-3xl">∭</span>
-                    </motion.a>
+                    {/* Logo (Left) */}
+                    <div className="flex justify-start">
+                        <motion.a
+                            href="#"
+                            className="flex items-center gap-2 font-bold text-lg"
+                            whileHover={{ scale: 1.05 }}
+                        >
+                            <span className="text-3xl">∭</span>
+                        </motion.a>
+                    </div>
 
-                    {/* Desktop Nav */}
-                    <div className="hidden md:flex items-center gap-12">
+                    {/* Desktop Nav (Center) */}
+                    <div className="hidden md:flex justify-center items-center gap-12">
                         {navItems.map((item, index) => (
                             <motion.a
                                 key={item.label}
@@ -65,8 +67,8 @@ export default function Navigation() {
                         ))}
                     </div>
 
-                    {/* Right Side */}
-                    <div className="flex items-center gap-4">
+                    {/* Right Side (Right) */}
+                    <div className="flex justify-end items-center gap-4">
                         <ThemeToggle />
 
                         {/* Mobile Menu Button */}
