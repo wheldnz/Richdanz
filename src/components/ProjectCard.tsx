@@ -15,9 +15,9 @@ interface ProjectCardProps {
 }
 
 const categoryLabels = {
-    data: '📊 Data Focus', // Merged Analyst+ML
-    math: '📐 Mathematics',
-    fullstack: '💻 Full Stack',
+    data: 'Data Focus', // Merged Analyst+ML
+    math: 'Mathematics',
+    fullstack: 'Full Stack',
 };
 
 export default function ProjectCard({
@@ -26,6 +26,7 @@ export default function ProjectCard({
     category,
     metric,
     metricLabel,
+    image,
     tags,
     link = '#',
 }: ProjectCardProps) {
@@ -39,6 +40,18 @@ export default function ProjectCard({
             whileHover={{ y: -8 }}
             transition={{ duration: 0.4 }}
         >
+            {/* Project Image */}
+            {image && (
+                <div className="relative h-44 -mx-6 -mt-6 mb-4 overflow-hidden border-b border-card-border rounded-t-3xl">
+                    <img
+                        src={image}
+                        alt={title}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background/20 to-transparent" />
+                </div>
+            )}
+
             {/* Hover Metric Popup */}
             <motion.div
                 className="absolute top-4 right-4 glass-card px-4 py-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
@@ -50,7 +63,7 @@ export default function ProjectCard({
             </motion.div>
 
             {/* Category Badge */}
-            <span className={`category-badge ${category}`}>
+            <span className={`category-badge ${category} mt-2 inline-block`}>
                 {categoryLabels[category]}
             </span>
 

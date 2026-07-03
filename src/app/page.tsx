@@ -5,6 +5,7 @@ import Navigation from '@/components/Navigation';
 import Hero from '@/sections/Hero';
 import Projects from '@/sections/Projects';
 import About from '@/sections/About';
+import Certificates from '@/sections/Certificates';
 import Contact from '@/sections/Contact';
 
 // Dynamically import ParticleBackground to avoid SSR issues with canvas
@@ -30,6 +31,7 @@ export default function Home() {
         <Hero />
         <Projects />
         <About />
+        <Certificates />
         <Contact />
       </main>
     </div>

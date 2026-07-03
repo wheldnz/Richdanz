@@ -6,30 +6,30 @@
 
 :root {
   /* Light Mode - Clean Paper Theme */
-  --background: #f8fafc;
-  --background-secondary: #ffffff;
-  --foreground: #0f172a;
-  --foreground-muted: #64748b;
-  --accent: #3b82f6;
-  --accent-secondary: #8b5cf6;
-  --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  --background: #ffffff;
+  --background-secondary: #fafafa;
+  --foreground: #111111;
+  --foreground-muted: #555555;
+  --accent: #ca8a04;
+  --accent-secondary: #eab308;
+  --accent-gradient: linear-gradient(135deg, #ca8a04 0%, #eab308 100%);
   --card-bg: rgba(255, 255, 255, 0.8);
   --card-border: rgba(0, 0, 0, 0.08);
-  --glow: rgba(59, 130, 246, 0.2);
+  --glow: rgba(202, 138, 4, 0.2);
 }
 
 .dark {
   /* Dark Mode - Terminal Theme */
-  --background: #0a0a14;
-  --background-secondary: #12121f;
-  --foreground: #e2e8f0;
-  --foreground-muted: #94a3b8;
-  --accent: #00ff88;
-  --accent-secondary: #00d4ff;
-  --accent-gradient: linear-gradient(135deg, #00ff88 0%, #00d4ff 100%);
-  --card-bg: rgba(18, 18, 31, 0.8);
+  --background: #111111;
+  --background-secondary: #1a1a1a;
+  --foreground: #ffffff;
+  --foreground-muted: #a3a3a3;
+  --accent: #facc15;
+  --accent-secondary: #eab308;
+  --accent-gradient: linear-gradient(135deg, #facc15 0%, #eab308 100%);
+  --card-bg: rgba(26, 26, 26, 0.8);
   --card-border: rgba(255, 255, 255, 0.08);
-  --glow: rgba(0, 255, 136, 0.15);
+  --glow: rgba(250, 204, 21, 0.15);
 }
 
 @theme inline {
@@ -312,41 +312,122 @@ body {
 }
 
 .category-badge.analyst {
-  background: rgba(59, 130, 246, 0.15);
-  color: #3b82f6;
+  background: rgba(202, 138, 4, 0.15);
+  color: #ca8a04;
 }
 
 .category-badge.ml {
-  background: rgba(139, 92, 246, 0.15);
-  color: #8b5cf6;
+  background: rgba(234, 179, 8, 0.15);
+  color: #eab308;
 }
 
 .category-badge.math {
-  background: rgba(236, 72, 153, 0.15);
-  color: #ec4899;
+  background: rgba(161, 98, 7, 0.15);
+  color: #a16207;
 }
 
 .category-badge.fullstack {
-  background: rgba(245, 158, 11, 0.15);
-  color: #f59e0b;
+  background: rgba(250, 204, 21, 0.15);
+  color: #facc15;
 }
 
 .dark .category-badge.analyst {
-  background: rgba(0, 255, 136, 0.15);
-  color: #00ff88;
+  background: rgba(234, 179, 8, 0.15);
+  color: #eab308;
 }
 
 .dark .category-badge.ml {
-  background: rgba(0, 212, 255, 0.15);
-  color: #00d4ff;
+  background: rgba(250, 204, 21, 0.15);
+  color: #facc15;
 }
 
 .dark .category-badge.math {
-  background: rgba(255, 107, 107, 0.15);
-  color: #ff6b6b;
+  background: rgba(253, 224, 71, 0.15);
+  color: #fde047;
 }
 
 .dark .category-badge.fullstack {
-  background: rgba(251, 191, 36, 0.15);
-  color: #fbbf24;
+  background: rgba(254, 240, 138, 0.15);
+  color: #fef08a;
+}
+
+/* Project Category Data Badge */
+.category-badge.data {
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--accent);
+}
+.dark .category-badge.data {
+  background: rgba(59, 130, 246, 0.2);
+  color: var(--accent);
+}
+
+/* Custom Prose Styling for Markdown Content */
+.prose-custom {
+  font-size: 1rem;
+}
+
+.prose-custom h1 {
+  display: none; /* Hide H1 in markdown since it's already in the page header */
+}
+
+.prose-custom h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--foreground);
+  border-bottom: 1px solid var(--card-border);
+  padding-bottom: 0.5rem;
+}
+
+.prose-custom h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-top: 1.75rem;
+  margin-bottom: 0.75rem;
+  color: var(--foreground);
+}
+
+.prose-custom p {
+  line-height: 1.75;
+  margin-bottom: 1.25rem;
+  color: var(--foreground-muted);
+}
+
+.prose-custom ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 1.25rem;
+  color: var(--foreground-muted);
+}
+
+.prose-custom ul li {
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.prose-custom code {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  background: var(--background-secondary);
+  border: 1px solid var(--card-border);
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  color: var(--accent);
+}
+
+.prose-custom pre {
+  background: #0f172a; /* Slate 900 for high contrast code blocks */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+  overflow-x: auto;
+  margin-bottom: 1.5rem;
+}
+
+.prose-custom pre code {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: #f1f5f9;
 }

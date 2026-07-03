@@ -5,10 +5,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Download, CheckCircle, Github, Linkedin, Mail, Instagram } from 'lucide-react';
 
 const contactReasons = [
-    { value: 'hire', label: '💼 Hire you', emoji: '💼' },
-    { value: 'collaborate', label: '🤝 Collaborate', emoji: '🤝' },
-    { value: 'ihsg', label: '📈 Discuss IHSG strategies', emoji: '📈' },
-    { value: 'hello', label: '👋 Just say hi', emoji: '👋' },
+    { value: 'hire', label: 'Hire you', emoji: '' },
+    { value: 'collaborate', label: 'Collaborate', emoji: '' },
+    { value: 'ihsg', label: 'Discuss IHSG strategies', emoji: '' },
+    { value: 'hello', label: 'Just say hi', emoji: '' },
 ];
 
 const socialLinks = [
@@ -223,7 +223,7 @@ export default function Contact() {
                         {/* Resume Download */}
                         <div className="glass-card p-8">
                             <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                                <span className="text-accent">📄</span>
+                                <span className="text-accent"></span>
                                 Resume
                             </h3>
                             <p className="text-foreground-muted mb-6">
@@ -245,7 +245,7 @@ export default function Contact() {
                         {/* Social Links */}
                         <div className="glass-card p-8">
                             <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-                                <span className="text-accent">🔗</span>
+                                <span className="text-accent"></span>
                                 Connect Elsewhere
                             </h3>
                             <div className="grid grid-cols-2 gap-4">
@@ -275,7 +275,7 @@ export default function Contact() {
                             whileHover={{ scale: 1.02 }}
                         >
                             <p className="text-sm text-foreground-muted">
-                                <span className="text-2xl block mb-2">☕</span>
+                                <span className="text-2xl block mb-2"></span>
                                 Probability of me replying: <span className="text-accent font-mono font-bold">0.98</span>
                                 <br />
                                 <span className="text-xs">(The other 0.02 is when I&apos;m debugging)</span>
@@ -295,7 +295,7 @@ export default function Contact() {
                         Built with <span className="text-accent">Next.js</span> & <span className="text-accent">Framer Motion</span>
                     </p>
                     <p className="mt-2 font-mono text-xs">
-                        © 2026 • Made with ∑ rigor and ☕ caffeine
+                        © 2026 • Made with ∑ rigor and caffeine
                     </p>
                 </motion.footer>
             </div>

@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { ArrowDown, Download, Github, Linkedin } from 'lucide-react';
 import LiveStats from '../components/LiveStats';
 
-const words = ["Data Science", "Machine Learning", "Data Engineering", "Data Analytics"];
+const words = ["AI Engineer", "Data Analytics", "Full Stack Developer"];
 
 export default function Hero() {
     const [text, setText] = useState('');
@@ -98,7 +98,7 @@ export default function Hero() {
                 >
                     From proofs to predictions bridging rigorous logic with real-world impact.
                     <span className="block mt-2 text-accent font-mono text-base">
-                        Data Enthusiast • Full Stack Developer • Math Enthusiast
+                        Data Enthusiast • FullStack Developer • Math Enthusiast • AI Enthusiast
                     </span>
                 </motion.p>
 

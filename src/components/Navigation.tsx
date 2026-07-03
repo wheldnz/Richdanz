@@ -8,6 +8,7 @@ import { Menu, X } from 'lucide-react';
 const navItems = [
     { label: 'Projects', href: '#projects' },
     { label: 'About', href: '#about' },
+    { label: 'Credentials', href: '#certificates' },
     { label: 'Contact', href: '#contact' },
 ];
 
@@ -43,7 +44,7 @@ export default function Navigation() {
                             className="flex items-center gap-2 font-bold text-lg"
                             whileHover={{ scale: 1.05 }}
                         >
-                            <span className="text-3xl">∭</span>
+                            <span className="text-3xl">W</span>
                         </motion.a>
                     </div>
 

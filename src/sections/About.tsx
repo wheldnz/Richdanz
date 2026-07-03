@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import BentoGrid, { BentoItem } from '../components/BentoGrid';
-import BacktestWidget from '../components/BacktestWidget';
+import Journey from '../components/Journey';
 import {
     Braces,
     Database,
@@ -70,7 +70,7 @@ export default function About() {
                                     className="w-20 h-20 rounded-2xl bg-gradient-to-br from-accent to-accent-secondary flex items-center justify-center text-3xl font-bold text-background shrink-0"
                                     whileHover={{ rotate: 5, scale: 1.05 }}
                                 >
-                                    ∭
+                                    W
                                 </motion.div>
                                 <div>
                                     <h3 className="text-2xl font-bold mb-1">M. Wildan Nuril Akmal</h3>
@@ -78,7 +78,7 @@ export default function About() {
                                         Data Analyst & Machine Learning Engineer
                                     </p>
                                     <p className="text-foreground-muted text-sm mt-1">
-                                        📍 Jakarta • Mathematics Background
+                                        Jakarta • Mathematics Background
                                     </p>
                                 </div>
                             </div>
@@ -107,7 +107,7 @@ export default function About() {
                                 className="glass-card p-4 text-center"
                                 whileHover={{ scale: 1.02 }}
                             >
-                                <div className="text-3xl mb-2">🎓</div>
+                                <div className="text-3xl mb-2"></div>
                                 <div className="text-sm font-medium">Mathematics</div>
                                 <div className="text-xs text-foreground-muted">Degree</div>
                             </motion.div>
@@ -116,7 +116,7 @@ export default function About() {
                                 className="glass-card p-4 text-center"
                                 whileHover={{ scale: 1.02 }}
                             >
-                                <div className="text-3xl mb-2">🤖</div>
+                                <div className="text-3xl mb-2"></div>
                                 <div className="text-sm font-medium">ML Models</div>
                                 <div className="text-xs text-foreground-muted">Built 15+</div>
                             </motion.div>
@@ -124,7 +124,7 @@ export default function About() {
                                 className="glass-card p-4 text-center"
                                 whileHover={{ scale: 1.02 }}
                             >
-                                <div className="text-3xl mb-2">🎯</div>
+                                <div className="text-3xl mb-2"></div>
                                 <div className="text-sm font-medium">Impact Driven</div>
                                 <div className="text-xs text-foreground-muted">Always</div>
                             </motion.div>
@@ -142,7 +142,7 @@ export default function About() {
                         {/* Tech Stack Bento */}
                         <div>
                             <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                                <span className="text-accent">⚡</span>
+                                <span className="text-accent"></span>
                                 Tools & Technologies
                             </h3>
                             <BentoGrid>
@@ -158,13 +158,9 @@ export default function About() {
                             </BentoGrid>
                         </div>
 
-                        {/* Backtest Widget */}
+                        {/* Journey Timeline */}
                         <div>
-                            <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                                <span className="text-accent">🎮</span>
-                                Try My Strategy (Demo)
-                            </h3>
-                            <BacktestWidget />
+                            <Journey />
                         </div>
                     </motion.div>
                 </div>
