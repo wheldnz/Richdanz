@@ -12,15 +12,15 @@ export default function DashboardContainer({ slug }: DashboardContainerProps) {
   const [activeTab, setActiveTab] = useState<'interactive' | 'screenshot'>('screenshot');
 
   const imageUrls: Record<string, string> = {
-    'enterprise-sales-analytics': '/images/projects/enterprise-sales.png',
-    'customer-churn-analytics': '/images/projects/customer-churn.png',
-    'supply-chain-analytics': '/images/projects/supply-chain.png',
-    'hr-analytics': '/images/projects/hr-analytics.png',
-    'repair-service-analytics': '/images/projects/repair-service.png',
-    'insurance-analytics': '/images/projects/insurance-analytics.png',
+    'analisis-sentimen-ruu-tni': '/images/projects/analisis-sentimen-ruu-tni.png',
+    'toko-online': '/images/projects/toko-online.png',
+    'klasifikasi-diabetes-dna': '/images/projects/klasifikasi-diabetes-dna.png',
+    'cs-ai-agent': '/images/projects/cs-ai-agent.png',
+    'avg-down-idx': '/images/projects/avg-down-idx.png',
+    'data-saham-indonesia': '/images/projects/data-saham-indonesia.png',
   };
 
-  const imageSrc = imageUrls[slug] || '/images/projects/enterprise-sales.png';
+  const imageSrc = imageUrls[slug] || '/images/projects/analisis-sentimen-ruu-tni.png';
 
   return (
     <div className="w-full">
