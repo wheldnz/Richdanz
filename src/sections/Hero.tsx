@@ -121,6 +121,8 @@ export default function Hero() {
 
                     <motion.a
                         href="/resume.pdf"
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="btn-secondary flex items-center gap-2"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}

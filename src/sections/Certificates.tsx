@@ -6,6 +6,15 @@ import { Award, ExternalLink, Calendar, CheckCircle2 } from 'lucide-react';
 // Certificates Data
 const certificates = [
     {
+        title: 'International Conference Author & Presenter',
+        issuer: 'The 14th International Conference on Green Technology',
+        date: 'October 2024',
+        id: 'Certificate No: 4174/FST/KM.03.2/10/2024',
+        link: '#',
+        image: '/images/certificates/greentech-2024.png',
+        skills: ['Convolutional Neural Networks (CNN)', 'DNA Sequences Classification', 'Diabetes Mellitus Research']
+    },
+    {
         title: 'AWS Certified Data Engineer - Associate',
         issuer: 'Udemy (Deepak Dubey)',
         date: 'March 2025',
@@ -49,6 +58,15 @@ const certificates = [
         link: 'https://ude.my/UC-d038276d-3de4-48cb-a6e7-67128fb5e6f2',
         image: '/images/certificates/data-analytics-pm.png',
         skills: ['Business Analytics', 'Project KPIs', 'Decision Science', 'Data Modeling']
+    },
+    {
+        title: 'Master Tableau 2025: Complete Guide to Data Visualization',
+        issuer: 'Udemy (Programming Hub & Asmita Ranade)',
+        date: 'May 2025',
+        id: 'Credential ID: UC-fda4a472-fb6b-46c5-8b04-69fc02487f3b',
+        link: 'https://ude.my/UC-fda4a472-fb6b-46c5-8b04-69fc02487f3b',
+        image: '/images/certificates/tableau-mastery.png',
+        skills: ['Tableau', 'Data Visualization', 'Business Intelligence', 'Data Analysis']
     }
 ];
 
