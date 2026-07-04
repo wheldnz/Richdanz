@@ -8,32 +8,29 @@ import {
     Database,
     LineChart,
     Binary,
-    BrainCircuit,
     BarChart3,
-    TrendingUp,
     Sigma,
-    Sparkles,
     Table2,
     Code2,
     Palette,
-    Layers,
-    FileCode2
+    FileCode2,
+    Cloud,
+    Terminal
 } from 'lucide-react';
 
 const techStack = [
     { icon: Braces, label: 'Python', color: '#3776ab' },
-    { icon: Database, label: 'SQL', color: '#f29111' },
-    { icon: Binary, label: 'React', color: '#61dafb' },
-    { icon: BrainCircuit, label: 'PyTorch', color: '#ee4c2c' },
-    { icon: LineChart, label: 'Next.js', color: '#000000' },
-    { icon: BarChart3, label: 'Tableau', color: '#e97627' },
-    { icon: Sparkles, label: 'Node.js', color: '#339933' },
-    { icon: Code2, label: 'HTML', color: '#E34F26' },
-    { icon: Palette, label: 'CSS', color: '#1572B6' },
-    { icon: Layers, label: 'Laravel', color: '#FF2D20' },
+    { icon: Database, label: 'SQL (Postgres/MySQL)', color: '#f29111' },
+    { icon: BarChart3, label: 'Power BI', color: '#f2c811' },
+    { icon: Cloud, label: 'AWS', color: '#ff9900' },
+    { icon: Database, label: 'Google BigQuery', color: '#4285f4' },
     { icon: FileCode2, label: 'PHP', color: '#777BB4' },
-    { icon: Sigma, label: 'NumPy', color: '#013243' },
+    { icon: Binary, label: 'TypeScript', color: '#3178c6' },
+    { icon: Binary, label: 'React / Next.js', color: '#00D8FF' },
+    { icon: Code2, label: 'Google Apps Script', color: '#34a853' },
+    { icon: Sigma, label: 'Pandas & NumPy', color: '#150458' },
     { icon: Table2, label: 'Excel', color: '#217346' },
+    { icon: Palette, label: 'HTML & CSS', color: '#E34F26' },
 ];
 
 export default function About() {

@@ -3,43 +3,52 @@
 import { motion } from 'framer-motion';
 import { Award, ExternalLink, Calendar, CheckCircle2 } from 'lucide-react';
 
-// Mock Certificates Data - User can edit this later
+// Certificates Data
 const certificates = [
     {
-        title: 'TensorFlow Developer Certificate',
-        issuer: 'Google',
-        date: '2024',
-        id: 'Credential ID: 12345678',
-        link: '#',
-        image: 'https://placehold.co/600x400/1a1a2e/00ff88?text=TensorFlow+Cert',
-        skills: ['Deep Learning', 'Computer Vision', 'NLP']
+        title: 'AWS Certified Data Engineer - Associate',
+        issuer: 'Udemy (Deepak Dubey)',
+        date: 'March 2025',
+        id: 'Credential ID: UC-c326f23c-0fe9-47db-9749-acd547616e47',
+        link: 'https://ude.my/UC-c326f23c-0fe9-47db-9749-acd547616e47',
+        image: '/images/certificates/aws-data-engineer.png',
+        skills: ['AWS Data Services', 'ETL Pipelines', 'Redshift / Athena', 'Glue / Kinesis']
     },
     {
-        title: 'Professional Data Engineer',
-        issuer: 'Google Cloud',
-        date: '2023',
-        id: 'Credential ID: 87654321',
-        link: '#',
-        image: 'https://placehold.co/600x400/1a1a2e/3b82f6?text=GCP+Data+Engineer',
-        skills: ['BigQuery', 'Dataflow', 'Cloud SQL']
+        title: 'Data Science Mastery: Complete Data Science Bootcamp 2025',
+        issuer: 'Udemy (Vivian Aranha)',
+        date: 'January 2025',
+        id: 'Credential ID: UC-521eb619-1faf-482f-9c93-9316e1da9602',
+        link: 'https://ude.my/UC-521eb619-1faf-482f-9c93-9316e1da9602',
+        image: '/images/certificates/data-science-mastery.png',
+        skills: ['Machine Learning', 'Statistical Modeling', 'Python Data Science', 'Data Analytics']
     },
     {
-        title: 'IBM Data Science Professional',
-        issuer: 'Coursera',
-        date: '2023',
-        id: 'Credential ID: ABCDEFGH',
-        link: '#',
-        image: 'https://placehold.co/600x400/1a1a2e/007aff?text=IBM+Data+Science',
-        skills: ['Python', 'SQL', 'Data Visualization']
+        title: 'Power BI ULTIMATE Course (Power BI Dual Certification)',
+        issuer: 'Udemy (ExpertEase Education)',
+        date: 'March 2025',
+        id: 'Credential ID: UC-c424a966-bc4f-4897-994a-38b4ec310715',
+        link: 'https://ude.my/UC-c424a966-bc4f-4897-994a-38b4ec310715',
+        image: '/images/certificates/powerbi-ultimate.png',
+        skills: ['Power BI', 'DAX Formulas', 'Data Modeling', 'Enterprise BI']
     },
     {
-        title: 'Deep Learning Specialization',
-        issuer: 'DeepLearning.AI',
-        date: '2022',
-        id: 'Credential ID: XYZ12345',
+        title: 'Power BI Fundamentals A to Z',
+        issuer: 'ExpertEase Education',
+        date: 'March 2025',
+        id: 'Credential ID: cert_3prq7ph0',
         link: '#',
-        image: 'https://placehold.co/600x400/1a1a2e/ff0055?text=DeepLearning.AI',
-        skills: ['Neural Networks', 'Hyperparameter Tuning']
+        image: '/images/certificates/powerbi-fundamentals.png',
+        skills: ['Power Query', 'Dashboard Design', 'Data Visualization']
+    },
+    {
+        title: 'Data Analytics for Project Management',
+        issuer: 'Udemy (Start-Tech Academy)',
+        date: 'March 2025',
+        id: 'Credential ID: UC-d038276d-3de4-48cb-a6e7-67128fb5e6f2',
+        link: 'https://ude.my/UC-d038276d-3de4-48cb-a6e7-67128fb5e6f2',
+        image: '/images/certificates/data-analytics-pm.png',
+        skills: ['Business Analytics', 'Project KPIs', 'Decision Science', 'Data Modeling']
     }
 ];
 
@@ -68,7 +77,7 @@ export default function Certificates() {
                 </motion.div>
 
                 {/* Grid */}
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {certificates.map((cert, index) => (
                         <motion.div
                             key={index}
