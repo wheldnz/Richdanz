@@ -29,10 +29,11 @@ const journeyItems = [
         color: '#3b82f6',
     },
     {
-        year: '2018 - 2022',
-        title: 'Bachelor of Mathematics',
-        company: 'University Graduate',
+        year: 'Aug 2021 - Dec 2024',
+        title: 'Bachelor of Science in Mathematics',
+        company: 'State Islamic University of Maulana Malik Ibrahim Malang',
         points: [
+            'Graduated with a GPA of 3.60 / 4.00.',
             'Specialized in statistical modeling, logic, and pure mathematics.',
             'Built the analytical foundation for engineering models, data pipelines, and quantitative research.'
         ],
