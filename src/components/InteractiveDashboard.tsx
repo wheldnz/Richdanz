@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { 
   BarChart3, TrendingUp, Users, ShoppingCart, Percent, Calendar, 
-  CheckCircle2, AlertTriangle, Play, HelpCircle, ShieldCheck, 
+  CheckCircle2, AlertTriangle, Play, HelpCircle, UserCheck, ShieldCheck, 
   TrendingDown, ArrowRight, RefreshCw, MessageSquare, Database, 
   Sparkles, Send, Dna, Calculator, Filter 
 } from 'lucide-react';
@@ -13,9 +13,32 @@ interface InteractiveDashboardProps {
 }
 
 export default function InteractiveDashboard({ slug }: InteractiveDashboardProps) {
+  // 1. Enterprise Sales Analytics State
+  const [salesMetric, setSalesMetric] = useState<'revenue' | 'profit' | 'margin'>('revenue');
+  const [salesRegion, setSalesRegion] = useState<string>('All');
+
+  // 2. Customer Churn Analytics State
+  const [churnSegment, setChurnSegment] = useState<'All' | 'Enterprise' | 'SMB'>('All');
+  const [churnView, setChurnView] = useState<'cohort' | 'risk'>('cohort');
+
+  // 3. Supply Chain Analytics State
+  const [scWarehouse, setScWarehouse] = useState<string>('Main Hub');
+  const [scOptimized, setScOptimized] = useState<boolean>(false);
+
+  // 4. HR Analytics State
+  const [hrSalaryIncrease, setHrSalaryIncrease] = useState<number>(0);
+
+  // 5. Repair Service Analytics State
+  const [repairTech, setRepairTech] = useState<'All' | 'Senior' | 'Junior'>('All');
+  const [activeStep, setActiveStep] = useState<string>('Diagnosis');
+
+  // 6. Insurance Analytics State
+  const [insExcludeUnder25, setInsExcludeUnder25] = useState<boolean>(false);
+
   // ==========================================
-  // 1. Analisis Sentimen RUU TNI State
+  // NEW 6 PROJECTS STATE VARIABLES
   // ==========================================
+  // 7. Analisis Sentimen RUU TNI State
   const [tniInput, setTniInput] = useState<string>('Revisi UU TNI mengancam supremasi sipil dan menghidupkan kembali dwifungsi militer.');
   const [tniResult, setTniResult] = useState<{
     label: 'Negatif' | 'Positif' | 'Netral';
@@ -30,6 +53,62 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
   });
   const [tniAnalyzing, setTniAnalyzing] = useState<boolean>(false);
 
+  // 8. toko_online State
+  const [cart, setCart] = useState<Array<{ id: number; name: string; price: number; qty: number; stock: number }>>([
+    { id: 1, name: 'Sepatu Sneakers Casual', price: 400000, qty: 1, stock: 5 },
+    { id: 2, name: 'Kaos Katun Premium', price: 150000, qty: 2, stock: 10 },
+    { id: 3, name: 'Jaket Bomber Slimfit', price: 350000, qty: 0, stock: 3 },
+  ]);
+  const [coupon, setCoupon] = useState<string>('');
+  const [discountPercent, setDiscountPercent] = useState<number>(0);
+  const [sqlLog, setSqlLog] = useState<string[]>([]);
+  const [checkoutStep, setCheckoutStep] = useState<'idle' | 'success'>('idle');
+
+  // 9. Klasifikasi Diabetes DNA State
+  const presetSequences = {
+    normal: 'ATG-CGA-TTC-GGA-CTA-GCT-AAC-GCT-GCA',
+    mutant: 'ATG-CGA-TTT-GCA-CTA-GCT-AAC-GCT-GCA',
+    custom: 'ATG-CGA-TTC-GGA-CTA-GCT-AAC-GCT-GCA'
+  };
+  const [dnaSeq, setDnaSeq] = useState<string>(presetSequences.normal);
+  const [dnaResult, setDnaResult] = useState<{
+    label: 'Normal' | 'Risiko Diabetes Tipe 2';
+    distance: number;
+    kmers: string[];
+  }>({
+    label: 'Normal',
+    distance: 0.12,
+    kmers: ['ATG', 'TGC', 'GCG', 'CGA', 'GAT', 'ATT', 'TTC', 'TCG', 'CGG', 'GGA', 'GAC', 'ACT', 'CTA', 'TAG', 'AGC', 'GCT', 'CTA', 'TAA', 'AAC', 'ACG', 'CGC', 'GCT', 'CTG', 'TGC', 'GCA']
+  });
+  const [dnaRunning, setDnaRunning] = useState<boolean>(false);
+
+  // 10. CS-AI-Agent State
+  const [csInput, setCsInput] = useState<string>('ORD-9921: Paket saya belum sampai dari kemarin. Saya mau refund!');
+  const [csConversation, setCsConversation] = useState<Array<{ sender: 'user' | 'agent'; text: string }>>([
+    { sender: 'user', text: 'Halo, saya ingin menanyakan status pesanan saya.' },
+    { sender: 'agent', text: 'Halo! Tentu, boleh saya minta nomor pesanan (Order ID) Anda untuk saya lacak?' },
+  ]);
+  const [agentLogs, setAgentLogs] = useState<string[]>([]);
+  const [csLoading, setCsLoading] = useState<boolean>(false);
+
+  // 11. avg-down-idx State
+  const [stockCode, setStockCode] = useState<string>('BBRI');
+  const [initialShares, setInitialShares] = useState<number>(100); // 100 Lots
+  const [initialPrice, setInitialPrice] = useState<number>(6000); // Rp6,000 / share
+  const [newShares, setNewShares] = useState<number>(200); // Buy 200 more Lots
+  const [newPrice, setNewPrice] = useState<number>(4200); // Buy at Rp4,200 / share
+  const [currentMarketPrice, setCurrentMarketPrice] = useState<number>(4400);
+
+  // 12. data-saham-indonesia State
+  const [peFilter, setPeFilter] = useState<number>(18);
+  const [pbvFilter, setPbvFilter] = useState<number>(2.5);
+  const [minRoe, setMinRoe] = useState<boolean>(true);
+
+  // ==========================================
+  // HELPER FUNCTIONS & CALCULATIONS FOR NEW PROJECTS
+  // ==========================================
+
+  // 7. RUU TNI Helpers
   const handleTniAnalyze = (text: string) => {
     setTniAnalyzing(true);
     setTimeout(() => {
@@ -48,7 +127,6 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
         score = 60 + Math.random() * 25;
       }
 
-      // Simple tokenization & mock stemming
       const cleanText = lowerText.replace(/[^a-zA-Z0-9\s]/g, '');
       const tokens = cleanText.split(/\s+/).filter(t => t.length > 0);
       const stemmed = tokens.map(t => {
@@ -65,19 +143,7 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
     }, 800);
   };
 
-  // ==========================================
-  // 2. toko_online State
-  // ==========================================
-  const [cart, setCart] = useState<Array<{ id: number; name: string; price: number; qty: number; stock: number }>>([
-    { id: 1, name: 'Sepatu Sneakers Casual', price: 400000, qty: 1, stock: 5 },
-    { id: 2, name: 'Kaos Katun Premium', price: 150000, qty: 2, stock: 10 },
-    { id: 3, name: 'Jaket Bomber Slimfit', price: 350000, qty: 0, stock: 3 },
-  ]);
-  const [coupon, setCoupon] = useState<string>('');
-  const [discountPercent, setDiscountPercent] = useState<number>(0);
-  const [sqlLog, setSqlLog] = useState<string[]>([]);
-  const [checkoutStep, setCheckoutStep] = useState<'idle' | 'success'>('idle');
-
+  // 8. toko_online Helpers
   const updateCartQty = (id: number, delta: number) => {
     setCart(prev => prev.map(item => {
       if (item.id === id) {
@@ -103,15 +169,12 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
 
   const handleCheckout = () => {
     if (subtotal === 0) return;
-    
-    // Simulate SQL transactions logs
     const logs = [
       '-- START TRANSACTION (Autocommit OFF)',
       'BEGIN;',
       'INSERT INTO orders (user_id, total_price, status) VALUES (42, ' + totalBill + ", 'pending');",
       'SELECT LAST_INSERT_ID() AS order_id; -- returns #10087'
     ];
-
     cart.forEach(item => {
       if (item.qty > 0) {
         logs.push(`-- Check stock for item ID ${item.id}`);
@@ -120,144 +183,27 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
         logs.push(`UPDATE products SET stock = stock - ${item.qty} WHERE id = ${item.id}; -- stock updated`);
       }
     });
-
     logs.push('COMMIT; -- Transaction successful, locks released.');
-    
     setSqlLog(logs);
     setCheckoutStep('success');
   };
 
-  // ==========================================
-  // 3. Klasifikasi Diabetes DNA State
-  // ==========================================
-  const presetSequences = {
-    normal: 'ATG-CGA-TTC-GGA-CTA-GCT-AAC-GCT-GCA',
-    mutant: 'ATG-CGA-TTT-GCA-CTA-GCT-AAC-GCT-GCA',
-    custom: 'ATG-CGA-TTC-GGA-CTA-GCT-AAC-GCT-GCA'
-  };
-  const [dnaSeq, setDnaSeq] = useState<string>(presetSequences.normal);
-  const [dnaResult, setDnaResult] = useState<{
-    label: 'Normal' | 'Risiko Diabetes Tipe 2';
-    distance: number;
-    kmers: string[];
-  }>({
-    label: 'Normal',
-    distance: 0.12,
-    kmers: ['ATG', 'TGC', 'GCG', 'CGA', 'GAT', 'ATT', 'TTC', 'TCG', 'CGG', 'GGA', 'GAC', 'ACT', 'CTA', 'TAG', 'AGC', 'GCT', 'CTA', 'TAA', 'AAC', 'ACG', 'CGC', 'GCT', 'CTG', 'TGC', 'GCA']
-  });
-  const [dnaRunning, setDnaRunning] = useState<boolean>(false);
-
-  const runDnaClassifier = (sequence: string) => {
-    setDnaRunning(true);
-    setTimeout(() => {
-      const cleanSeq = sequence.toUpperCase().replace(/[^ATCG]/g, '');
-      
-      // Calculate 3-mers
-      const kmersList: string[] = [];
-      for (let i = 0; i < cleanSeq.length - 2; i++) {
-        kmersList.push(cleanSeq.slice(i, i + 3));
-      }
-
-      // Simple prediction: if sequence contains TTT or GCA, mark as high risk
-      const hasMutations = cleanSeq.includes('TTT') || cleanSeq.includes('GCA') || cleanSeq.includes('TTA');
-      const label = hasMutations ? 'Risiko Diabetes Tipe 2' : 'Normal';
-      const distance = hasMutations ? 1.45 + Math.random() * 0.5 : 0.08 + Math.random() * 0.15;
-
-      setDnaResult({
-        label,
-        distance: parseFloat(distance.toFixed(3)),
-        kmers: kmersList.slice(0, 25)
-      });
-      setDnaRunning(false);
-    }, 700);
-  };
-
-  // ==========================================
-  // 4. CS-AI-Agent State
-  // ==========================================
-  const [csInput, setCsInput] = useState<string>('ORD-9921: Paket saya belum sampai dari kemarin. Saya mau refund!');
-  const [csConversation, setCsConversation] = useState<Array<{ sender: 'user' | 'agent'; text: string }>>([
-    { sender: 'user', text: 'Halo, saya ingin menanyakan status pesanan saya.' },
-    { sender: 'agent', text: 'Halo! Tentu, boleh saya minta nomor pesanan (Order ID) Anda untuk saya lacak?' },
-  ]);
-  const [agentLogs, setAgentLogs] = useState<string[]>([]);
-  const [csLoading, setCsLoading] = useState<boolean>(false);
-
-  const runAgentResponse = (message: string) => {
-    if (!message.trim()) return;
-
-    setCsConversation(prev => [...prev, { sender: 'user', text: message }]);
-    setCsLoading(true);
-
-    setTimeout(() => {
-      let reply = '';
-      const logs = [
-        `[Agent Initiated] Parsing message: "${message}"`,
-        `[Step 1: NLP Intent Detection] Mapped query to Intent: 'Order Status Query' / 'Refund Request'`,
-      ];
-
-      const lower = message.toLowerCase();
-      if (lower.includes('ord') || lower.includes('paket') || lower.includes('lacak')) {
-        logs.push(`[Step 2: Tool Selection] Message requires database lookup. Selected tool: 'TrackPackage'`);
-        logs.push(`[Step 3: Action Execution] Calling TrackPackage(order_id="ORD-9921")...`);
-        logs.push(`[Step 4: Observation] Database returned: { status: 'Transit', location: 'Jakarta Barat', carrier: 'JNE Express', status_code: 3 }`);
-        
-        if (lower.includes('refund')) {
-          logs.push(`[Step 5: Policy Check] Selected tool: 'RefundPolicy'`);
-          logs.push(`[Step 6: Action Execution] Calling RefundPolicy(status="Transit")...`);
-          logs.push(`[Step 7: Observation] Policy returned: "Refund cannot be processed while item is in active transit."`);
-          
-          reply = 'Halo! Saya telah melacak pesanan Anda dengan nomor ORD-9921. Saat ini paket sedang transit di pusat sortir Jakarta Barat JNE Express. Berdasarkan kebijakan e-commerce, kami tidak dapat memproses pengembalian dana (refund) untuk barang yang sedang dalam proses pengantaran aktif. Mohon ditunggu hingga kurir sampai ke alamat Anda ya.';
-        } else {
-          reply = 'Halo! Saya melacak pesanan ORD-9921 Anda. Paket Anda saat ini berada di pusat sortir Jakarta Barat JNE Express dan sedang menuju ke alamat pengiriman Anda. Estimasi sampai hari ini.';
-        }
-      } else {
-        logs.push(`[Step 2: Direct Reply] No external database tool needed. Categorized as general greeting.`);
-        reply = 'Halo! Ada yang bisa saya bantu terkait pesanan, katalog produk, atau penawaran promo hari ini?';
-      }
-
-      logs.push(`[Step 8: Output Synthesis] Generating empathetic tone response.`);
-      setAgentLogs(logs);
-      setCsConversation(prev => [...prev, { sender: 'agent', text: reply }]);
-      setCsLoading(false);
-    }, 1200);
-  };
-
-  // ==========================================
-  // 5. avg-down-idx State
-  // ==========================================
-  const [stockCode, setStockCode] = useState<string>('BBRI');
-  const [initialShares, setInitialShares] = useState<number>(100); // 100 Lots
-  const [initialPrice, setInitialPrice] = useState<number>(6000); // Rp6,000 / share
-  const [newShares, setNewShares] = useState<number>(200); // Buy 200 more Lots
-  const [newPrice, setNewPrice] = useState<number>(4200); // Buy at Rp4,200 / share
-  const [currentMarketPrice, setCurrentMarketPrice] = useState<number>(4400);
-
-  // Calculations
+  // 11. avg-down-idx Calculations
   const totalInitCost = initialShares * 100 * initialPrice;
   const totalNewCost = newShares * 100 * newPrice;
   const totalCost = totalInitCost + totalNewCost;
   const totalSharesQty = (initialShares + newShares) * 100;
   const combinedAvgPrice = Math.round(totalCost / totalSharesQty);
-  
   const initValue = initialShares * 100 * currentMarketPrice;
   const combinedValue = totalSharesQty * currentMarketPrice;
-  
   const floatingLossInit = initValue - totalInitCost;
   const floatingLossCombined = combinedValue - totalCost;
   const lossPercentInit = ((floatingLossInit) / totalInitCost) * 100;
   const lossPercentCombined = ((floatingLossCombined) / totalCost) * 100;
-
   const requiredRiseInit = ((initialPrice - currentMarketPrice) / currentMarketPrice) * 100;
   const requiredRiseCombined = ((combinedAvgPrice - currentMarketPrice) / currentMarketPrice) * 100;
 
-  // ==========================================
-  // 6. data-saham-indonesia State
-  // ==========================================
-  const [peFilter, setPeFilter] = useState<number>(18);
-  const [pbvFilter, setPbvFilter] = useState<number>(2.5);
-  const [minRoe, setMinRoe] = useState<boolean>(true);
-
+  // 12. data-saham-indonesia Data
   const stockList = [
     { ticker: 'BBRI', name: 'Bank Rakyat Indonesia', pe: 10.5, pbv: 2.1, roe: 22.7, yield: 6.2, price: 4300, status: 'Undervalued' },
     { ticker: 'TLKM', name: 'Telkom Indonesia', pe: 14.5, pbv: 2.3, roe: 14.6, yield: 5.1, price: 3200, status: 'Fair Value' },
@@ -267,7 +213,6 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
     { ticker: 'SMGR', name: 'Semen Indonesia', pe: 11.2, pbv: 0.9, roe: 8.2, yield: 4.8, price: 3900, status: 'Undervalued' },
     { ticker: 'ICBP', name: 'Indofood CBP', pe: 16.2, pbv: 2.8, roe: 18.5, yield: 3.4, price: 10800, status: 'Fair Value' },
   ];
-
   const filteredStocks = stockList.filter(s => {
     const passPe = s.pe > 0 && s.pe <= peFilter;
     const passPbv = s.pbv <= pbvFilter;
@@ -275,9 +220,719 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
     return passPe && passPbv && passRoe;
   });
 
+  // ----------------------------------------------------
+  // RENDER DASHBOARD 1: Enterprise Sales
+  // ----------------------------------------------------
+  if (slug === 'enterprise-sales-analytics') {
+    const regionMultipliers: Record<string, number> = { All: 1, North: 1.2, South: 0.8, East: 0.95, West: 1.1 };
+    const m = regionMultipliers[salesRegion] || 1;
+
+    const data = {
+      revenue: { val: `$${(12.4 * m).toFixed(1)}M`, label: 'Total Revenue', color: 'text-blue-500', bg: 'bg-blue-500/10', stroke: '#3b82f6', chartData: [45, 52, 49, 62, 58, 75, 70, 85, 82, 95, 110, 124] },
+      profit: { val: `$${(2.1 * m).toFixed(1)}M`, label: 'Total Profit', color: 'text-teal-500', bg: 'bg-teal-500/10', stroke: '#14b8a6', chartData: [8, 9.5, 9, 11, 10, 13.5, 12, 15, 14, 16.5, 19, 21] },
+      margin: { val: `${(16.9 * (salesRegion === 'South' ? 1.15 : salesRegion === 'North' ? 0.92 : 1)).toFixed(1)}%`, label: 'Profit Margin', color: 'text-amber-500', bg: 'bg-amber-500/10', stroke: '#f59e0b', chartData: [17.8, 18.2, 18.3, 17.7, 17.2, 18.0, 17.1, 17.6, 17.0, 17.3, 17.2, 16.9] }
+    };
+
+    const active = data[salesMetric];
+
+    return (
+      <div className="glass-card p-6 bg-slate-950 text-slate-100 border-slate-800 rounded-2xl w-full">
+        {/* Header */}
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-6 border-b border-slate-800 pb-4">
+          <div>
+            <h4 className="text-lg font-bold flex items-center gap-2 text-blue-400">
+              <BarChart3 className="w-5 h-5" /> Enterprise Sales Dashboard Mockup
+            </h4>
+            <p className="text-xs text-slate-400">DirectQuery Postgres Live Pipeline Simulation</p>
+          </div>
+          <div className="flex gap-2">
+            {['All', 'North', 'South', 'East', 'West'].map((r) => (
+              <button
+                key={r}
+                onClick={() => setSalesRegion(r)}
+                className={`px-3 py-1 text-xs rounded-full cursor-pointer transition-all ${
+                  salesRegion === r ? 'bg-blue-600 text-white font-semibold' : 'bg-slate-900 text-slate-400 hover:bg-slate-800'
+                }`}
+              >
+                {r}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Metrics Grid */}
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          {(['revenue', 'profit', 'margin'] as const).map((key) => {
+            const item = data[key];
+            const isSelected = salesMetric === key;
+            return (
+              <div
+                key={key}
+                onClick={() => setSalesMetric(key)}
+                className={`p-4 rounded-xl cursor-pointer transition-all border ${
+                  isSelected ? 'bg-slate-900 border-blue-500/50 shadow-md shadow-blue-500/5' : 'bg-slate-950 border-slate-800 hover:border-slate-700'
+                }`}
+              >
+                <span className="text-xs text-slate-400 font-medium block">{item.label}</span>
+                <span className={`text-xl font-bold mt-1 block ${item.color}`}>{item.val}</span>
+                <span className="text-[10px] text-emerald-500 flex items-center gap-0.5 mt-1">
+                  <TrendingUp className="w-3 h-3" /> +12.4% MoM
+                </span>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Chart Area */}
+        <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-4">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-xs font-semibold text-slate-300">12-Month Performance Trend ({active.label})</span>
+            <span className="text-[10px] text-slate-400">Jan 2025 - Dec 2025</span>
+          </div>
+
+          <div className="h-40 w-full flex items-end justify-between gap-1 pt-6 px-2 relative">
+            {/* Gridlines */}
+            <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-10">
+              <div className="border-t border-slate-100 w-full"></div>
+              <div className="border-t border-slate-100 w-full"></div>
+              <div className="border-t border-slate-100 w-full"></div>
+            </div>
+
+            {/* Custom SVG Line Chart */}
+            <svg className="absolute inset-0 h-full w-full pointer-events-none" preserveAspectRatio="none">
+              <path
+                d={`M ${active.chartData
+                  .map((val, idx) => {
+                    const maxVal = Math.max(...active.chartData);
+                    const minVal = Math.min(...active.chartData) * 0.9;
+                    const x = (idx / 11) * 100;
+                    const y = 90 - ((val - minVal) / (maxVal - minVal)) * 60;
+                    return `${x}% ${y}%`;
+                  })
+                  .join(' L ')}`}
+                fill="none"
+                stroke={active.stroke}
+                strokeWidth="3"
+                className="transition-all duration-500"
+              />
+              {/* Fill under line */}
+              <path
+                d={`M 0% 100% L ${active.chartData
+                  .map((val, idx) => {
+                    const maxVal = Math.max(...active.chartData);
+                    const minVal = Math.min(...active.chartData) * 0.9;
+                    const x = (idx / 11) * 100;
+                    const y = 90 - ((val - minVal) / (maxVal - minVal)) * 60;
+                    return `${x}% ${y}%`;
+                  })
+                  .join(' L ')} L 100% 100% Z`}
+                fill={`url(#gradient-${salesMetric})`}
+                className="transition-all duration-500"
+              />
+              <defs>
+                <linearGradient id={`gradient-${salesMetric}`} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={active.stroke} stopOpacity="0.2" />
+                  <stop offset="100%" stopColor={active.stroke} stopOpacity="0.0" />
+                </linearGradient>
+              </defs>
+            </svg>
+
+            {/* Labels */}
+            {['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'].map((m, idx) => (
+              <span key={idx} className="text-[9px] text-slate-500 w-full text-center z-10 select-none">
+                {m}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-4 text-xs text-slate-400 bg-slate-900 border border-slate-800 p-3 rounded-lg flex items-start gap-2">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+          <span>
+            <strong>Interactive Tip:</strong> Coba klik tombol Region atau Card Metrik di atas. Terlihat bagaimana relasi database PostgreSQL secara dinamis memicu perubahan metrik aggregasi harian.
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   // ----------------------------------------------------
-  // RENDER 1: Analisis Sentimen RUU TNI
+  // RENDER DASHBOARD 2: Customer Churn
+  // ----------------------------------------------------
+  if (slug === 'customer-churn-analytics') {
+    // Cohort data (All, Enterprise, SMB)
+    const cohortData = {
+      All: [
+        { m: 'M0', r: 100, color: 'bg-emerald-600/90' },
+        { m: 'M1', r: 68, color: 'bg-emerald-500/70' },
+        { m: 'M2', r: 54, color: 'bg-emerald-500/50' },
+        { m: 'M3', r: 42, color: 'bg-emerald-500/30' },
+        { m: 'M6', r: 28, color: 'bg-emerald-500/20' },
+        { m: 'M12', r: 8, color: 'bg-rose-500/20' },
+      ],
+      Enterprise: [
+        { m: 'M0', r: 100, color: 'bg-emerald-600/90' },
+        { m: 'M1', r: 94, color: 'bg-emerald-500/90' },
+        { m: 'M2', r: 91, color: 'bg-emerald-500/80' },
+        { m: 'M3', r: 88, color: 'bg-emerald-500/75' },
+        { m: 'M6', r: 82, color: 'bg-emerald-500/60' },
+        { m: 'M12', r: 75, color: 'bg-emerald-500/50' },
+      ],
+      SMB: [
+        { m: 'M0', r: 100, color: 'bg-emerald-600/90' },
+        { m: 'M1', r: 45, color: 'bg-emerald-500/40' },
+        { m: 'M2', r: 30, color: 'bg-rose-500/20' },
+        { m: 'M3', r: 21, color: 'bg-rose-500/30' },
+        { m: 'M6', r: 12, color: 'bg-rose-500/40' },
+        { m: 'M12', r: 3, color: 'bg-rose-600/60' },
+      ],
+    };
+
+    const churnRate = churnSegment === 'All' ? '4.2%' : churnSegment === 'Enterprise' ? '1.5%' : '7.8%';
+    const activeCohort = cohortData[churnSegment];
+
+    return (
+      <div className="glass-card p-6 bg-white text-slate-800 border-slate-200 rounded-2xl w-full shadow-sm">
+        {/* Header */}
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-6 border-b border-slate-100 pb-4">
+          <div>
+            <h4 className="text-lg font-bold flex items-center gap-2 text-rose-500">
+              <Users className="w-5 h-5" /> Customer Churn Analytics Dashboard
+            </h4>
+            <p className="text-xs text-slate-500">Cohort Retention Analysis Framework</p>
+          </div>
+          <div className="flex gap-1 bg-slate-100 p-1 rounded-lg">
+            {(['All', 'Enterprise', 'SMB'] as const).map((s) => (
+              <button
+                key={s}
+                onClick={() => setChurnSegment(s)}
+                className={`px-3 py-1 text-xs rounded-md cursor-pointer transition-all ${
+                  churnSegment === s ? 'bg-white text-slate-800 font-semibold shadow-sm' : 'text-slate-500 hover:text-slate-800'
+                }`}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* View Toggle */}
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex gap-4">
+            <div>
+              <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-semibold">Active Segment Churn</span>
+              <span className="text-2xl font-black text-slate-800">{churnRate}</span>
+            </div>
+            <div>
+              <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-semibold">Avg Cust Tenure</span>
+              <span className="text-2xl font-black text-slate-800">
+                {churnSegment === 'All' ? '8.4 Bln' : churnSegment === 'Enterprise' ? '24.1 Bln' : '3.6 Bln'}
+              </span>
+            </div>
+          </div>
+          <div className="flex gap-2 border border-slate-200 rounded-lg p-1 bg-slate-50">
+            <button
+              onClick={() => setChurnView('cohort')}
+              className={`px-3 py-1 text-xs rounded-md cursor-pointer ${
+                churnView === 'cohort' ? 'bg-slate-200 text-slate-800 font-semibold' : 'text-slate-500'
+              }`}
+            >
+              Retention Grid
+            </button>
+            <button
+              onClick={() => setChurnView('risk')}
+              className={`px-3 py-1 text-xs rounded-md cursor-pointer ${
+                churnView === 'risk' ? 'bg-slate-200 text-slate-800 font-semibold' : 'text-slate-500'
+              }`}
+            >
+              Risk Profile
+            </button>
+          </div>
+        </div>
+
+        {/* Visualizer Container */}
+        <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+          {churnView === 'cohort' ? (
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-xs font-bold text-slate-600">Cohort Retention Over Time (%)</span>
+                <span className="text-[10px] text-emerald-600 font-semibold">Segment: {churnSegment}</span>
+              </div>
+              <div className="grid grid-cols-6 gap-2 text-center">
+                {activeCohort.map((c, i) => (
+                  <div key={i} className="flex flex-col gap-1 items-center">
+                    <span className="text-[10px] font-bold text-slate-500">{c.m}</span>
+                    <div
+                      className={`w-full py-4 rounded-lg font-bold text-sm text-slate-800 border border-slate-200/50 flex items-center justify-center transition-all duration-500 ${c.color}`}
+                    >
+                      {c.r}%
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-bold text-slate-600">Risk Scatter Plot (Support Tickets vs. Login Decrease)</span>
+                <span className="text-[10px] text-red-500 font-semibold">High Risk Zone Red</span>
+              </div>
+              <div className="h-32 border-l border-b border-slate-300 relative flex items-end justify-between px-4 pb-2">
+                {/* Simulated dots */}
+                <div
+                  className="absolute w-3 h-3 rounded-full bg-red-500 border border-white animate-pulse"
+                  style={{ bottom: '70%', left: '80%' }}
+                  title="Cust A: Support Tickets > 5, Churn Probability 95%"
+                />
+                <div
+                  className="absolute w-3 h-3 rounded-full bg-orange-500 border border-white"
+                  style={{ bottom: '45%', left: '50%' }}
+                  title="Cust B: Support Tickets 3, Churn Probability 50%"
+                />
+                <div
+                  className="absolute w-3 h-3 rounded-full bg-emerald-500 border border-white"
+                  style={{ bottom: '15%', left: '20%' }}
+                  title="Cust C: Support Tickets 0, Churn Probability 2%"
+                />
+                <div
+                  className="absolute w-3 h-3 rounded-full bg-emerald-500 border border-white"
+                  style={{ bottom: '25%', left: '10%' }}
+                />
+
+                <span className="absolute bottom-1 right-2 text-[8px] text-slate-400">Login Drop %</span>
+                <span className="absolute top-2 left-2 text-[8px] text-slate-400 rotate-90 origin-left">Tickets count</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="mt-4 text-xs text-slate-600 bg-slate-100 border border-slate-200 p-3 rounded-lg flex items-start gap-2">
+          <Percent className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
+          <span>
+            <strong>Interactive Tip:</strong> Klik segment toggle (Enterprise vs SMB). Terlihat bahwa pelanggan SMB mengalami Churn ekstrem pada Month 1 (turun ke 45%), menyarankan fokus alokasi promosi retensi pada segmen SMB.
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  // ----------------------------------------------------
+  // RENDER DASHBOARD 3: Supply Chain
+  // ----------------------------------------------------
+  if (slug === 'supply-chain-analytics') {
+    const warehouseData: Record<string, { capacity: number; otif: number; cost: string; status: 'low' | 'healthy' | 'critical' }> = {
+      'Main Hub': { capacity: 92, otif: 80, cost: '$45,000', status: 'critical' },
+      'East Coast': { capacity: 52, otif: 94, cost: '$18,500', status: 'healthy' },
+      'Central': { capacity: 75, otif: 85, cost: '$29,000', status: 'low' },
+    };
+
+    const currentWh = warehouseData[scWarehouse] || warehouseData['Main Hub'];
+    const activeOtif = scOptimized ? 96 : currentWh.otif;
+    const activeCapacity = scOptimized ? 78 : currentWh.capacity;
+
+    return (
+      <div className="glass-card p-6 bg-zinc-950 text-zinc-100 border-zinc-800 rounded-2xl w-full">
+        {/* Header */}
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-6 border-b border-zinc-800 pb-4">
+          <div>
+            <h4 className="text-lg font-bold flex items-center gap-2 text-amber-500">
+              <ShoppingCart className="w-5 h-5" /> Supply Chain Analytics Dashboard
+            </h4>
+            <p className="text-xs text-zinc-400">Inventory Turnover & Supplier SLA Simulator</p>
+          </div>
+          <div className="flex gap-2">
+            {['Main Hub', 'East Coast', 'Central'].map((w) => (
+              <button
+                key={w}
+                onClick={() => {
+                  setScWarehouse(w);
+                  setScOptimized(false);
+                }}
+                className={`px-3 py-1 text-xs rounded-lg cursor-pointer transition-all ${
+                  scWarehouse === w ? 'bg-amber-600 text-white font-semibold' : 'bg-zinc-900 text-zinc-400 hover:bg-zinc-800'
+                }`}
+              >
+                {w}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Metrics Grid */}
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className="p-4 rounded-xl bg-zinc-900 border border-zinc-800">
+            <span className="text-xs text-zinc-400 block">Warehouse Capacity</span>
+            <span className={`text-xl font-bold mt-1 block ${activeCapacity > 90 ? 'text-red-500' : 'text-zinc-100'}`}>
+              {activeCapacity}%
+            </span>
+            <div className="w-full bg-zinc-800 h-1.5 rounded-full mt-2 overflow-hidden">
+              <div
+                className={`h-full transition-all duration-500 ${activeCapacity > 90 ? 'bg-red-500' : 'bg-amber-500'}`}
+                style={{ width: `${activeCapacity}%` }}
+              />
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-zinc-900 border border-zinc-800">
+            <span className="text-xs text-zinc-400 block">OTIF Rate (Supplier)</span>
+            <span className={`text-xl font-bold mt-1 block ${activeOtif >= 95 ? 'text-emerald-500' : 'text-amber-500'}`}>
+              {activeOtif}%
+            </span>
+            <span className="text-[10px] text-zinc-500 block mt-2">Target: 95% SLA</span>
+          </div>
+
+          <div className="p-4 rounded-xl bg-zinc-900 border border-zinc-800">
+            <span className="text-xs text-zinc-400 block">Monthly Holding Cost</span>
+            <span className="text-xl font-bold mt-1 block text-zinc-100">{scOptimized ? '$32,000' : currentWh.cost}</span>
+            <span className="text-[10px] text-zinc-500 block mt-2">Warehouse Lease Fee</span>
+          </div>
+        </div>
+
+        {/* Action Button for Simulation */}
+        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center">
+          <h5 className="text-xs font-semibold text-zinc-300 mb-2">Simulasi Pengoptimalan Reorder Point & Safety Stock</h5>
+          <button
+            onClick={() => setScOptimized(!scOptimized)}
+            className={`w-full py-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+              scOptimized
+                ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+                : 'bg-amber-500 text-zinc-950 hover:bg-amber-600'
+            }`}
+          >
+            {scOptimized ? (
+              <>
+                <CheckCircle2 className="w-4 h-4" /> Optimasi Selesai (Klik untuk Reset)
+              </>
+            ) : (
+              <>
+                <Play className="w-4 h-4" /> Jalankan Simulasi Optimasi Safety Stock
+              </>
+            )}
+          </button>
+
+          {scOptimized && (
+            <div className="mt-3 text-[10px] text-emerald-400 font-semibold text-left flex items-start gap-1">
+              <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+              <span>
+                <strong>Hasil Simulasi:</strong> ROP dinamis memicu pembagian beban inventori ke regional hub. Kapasitas Main Hub turun ke 78% (Aman), OTIF supplier naik ke 96% karena jeda pemesanan yang logis.
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ----------------------------------------------------
+  // RENDER DASHBOARD 4: HR Analytics
+  // ----------------------------------------------------
+  if (slug === 'hr-analytics') {
+    const baseAttrition = 14;
+    const finalAttrition = Math.max(8, baseAttrition - Math.floor(hrSalaryIncrease / 2.5));
+    const budgetImpact = (hrSalaryIncrease * 85000).toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+
+    return (
+      <div className="glass-card p-6 bg-slate-900 text-slate-100 border-slate-800 rounded-2xl w-full">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
+          <div>
+            <h4 className="text-lg font-bold flex items-center gap-2 text-violet-400">
+              <Users className="w-5 h-5" /> HR Talent Analytics Dashboard
+            </h4>
+            <p className="text-xs text-slate-400">Employee Attrition Risk Simulator</p>
+          </div>
+          <span className="text-[10px] font-mono bg-violet-500/10 text-violet-400 px-2.5 py-1 rounded-full border border-violet-500/20">
+            SCD Type 2 Career Path
+          </span>
+        </div>
+
+        {/* Dashboard Visual KPIs */}
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between">
+            <div>
+              <span className="text-xs text-slate-400">Current Attrition Rate</span>
+              <span className={`text-3xl font-black mt-1 block transition-all ${finalAttrition <= 9 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                {finalAttrition}%
+              </span>
+            </div>
+            <TrendingDown className={`w-10 h-10 ${finalAttrition <= 9 ? 'text-emerald-400/20' : 'text-rose-400/20'}`} />
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between">
+            <div>
+              <span className="text-xs text-slate-400">Annual Budget Impact</span>
+              <span className="text-2xl font-black mt-1 block text-violet-400">
+                {hrSalaryIncrease === 0 ? '$0' : `+${budgetImpact}`}
+              </span>
+            </div>
+            <TrendingUp className="w-10 h-10 text-violet-400/20" />
+          </div>
+        </div>
+
+        {/* What-If Slider Section */}
+        <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 mb-4">
+          <div className="flex justify-between items-center mb-3">
+            <h5 className="text-xs font-bold text-slate-300">What-If: Rencana Kenaikan Gaji Minimum Karyawan (%)</h5>
+            <span className="text-xs font-mono font-bold text-violet-400">{hrSalaryIncrease}% Kenaikan</span>
+          </div>
+
+          <input
+            type="range"
+            min="0"
+            max="15"
+            value={hrSalaryIncrease}
+            onChange={(e) => setHrSalaryIncrease(parseInt(e.target.value))}
+            className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-violet-500"
+          />
+
+          <div className="flex justify-between text-[10px] text-slate-500 mt-2">
+            <span>0% (Market Base)</span>
+            <span>7.5%</span>
+            <span>15% (Premium)</span>
+          </div>
+        </div>
+
+        <div className="text-xs text-slate-400 bg-slate-950 border border-slate-800 p-3 rounded-lg flex items-start gap-2">
+          <HelpCircle className="w-4 h-4 text-violet-400 shrink-0 mt-0.5" />
+          <span>
+            <strong>Analisis Sensitivitas:</strong> Menggeser slider ke kanan menyimulasikan bagaimana penyesuaian gaji mengurangi tingkat resign karyawan ber-kinerja tinggi (*High Performers*) yang rentan keluar akibat kesenjangan gaji pasar.
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  // ----------------------------------------------------
+  // RENDER DASHBOARD 5: Repair Service
+  // ----------------------------------------------------
+  if (slug === 'repair-service-analytics') {
+    const techKPIs = {
+      All: { mttr: '3.2 Jam', ffr: '81%', sla: '74%', color: 'text-orange-500' },
+      Senior: { mttr: '1.8 Jam', ffr: '92%', sla: '95%', color: 'text-emerald-500' },
+      Junior: { mttr: '4.5 Jam', ffr: '72%', sla: '58%', color: 'text-red-500' },
+    };
+
+    const currentTech = techKPIs[repairTech];
+
+    const steps = [
+      { id: 'Queue', label: '1. Queue', time: '12 Jam' },
+      { id: 'Diagnosis', label: '2. Diagnosis', time: '36 Jam', bottleneck: true },
+      { id: 'Repair', label: '3. Repair', time: '2.4 Jam' },
+      { id: 'QC', label: '4. Quality Control', time: '0.5 Jam' },
+      { id: 'Completed', label: '5. Completed', time: '-' },
+    ];
+
+    return (
+      <div className="glass-card p-6 bg-neutral-950 text-neutral-100 border-neutral-800 rounded-2xl w-full">
+        {/* Header */}
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-6 border-b border-neutral-800 pb-4">
+          <div>
+            <h4 className="text-lg font-bold flex items-center gap-2 text-orange-400">
+              <CheckCircle2 className="w-5 h-5" /> Repair SLA Performance Dashboard
+            </h4>
+            <p className="text-xs text-neutral-400">Operational Bottleneck Analysis Tool</p>
+          </div>
+          <div className="flex gap-1 bg-neutral-900 p-1 rounded-lg">
+            {(['All', 'Senior', 'Junior'] as const).map((t) => (
+              <button
+                key={t}
+                onClick={() => setRepairTech(t)}
+                className={`px-3 py-1 text-xs rounded-md cursor-pointer transition-all ${
+                  repairTech === t ? 'bg-orange-600 text-white font-semibold shadow-sm' : 'text-neutral-500 hover:text-neutral-300'
+                }`}
+              >
+                {t} Teknisi
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Metrics Grid */}
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className="p-4 rounded-xl bg-neutral-900 border border-neutral-800">
+            <span className="text-xs text-neutral-400 block">Avg MTTR</span>
+            <span className={`text-xl font-bold mt-1 block ${currentTech.color}`}>{currentTech.mttr}</span>
+            <span className="text-[10px] text-neutral-500 block mt-1">Mean Time to Repair</span>
+          </div>
+
+          <div className="p-4 rounded-xl bg-neutral-900 border border-neutral-800">
+            <span className="text-xs text-neutral-400 block">First Fix Rate</span>
+            <span className="text-xl font-bold mt-1 block text-neutral-100">{currentTech.ffr}</span>
+            <span className="text-[10px] text-neutral-500 block mt-1">No repeat repairs 30d</span>
+          </div>
+
+          <div className="p-4 rounded-xl bg-neutral-900 border border-neutral-800">
+            <span className="text-xs text-neutral-400 block">SLA Compliance</span>
+            <span className="text-xl font-bold mt-1 block text-neutral-100">{currentTech.sla}</span>
+            <span className="text-[10px] text-neutral-500 block mt-1">SLA &lt; 24h Achievement</span>
+          </div>
+        </div>
+
+        {/* Interactive Funnel */}
+        <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-4">
+          <div className="flex justify-between items-center mb-3">
+            <span className="text-xs font-bold text-neutral-300">Repair Pipeline Funnel (Click steps to view latency)</span>
+            {activeStep === 'Diagnosis' && (
+              <span className="text-[10px] text-red-400 flex items-center gap-0.5 font-bold animate-pulse">
+                <AlertTriangle className="w-3.5 h-3.5" /> Major Bottleneck
+              </span>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-2">
+            {steps.map((s) => {
+              const isSelected = activeStep === s.id;
+              return (
+                <div
+                  key={s.id}
+                  onClick={() => setActiveStep(s.id)}
+                  className={`p-3 rounded-lg cursor-pointer transition-all border flex justify-between items-center ${
+                    isSelected
+                      ? 'bg-neutral-950 border-orange-500/70 shadow shadow-orange-500/10'
+                      : 'bg-neutral-900/50 border-neutral-800 hover:border-neutral-700'
+                  }`}
+                >
+                  <span className="text-xs font-semibold">{s.label}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-mono text-neutral-400">{s.time}</span>
+                    {s.bottleneck && (
+                      <span className="w-2 h-2 rounded-full bg-red-500" />
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {activeStep === 'Diagnosis' && (
+            <div className="mt-3 text-[10px] text-red-400 bg-red-950/20 border border-red-900/50 p-2.5 rounded">
+              <strong>Antrean Diagnosis:</strong> Tiket mengendap rata-rata 36 jam di fase diagnosis karena kapasitas slot pengujian teknisi junior yang terbatas. Rekomendasi: Terapkan Express Diagnosis.
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ----------------------------------------------------
+  // RENDER DASHBOARD 6: Insurance
+  // ----------------------------------------------------
+  if (slug === 'insurance-analytics') {
+    const baseLossRatio = insExcludeUnder25 ? 58 : 64;
+
+    return (
+      <div className="glass-card p-6 bg-emerald-950/40 text-slate-100 border-emerald-900/50 rounded-2xl w-full">
+        {/* Header */}
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-6 border-b border-emerald-900/40 pb-4">
+          <div>
+            <h4 className="text-lg font-bold flex items-center gap-2 text-emerald-400">
+              <ShieldCheck className="w-5 h-5" /> Underwriting Analytics Dashboard
+            </h4>
+            <p className="text-xs text-emerald-300/60">Risk Modelling & Claims Ratio Analysis</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-slate-300">Exclude &lt; 25yo Driver:</span>
+            <button
+              onClick={() => setInsExcludeUnder25(!insExcludeUnder25)}
+              className={`w-12 h-6 rounded-full p-1 cursor-pointer transition-all duration-300 ${
+                insExcludeUnder25 ? 'bg-emerald-600' : 'bg-slate-800'
+              }`}
+            >
+              <div
+                className={`w-4 h-4 rounded-full bg-white transition-all duration-300 ${
+                  insExcludeUnder25 ? 'translate-x-6' : 'translate-x-0'
+                }`}
+              />
+            </button>
+          </div>
+        </div>
+
+        {/* Dashboard visual KPIs */}
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-900/30">
+            <span className="text-xs text-slate-400 block">Gross Earned Premiums</span>
+            <span className="text-xl font-bold mt-1 block text-slate-100">$48.2M</span>
+            <span className="text-[10px] text-emerald-400 font-semibold block mt-1">+14.2% YoY</span>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-900/30">
+            <span className="text-xs text-slate-400 block">Incurred Claims</span>
+            <span className="text-xl font-bold mt-1 block text-slate-100">
+              {insExcludeUnder25 ? '$27.9M' : '$30.8M'}
+            </span>
+            <span className="text-[10px] text-slate-500 block mt-1">Paid & Reserved</span>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-900/30">
+            <span className="text-xs text-slate-400 block">Portfolio Loss Ratio</span>
+            <span className={`text-xl font-bold mt-1 block ${baseLossRatio > 60 ? 'text-amber-400' : 'text-emerald-400'}`}>
+              {baseLossRatio}%
+            </span>
+            <span className="text-[10px] text-slate-500 block mt-1">Target: &lt; 65% LR</span>
+          </div>
+        </div>
+
+        {/* Visual Line charts */}
+        <div className="bg-slate-950/60 border border-emerald-900/30 rounded-xl p-4">
+          <div className="flex justify-between items-center mb-3">
+            <span className="text-xs font-semibold text-slate-300">Cumulative Performance Chart ($ Millions)</span>
+            <div className="flex gap-3 text-[9px] text-slate-400">
+              <span className="flex items-center gap-1"><span className="w-2.5 h-0.5 bg-emerald-400 inline-block"></span> Premium</span>
+              <span className="flex items-center gap-1"><span className="w-2.5 h-0.5 bg-amber-400 inline-block"></span> Claims</span>
+            </div>
+          </div>
+
+          <div className="h-32 w-full flex items-end justify-between gap-1 pt-6 relative px-2">
+            {/* Custom dual line chart via simple SVG */}
+            <svg className="absolute inset-0 h-full w-full pointer-events-none" preserveAspectRatio="none">
+              {/* Premium line */}
+              <path
+                d="M 0% 80% L 20% 70% L 40% 55% L 60% 40% L 80% 25% L 100% 10%"
+                fill="none"
+                stroke="#34d399"
+                strokeWidth="2"
+              />
+              {/* Claims line */}
+              <path
+                d={insExcludeUnder25 
+                  ? "M 0% 90% L 20% 85% L 40% 75% L 60% 68% L 80% 58% L 100% 45%"
+                  : "M 0% 90% L 20% 85% L 40% 70% L 60% 60% L 80% 48% L 100% 35%"}
+                fill="none"
+                stroke="#fbbf24"
+                strokeWidth="2"
+                className="transition-all duration-500"
+              />
+            </svg>
+
+            {['Q1', 'Q2', 'Q3', 'Q4'].map((q, idx) => (
+              <span key={idx} className="text-[9px] text-slate-500 w-full text-center z-10 select-none">
+                {q}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {insExcludeUnder25 ? (
+          <div className="mt-4 text-xs text-emerald-400 bg-emerald-950/60 border border-emerald-800 p-3 rounded-lg flex items-start gap-2">
+            <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
+            <span>
+              <strong>Aktuaria Teroptimasi:</strong> Pengecualian pengemudi muda di bawah 25 tahun menurunkan rasio kerugian sebesar 6% ke angka 58%. Loss Ratio berada di bawah batas target underwriting asuransi.
+            </span>
+          </div>
+        ) : (
+          <div className="mt-4 text-xs text-amber-400 bg-amber-950/20 border border-amber-900/50 p-3 rounded-lg flex items-start gap-2">
+            <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+            <span>
+              <strong>Peringatan Risiko:</strong> Segmen pengemudi di bawah 25 tahun menyumbangkan volatilitas klaim tinggi. Rasio kerugian total 64% mendekati ambang batas toleransi profitabilitas (65%).
+            </span>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // ----------------------------------------------------
+  // RENDER 7: Analisis Sentimen RUU TNI
   // ----------------------------------------------------
   if (slug === 'analisis-sentimen-ruu-tni') {
     return (
@@ -406,7 +1061,7 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
   }
 
   // ----------------------------------------------------
-  // RENDER 2: toko_online (PHP / MySQL)
+  // RENDER 8: toko_online (PHP / MySQL)
   // ----------------------------------------------------
   if (slug === 'toko-online') {
     return (
@@ -541,9 +1196,33 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
   }
 
   // ----------------------------------------------------
-  // RENDER 3: Klasifikasi Diabetes DNA (Math / Bioinfo)
+  // RENDER 9: Klasifikasi Diabetes DNA (Math / Bioinfo)
   // ----------------------------------------------------
   if (slug === 'klasifikasi-diabetes-dna') {
+    const runDnaClassifierMock = (sequence: string) => {
+      setDnaRunning(true);
+      setTimeout(() => {
+        const cleanSeq = sequence.toUpperCase().replace(/[^ATCG]/g, '');
+        
+        // Calculate 3-mers
+        const kmersList: string[] = [];
+        for (let i = 0; i < cleanSeq.length - 2; i++) {
+          kmersList.push(cleanSeq.slice(i, i + 3));
+        }
+
+        const hasMutations = cleanSeq.includes('TTT') || cleanSeq.includes('GCA') || cleanSeq.includes('TTA');
+        const label = hasMutations ? 'Risiko Diabetes Tipe 2' : 'Normal';
+        const distance = hasMutations ? 1.45 + Math.random() * 0.5 : 0.08 + Math.random() * 0.15;
+
+        setDnaResult({
+          label,
+          distance: parseFloat(distance.toFixed(3)),
+          kmers: kmersList.slice(0, 25)
+        });
+        setDnaRunning(false);
+      }, 700);
+    };
+
     return (
       <div className="glass-card p-6 bg-slate-950 text-slate-100 border-slate-800 rounded-2xl w-full">
         <div className="flex flex-wrap items-center justify-between gap-4 mb-6 border-b border-slate-800 pb-4">
@@ -568,7 +1247,7 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
               className="flex-1 px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-sm focus:outline-none focus:border-cyan-500 text-slate-100 font-mono tracking-wider"
             />
             <button
-              onClick={() => runDnaClassifier(dnaSeq)}
+              onClick={() => runDnaClassifierMock(dnaSeq)}
               disabled={dnaRunning}
               className="px-4 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-700 font-semibold text-sm transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
             >
@@ -582,7 +1261,7 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
             <button 
               onClick={() => {
                 setDnaSeq(presetSequences.normal);
-                runDnaClassifier(presetSequences.normal);
+                runDnaClassifierMock(presetSequences.normal);
               }}
               className="text-[11px] bg-slate-900 border border-slate-800 hover:border-slate-700 px-2.5 py-1 rounded-md text-slate-300 transition-colors cursor-pointer"
             >
@@ -591,7 +1270,7 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
             <button 
               onClick={() => {
                 setDnaSeq(presetSequences.mutant);
-                runDnaClassifier(presetSequences.mutant);
+                runDnaClassifierMock(presetSequences.mutant);
               }}
               className="text-[11px] bg-slate-900 border border-slate-800 hover:border-slate-700 px-2.5 py-1 rounded-md text-slate-300 transition-colors cursor-pointer"
             >
@@ -652,9 +1331,49 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
   }
 
   // ----------------------------------------------------
-  // RENDER 4: CS-AI-Agent Customer Service
+  // RENDER 10: CS-AI-Agent Customer Service
   // ----------------------------------------------------
   if (slug === 'cs-ai-agent') {
+    const runAgentResponseMock = (message: string) => {
+      if (!message.trim()) return;
+
+      setCsConversation(prev => [...prev, { sender: 'user', text: message }]);
+      setCsLoading(true);
+
+      setTimeout(() => {
+        let reply = '';
+        const logs = [
+          `[Agent Initiated] Parsing message: "${message}"`,
+          `[Step 1: NLP Intent Detection] Mapped query to Intent: 'Order Status Query' / 'Refund Request'`,
+        ];
+
+        const lower = message.toLowerCase();
+        if (lower.includes('ord') || lower.includes('paket') || lower.includes('lacak')) {
+          logs.push(`[Step 2: Tool Selection] Message requires database lookup. Selected tool: 'TrackPackage'`);
+          logs.push(`[Step 3: Action Execution] Calling TrackPackage(order_id="ORD-9921")...`);
+          logs.push(`[Step 4: Observation] Database returned: { status: 'Transit', location: 'Jakarta Barat', carrier: 'JNE Express', status_code: 3 }`);
+          
+          if (lower.includes('refund')) {
+            logs.push(`[Step 5: Policy Check] Selected tool: 'RefundPolicy'`);
+            logs.push(`[Step 6: Action Execution] Calling RefundPolicy(status="Transit")...`);
+            logs.push(`[Step 7: Observation] Policy returned: "Refund cannot be processed while item is in active transit."`);
+            
+            reply = 'Halo! Saya telah melacak pesanan Anda dengan nomor ORD-9921. Saat ini paket sedang transit di pusat sortir Jakarta Barat JNE Express. Berdasarkan kebijakan e-commerce, kami tidak dapat memproses pengembalian dana (refund) untuk barang yang sedang dalam proses pengantaran aktif. Mohon ditunggu hingga kurir sampai ke alamat Anda ya.';
+          } else {
+            reply = 'Halo! Saya melacak pesanan ORD-9921 Anda. Paket Anda saat ini berada di pusat sortir Jakarta Barat JNE Express dan sedang menuju ke alamat pengiriman Anda. Estimasi sampai hari ini.';
+          }
+        } else {
+          logs.push(`[Step 2: Direct Reply] No external database tool needed. Categorized as general greeting.`);
+          reply = 'Halo! Ada yang bisa saya bantu terkait pesanan, katalog produk, atau penawaran promo hari ini?';
+        }
+
+        logs.push(`[Step 8: Output Synthesis] Generating empathetic tone response.`);
+        setAgentLogs(logs);
+        setCsConversation(prev => [...prev, { sender: 'agent', text: reply }]);
+        setCsLoading(false);
+      }, 1200);
+    };
+
     return (
       <div className="glass-card p-6 bg-slate-950 text-slate-100 border-slate-800 rounded-2xl w-full">
         <div className="flex flex-wrap items-center justify-between gap-4 mb-6 border-b border-slate-800 pb-4">
@@ -707,11 +1426,11 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
                 placeholder="Kirim keluhan (misal: Cek paket ORD-9921)"
                 value={csInput}
                 onChange={(e) => setCsInput(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') { runAgentResponse(csInput); setCsInput(''); } }}
+                onKeyDown={(e) => { if (e.key === 'Enter') { runAgentResponseMock(csInput); setCsInput(''); } }}
                 className="flex-1 px-3 py-2 rounded-xl bg-slate-950 border border-slate-850 text-xs text-slate-200 focus:outline-none"
               />
               <button 
-                onClick={() => { runAgentResponse(csInput); setCsInput(''); }}
+                onClick={() => { runAgentResponseMock(csInput); setCsInput(''); }}
                 className="p-2.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white cursor-pointer"
               >
                 <Send className="w-4 h-4" />
@@ -750,7 +1469,7 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
   }
 
   // ----------------------------------------------------
-  // RENDER 5: Kalkulator Average Down Saham IDX
+  // RENDER 11: Kalkulator Average Down Saham IDX
   // ----------------------------------------------------
   if (slug === 'avg-down-idx') {
     return (
@@ -902,7 +1621,7 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
   }
 
   // ----------------------------------------------------
-  // RENDER 6: Data Pipeline Saham Indonesia
+  // RENDER 12: Data Pipeline Saham Indonesia
   // ----------------------------------------------------
   if (slug === 'data-saham-indonesia') {
     return (
@@ -920,7 +1639,7 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
         </div>
 
         {/* Dynamic Controls */}
-        <div className="grid md:grid-cols-3 gap-4 mb-6 bg-slate-900 p-4 rounded-xl border border-slate-800">
+        <div className="grid md:grid-cols-3 gap-4 mb-6 bg-slate-900 p-4 rounded-xl border border-slate-850">
           <div>
             <div className="flex justify-between text-xs mb-1.5">
               <span className="text-slate-400 font-semibold">PE Ratio Maksimal:</span>
@@ -970,7 +1689,7 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
         </div>
 
         {/* Output Table */}
-        <div className="bg-slate-900 border border-slate-850 rounded-xl overflow-hidden">
+        <div className="bg-slate-900 border border-slate-855 rounded-xl overflow-hidden">
           <div className="overflow-x-auto max-h-56">
             <table className="w-full text-xs text-left text-slate-300">
               <thead className="bg-slate-950 text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-850">

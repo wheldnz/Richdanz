@@ -18,6 +18,12 @@ export default function DashboardContainer({ slug }: DashboardContainerProps) {
     'cs-ai-agent': '/images/projects/cs-ai-agent.png',
     'avg-down-idx': '/images/projects/avg-down-idx.png',
     'data-saham-indonesia': '/images/projects/data-saham-indonesia.png',
+    'enterprise-sales-analytics': '/images/projects/enterprise-sales.png',
+    'customer-churn-analytics': '/images/projects/customer-churn.png',
+    'supply-chain-analytics': '/images/projects/supply-chain.png',
+    'hr-analytics': '/images/projects/hr-analytics.png',
+    'repair-service-analytics': '/images/projects/repair-service.png',
+    'insurance-analytics': '/images/projects/insurance-analytics.png',
   };
 
   const imageSrc = imageUrls[slug] || '/images/projects/analisis-sentimen-ruu-tni.png';
