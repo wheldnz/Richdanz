@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Download, CheckCircle, Github, Linkedin, Mail, Instagram } from 'lucide-react';
+import { Send, Download, CheckCircle, Github, Linkedin, Mail, Instagram, Printer } from 'lucide-react';
 
 const contactReasons = [
     { value: 'hire', label: 'Hire you', emoji: '' },
@@ -230,16 +230,27 @@ export default function Contact() {
                                 Download my ATS-friendly resume for a detailed look at my experience,
                                 skills, and education.
                             </p>
-                            <motion.a
-                                href="/resume.pdf"
-                                download
-                                className="btn-primary inline-flex items-center gap-2"
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                            >
-                                <Download className="w-4 h-4" />
-                                Download PDF
-                            </motion.a>
+                            <div className="flex flex-wrap gap-4">
+                                <motion.a
+                                    href="/resume.pdf"
+                                    download
+                                    className="btn-primary inline-flex items-center gap-2"
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                >
+                                    <Download className="w-4 h-4" />
+                                    Download PDF
+                                </motion.a>
+                                <motion.a
+                                    href="/print-portfolio"
+                                    className="btn-secondary inline-flex items-center gap-2"
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                >
+                                    <Printer className="w-4 h-4" />
+                                    Print CV/Portfolio
+                                </motion.a>
+                            </div>
                         </div>
 
                         {/* Social Links */}

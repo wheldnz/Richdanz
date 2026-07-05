@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowDown, Download, Github, Linkedin } from 'lucide-react';
+import { ArrowDown, Download, Github, Linkedin, Printer } from 'lucide-react';
 import LiveStats from '../components/LiveStats';
 
 const words = ["AI Engineer", "Data Analytics", "Full Stack Developer"];
@@ -128,7 +128,17 @@ export default function Hero() {
                         whileTap={{ scale: 0.95 }}
                     >
                         <Download className="w-4 h-4" />
-                        Resume
+                        Resume (ATS)
+                    </motion.a>
+
+                    <motion.a
+                        href="/print-portfolio"
+                        className="btn-secondary flex items-center gap-2"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                    >
+                        <Printer className="w-4 h-4" />
+                        Print CV / Portfolio
                     </motion.a>
                 </motion.div>
 
