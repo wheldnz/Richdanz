@@ -11,7 +11,7 @@ const personalInfo = {
     phone: '+6285225990234',
     linkedin: 'https://www.linkedin.com/in/wildan-nuril/',
     github: 'https://github.com/wheldnz',
-    portfolio: 'https://richdanz.vercel.app'
+    portfolio: 'https://portofolio-tau-lemon-87.vercel.app/'
 };
 
 const summary = `Data Analyst with 1+ years of experience transforming multi-source operational data into actionable business insights. Skilled in SQL, Python, BigQuery, Advanced Excel, reporting automation, and dashboard development using Power BI and Tableau. Mathematics graduate bringing rigorous logical and statistical frameworks to machine learning pipelines, predictive modeling, and quantitative research.`;
