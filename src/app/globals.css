@@ -258,24 +258,6 @@ body {
   color: var(--background);
 }
 
-/* LaTeX-style Math Background Pattern */
-.math-pattern {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  opacity: 0.03;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  line-height: 2;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.dark .math-pattern {
-  opacity: 0.05;
-}
 
 /* Bento Grid */
 .bento-grid {

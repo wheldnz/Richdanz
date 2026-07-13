@@ -46,16 +46,7 @@ export default function Hero() {
 
     return (
         <section className="relative min-h-screen flex flex-col items-center justify-center px-6 pt-32 overflow-hidden">
-            {/* Math Pattern Background */}
-            <div className="math-pattern">
-                {Array.from({ length: 50 }).map((_, i) => (
-                    <div key={i} className="whitespace-nowrap">
-                        ∫ f(x)dx = F(x) + C &nbsp; ∇×E = -∂B/∂t &nbsp; Σ(xi - μ)² / n &nbsp;
-                        ∂L/∂w = 0 &nbsp; P(A|B) = P(B|A)P(A)/P(B) &nbsp; det(A - λI) = 0 &nbsp;
-                        ∂²u/∂t² = c²∂²u/∂x² &nbsp; E[X] = Σ x·P(x) &nbsp; ∇·F = ∂M/∂x + ∂N/∂y
-                    </div>
-                ))}
-            </div>
+
 
             {/* Main Content */}
             <div className="relative z-10 max-w-5xl mx-auto text-center">
@@ -96,9 +87,9 @@ export default function Hero() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: 0.2 }}
                 >
-                    From proofs to predictions bridging rigorous logic with real-world impact.
+                    From proofs to predictions — bridging rigorous logic with real-world impact.
                     <span className="block mt-2 text-accent font-mono text-base">
-                        Data Enthusiast • FullStack Developer • Math Enthusiast • AI Enthusiast
+                        Data Analyst | BI &amp; Analytics Engineer
                     </span>
                 </motion.p>
 
