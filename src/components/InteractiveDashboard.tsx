@@ -723,6 +723,14 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
 
     const currentPartner = partnerKPIs[repairTech] || partnerKPIs['All'];
 
+    const steps = [
+      { id: 'Registration', label: '1. Pendaftaran Klaim', time: '0.5 Hari' },
+      { id: 'Verification', label: '2. Verifikasi Dokumen Asuransi', time: '1.2 Hari' },
+      { id: 'Diagnosis', label: '3. Inspeksi Service Center', time: '2.1 Hari', bottleneck: true },
+      { id: 'Repair', label: '4. Perbaikan & Suku Cadang', time: '1.2 Hari' },
+      { id: 'Completed', label: '5. Selesai (Diserahkan ke Konsumen)', time: '0.4 Hari' },
+    ];
+
     return (
       <div className="glass-card p-6 bg-neutral-950 text-neutral-100 border-neutral-800 rounded-2xl w-full">
         {/* Header */}
