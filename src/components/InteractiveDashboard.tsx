@@ -221,16 +221,23 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
   });
 
   // ----------------------------------------------------
-  // RENDER DASHBOARD 1: Enterprise Sales
+  // RENDER DASHBOARD 1: Enterprise Sales & Multi-Channel P&L
   // ----------------------------------------------------
   if (slug === 'enterprise-sales-analytics') {
-    const regionMultipliers: Record<string, number> = { All: 1, North: 1.2, South: 0.8, East: 0.95, West: 1.1 };
-    const m = regionMultipliers[salesRegion] || 1;
+    const channelMultipliers: Record<string, { rev: string; profit: string; margin: string; factor: number }> = {
+      All: { rev: 'Rp 42.8B', profit: 'Rp 7.8B', margin: '18.2%', factor: 1 },
+      '16 Brand Partners': { rev: 'Rp 28.4B', profit: 'Rp 4.2B', margin: '14.8%', factor: 1.15 },
+      '9 Service Centers': { rev: 'Rp 6.2B', profit: 'Rp 1.5B', margin: '24.2%', factor: 0.85 },
+      '50 Retail Partners': { rev: 'Rp 8.2B', profit: 'Rp 0.8B', margin: '9.8%', factor: 0.95 }
+    };
+    
+    const currentChannel = channelMultipliers[salesRegion] || channelMultipliers['All'];
+    const f = currentChannel.factor;
 
     const data = {
-      revenue: { val: `$${(12.4 * m).toFixed(1)}M`, label: 'Total Revenue', color: 'text-blue-500', bg: 'bg-blue-500/10', stroke: '#3b82f6', chartData: [45, 52, 49, 62, 58, 75, 70, 85, 82, 95, 110, 124] },
-      profit: { val: `$${(2.1 * m).toFixed(1)}M`, label: 'Total Profit', color: 'text-teal-500', bg: 'bg-teal-500/10', stroke: '#14b8a6', chartData: [8, 9.5, 9, 11, 10, 13.5, 12, 15, 14, 16.5, 19, 21] },
-      margin: { val: `${(16.9 * (salesRegion === 'South' ? 1.15 : salesRegion === 'North' ? 0.92 : 1)).toFixed(1)}%`, label: 'Profit Margin', color: 'text-amber-500', bg: 'bg-amber-500/10', stroke: '#f59e0b', chartData: [17.8, 18.2, 18.3, 17.7, 17.2, 18.0, 17.1, 17.6, 17.0, 17.3, 17.2, 16.9] }
+      revenue: { val: currentChannel.rev, label: 'Gross Revenue', color: 'text-blue-400', bg: 'bg-blue-500/10', stroke: '#60a5fa', chartData: [45 * f, 52 * f, 49 * f, 62 * f, 58 * f, 75 * f, 70 * f, 85 * f, 82 * f, 95 * f, 110 * f, 124 * f] },
+      profit: { val: currentChannel.profit, label: 'Net Profit', color: 'text-emerald-400', bg: 'bg-emerald-500/10', stroke: '#34d399', chartData: [8 * f, 9.5 * f, 9 * f, 11 * f, 10 * f, 13.5 * f, 12 * f, 15 * f, 14 * f, 16.5 * f, 19 * f, 21 * f] },
+      margin: { val: currentChannel.margin, label: 'Net Profit Margin %', color: 'text-amber-400', bg: 'bg-amber-500/10', stroke: '#fbbf24', chartData: [17.8, 18.2, 18.3, 17.7, 17.2, 18.0, 17.1, 17.6, 17.0, 17.3, 17.2, 16.9] }
     };
 
     const active = data[salesMetric];
@@ -241,12 +248,12 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
         <div className="flex flex-wrap items-center justify-between gap-4 mb-6 border-b border-slate-800 pb-4">
           <div>
             <h4 className="text-lg font-bold flex items-center gap-2 text-blue-400">
-              <BarChart3 className="w-5 h-5" /> Enterprise Sales Dashboard Mockup
+              <BarChart3 className="w-5 h-5" /> Multi-Channel P&L & Retail Sales Dashboard
             </h4>
-            <p className="text-xs text-slate-400">DirectQuery Postgres Live Pipeline Simulation</p>
+            <p className="text-xs text-slate-400">DirectQuery Postgres & Power BI Model (16 Brands, 9 Service Centers, 50 Retailers)</p>
           </div>
-          <div className="flex gap-2">
-            {['All', 'North', 'South', 'East', 'West'].map((r) => (
+          <div className="flex flex-wrap gap-1.5">
+            {['All', '16 Brand Partners', '9 Service Centers', '50 Retail Partners'].map((r) => (
               <button
                 key={r}
                 onClick={() => setSalesRegion(r)}
@@ -703,45 +710,39 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
   }
 
   // ----------------------------------------------------
-  // RENDER DASHBOARD 5: Repair Service
+  // RENDER DASHBOARD 5: Insurance Claims & SLA Analytics
   // ----------------------------------------------------
   if (slug === 'repair-service-analytics') {
-    const techKPIs = {
-      All: { mttr: '3.2 Jam', ffr: '81%', sla: '74%', color: 'text-orange-500' },
-      Senior: { mttr: '1.8 Jam', ffr: '92%', sla: '95%', color: 'text-emerald-500' },
-      Junior: { mttr: '4.5 Jam', ffr: '72%', sla: '58%', color: 'text-red-500' },
+    const partnerKPIs: Record<string, { tat: string; resRate: string; sla: string; color: string }> = {
+      All: { tat: '5.4 Hari', resRate: '90.2%', sla: '92.4%', color: 'text-emerald-400' },
+      Qoala: { tat: '5.1 Hari', resRate: '92.8%', sla: '95.1%', color: 'text-emerald-400' },
+      Igloo: { tat: '5.6 Hari', resRate: '89.4%', sla: '91.8%', color: 'text-amber-400' },
+      Chubb: { tat: '4.8 Hari', resRate: '94.2%', sla: '96.5%', color: 'text-blue-400' },
+      Allianz: { tat: '5.8 Hari', resRate: '87.9%', sla: '89.2%', color: 'text-amber-400' }
     };
 
-    const currentTech = techKPIs[repairTech];
-
-    const steps = [
-      { id: 'Queue', label: '1. Queue', time: '12 Jam' },
-      { id: 'Diagnosis', label: '2. Diagnosis', time: '36 Jam', bottleneck: true },
-      { id: 'Repair', label: '3. Repair', time: '2.4 Jam' },
-      { id: 'QC', label: '4. Quality Control', time: '0.5 Jam' },
-      { id: 'Completed', label: '5. Completed', time: '-' },
-    ];
+    const currentPartner = partnerKPIs[repairTech] || partnerKPIs['All'];
 
     return (
       <div className="glass-card p-6 bg-neutral-950 text-neutral-100 border-neutral-800 rounded-2xl w-full">
         {/* Header */}
         <div className="flex flex-wrap items-center justify-between gap-4 mb-6 border-b border-neutral-800 pb-4">
           <div>
-            <h4 className="text-lg font-bold flex items-center gap-2 text-orange-400">
-              <CheckCircle2 className="w-5 h-5" /> Repair SLA Performance Dashboard
+            <h4 className="text-lg font-bold flex items-center gap-2 text-emerald-400">
+              <CheckCircle2 className="w-5 h-5" /> Insurance Claims & SLA Analytics Dashboard
             </h4>
-            <p className="text-xs text-neutral-400">Operational Bottleneck Analysis Tool</p>
+            <p className="text-xs text-neutral-400">3,800+ Claims Monitored Across 9 Insurance Partners (7-Day SLA Target)</p>
           </div>
-          <div className="flex gap-1 bg-neutral-900 p-1 rounded-lg">
-            {(['All', 'Senior', 'Junior'] as const).map((t) => (
+          <div className="flex flex-wrap gap-1 bg-neutral-900 p-1 rounded-lg">
+            {(['All', 'Qoala', 'Igloo', 'Chubb', 'Allianz'] as const).map((t) => (
               <button
                 key={t}
                 onClick={() => setRepairTech(t)}
                 className={`px-3 py-1 text-xs rounded-md cursor-pointer transition-all ${
-                  repairTech === t ? 'bg-orange-600 text-white font-semibold shadow-sm' : 'text-neutral-500 hover:text-neutral-300'
+                  repairTech === t ? 'bg-emerald-600 text-white font-semibold shadow-sm' : 'text-neutral-500 hover:text-neutral-300'
                 }`}
               >
-                {t} Teknisi
+                {t}
               </button>
             ))}
           </div>
@@ -750,21 +751,21 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
         {/* Metrics Grid */}
         <div className="grid grid-cols-3 gap-4 mb-6">
           <div className="p-4 rounded-xl bg-neutral-900 border border-neutral-800">
-            <span className="text-xs text-neutral-400 block">Avg MTTR</span>
-            <span className={`text-xl font-bold mt-1 block ${currentTech.color}`}>{currentTech.mttr}</span>
-            <span className="text-[10px] text-neutral-500 block mt-1">Mean Time to Repair</span>
+            <span className="text-xs text-neutral-400 block">Avg Turnaround Time (TAT)</span>
+            <span className={`text-xl font-bold mt-1 block ${currentPartner.color}`}>{currentPartner.tat}</span>
+            <span className="text-[10px] text-neutral-500 block mt-1">Target SLA: &le; 7 Hari</span>
           </div>
 
           <div className="p-4 rounded-xl bg-neutral-900 border border-neutral-800">
-            <span className="text-xs text-neutral-400 block">First Fix Rate</span>
-            <span className="text-xl font-bold mt-1 block text-neutral-100">{currentTech.ffr}</span>
-            <span className="text-[10px] text-neutral-500 block mt-1">No repeat repairs 30d</span>
+            <span className="text-xs text-neutral-400 block">Resolution Rate</span>
+            <span className="text-xl font-bold mt-1 block text-neutral-100">{currentPartner.resRate}</span>
+            <span className="text-[10px] text-neutral-500 block mt-1">Status Resolved vs Pending</span>
           </div>
 
           <div className="p-4 rounded-xl bg-neutral-900 border border-neutral-800">
-            <span className="text-xs text-neutral-400 block">SLA Compliance</span>
-            <span className="text-xl font-bold mt-1 block text-neutral-100">{currentTech.sla}</span>
-            <span className="text-[10px] text-neutral-500 block mt-1">SLA &lt; 24h Achievement</span>
+            <span className="text-xs text-neutral-400 block">SLA Adherence %</span>
+            <span className="text-xl font-bold mt-1 block text-emerald-400">{currentPartner.sla}</span>
+            <span className="text-[10px] text-neutral-500 block mt-1">Met SLA (&le; 7 Days)</span>
           </div>
         </div>
 
