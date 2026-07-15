@@ -1,48 +1,29 @@
--- DDL Schema untuk PostgreSQL
+-- Schema PostgreSQL: Multi-Channel P&L Dashboard (Project 01)
+-- Managing Daily/Monthly/Yearly P&L across 16 Brand Partners, 9 Infinix Service Centers, and 50 Retail Partners
 
--- Hapus tabel jika sudah ada (untuk keperluan reset)
-DROP TABLE IF EXISTS order_items CASCADE;
-DROP TABLE IF EXISTS orders CASCADE;
-DROP TABLE IF EXISTS products CASCADE;
-DROP TABLE IF EXISTS stores CASCADE;
+DROP TABLE IF EXISTS fact_pl_monthly CASCADE;
+DROP TABLE IF EXISTS dim_partners CASCADE;
 
--- 1. Tabel Dimensi Toko
-CREATE TABLE stores (
-    store_id INT PRIMARY KEY,
-    store_name VARCHAR(100) NOT NULL,
-    city VARCHAR(100) NOT NULL,
-    region VARCHAR(50) NOT NULL
+-- 1. Dimensi Mitra Usaha (75 Partners across 3 Channels)
+CREATE TABLE dim_partners (
+    partner_id VARCHAR(50) PRIMARY KEY,
+    partner_name VARCHAR(100) NOT NULL,
+    channel_type VARCHAR(50) NOT NULL CHECK (channel_type IN ('Brand Partner', 'Infinix Service Center', 'Retail Partner'))
 );
 
--- 2. Tabel Dimensi Produk
-CREATE TABLE products (
-    product_id INT PRIMARY KEY,
-    product_name VARCHAR(100) NOT NULL,
-    category VARCHAR(100) NOT NULL,
-    cost_price NUMERIC(12, 2) NOT NULL CHECK (cost_price >= 0), -- Constraint harga tidak boleh negatif setelah ETL
-    unit_price NUMERIC(12, 2) NOT NULL CHECK (unit_price >= 0)
+-- 2. Tabel Fakta P&L Bulanan (1,800 Records for 2024-2025)
+CREATE TABLE fact_pl_monthly (
+    pl_id SERIAL PRIMARY KEY,
+    partner_id VARCHAR(50) REFERENCES dim_partners(partner_id),
+    month_date DATE NOT NULL,
+    gross_revenue_idr NUMERIC(15, 2) NOT NULL,
+    cogs_idr NUMERIC(15, 2) NOT NULL,
+    gross_profit_idr NUMERIC(15, 2) NOT NULL,
+    operating_expenses_idr NUMERIC(15, 2) NOT NULL,
+    net_profit_idr NUMERIC(15, 2) NOT NULL,
+    net_profit_margin_pct NUMERIC(5, 2) NOT NULL
 );
 
--- 3. Tabel Fakta Transaksi Order (Header)
-CREATE TABLE orders (
-    order_id INT PRIMARY KEY,
-    order_date DATE NOT NULL, -- Harus valid Date
-    customer_id INT NOT NULL,
-    store_id INT NOT NULL REFERENCES stores(store_id), -- Foreign key referensi wajib ada
-    salesperson_id INT NOT NULL
-);
-
--- 4. Tabel Fakta Transaksi Order (Detail)
-CREATE TABLE order_items (
-    item_id INT PRIMARY KEY,
-    order_id INT NOT NULL REFERENCES orders(order_id) ON DELETE CASCADE,
-    product_id INT NOT NULL REFERENCES products(product_id),
-    quantity INT NOT NULL CHECK (quantity > 0) -- Qty harus positif setelah ETL
-);
-
--- Optimalisasi Database (Index)
-CREATE INDEX idx_orders_date ON orders(order_date);
-CREATE INDEX idx_orders_store ON orders(store_id);
-CREATE INDEX idx_items_order ON order_items(order_id);
-CREATE INDEX idx_items_product ON order_items(product_id);
-CREATE INDEX idx_products_category ON products(category);
+-- Indeks Performa
+CREATE INDEX idx_pl_partner ON fact_pl_monthly(partner_id);
+CREATE INDEX idx_pl_month ON fact_pl_monthly(month_date);

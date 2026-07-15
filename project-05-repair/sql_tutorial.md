@@ -1,123 +1,158 @@
-# Tutorial SQL Complete (Pure PostgreSQL ELT) - Project 05: Repair Service Analytics
+# Tutorial SQL Complete (Pure PostgreSQL ELT) - Project 05: Claims & SLA Analytics
 
-Tutorial ini memandu Anda melakukan **ELT & Analisis Performa Perbaikan Perangkat & Garansi Ulang** murni menggunakan SQL di PostgreSQL.
+Tutorial ini memandu Anda melakukan **ELT & Analisis SLA Klaim Asuransi Perbaikan** murni menggunakan kueri SQL di PostgreSQL.
+Fokus analisis: **Memantau 300+ klaim bulanan di 9 Mitra Asuransi, mengukur Resolution Rate, serta mengevaluasi Turnaround Time (TAT rata-rata 5-6 hari vs Target SLA 7 Hari).**
 
 ---
 
-## 1. Staging Table: Impor Data Tiket & Teknisi
+## 1. Staging Table: Impor Data Mentah Klaim (`claims_sla_raw.csv`)
 
 ```sql
-DROP TABLE IF EXISTS staging_technician CASCADE;
-DROP TABLE IF EXISTS staging_ticket CASCADE;
-DROP TABLE IF EXISTS staging_warranty CASCADE;
+DROP TABLE IF EXISTS staging_claims_sla CASCADE;
 
-CREATE TABLE staging_technician (
-    technician_id TEXT,
-    technician_name TEXT,
-    is_certified TEXT
-);
-
-CREATE TABLE staging_ticket (
-    ticket_id TEXT,
-    device_id TEXT,
-    technician_id TEXT,
+CREATE TABLE staging_claims_sla (
+    claim_id TEXT,
+    insurance_partner TEXT,
+    service_center TEXT,
+    brand TEXT,
+    model TEXT,
+    claim_date TEXT,
+    approval_date TEXT,
+    completion_date TEXT,
+    turnaround_time_days TEXT,
+    repair_cost TEXT, -- String masih ada 'Rp '
     status TEXT,
-    completion_date TEXT
+    sla_status TEXT,
+    csat_rating TEXT
 );
 
-CREATE TABLE staging_warranty (
-    warranty_id TEXT,
-    device_id TEXT,
-    claim_date TEXT
-);
+-- Impor file data/raw/claims_sla_raw.csv ke staging_claims_sla lewat pgAdmin Import / COPY command
 ```
 
 ---
 
-## 2. Pembersihan & Perbaikan Anomali Data (Murni SQL)
+## 2. Pembersihan & Transformasi Relasional Murni SQL
 
-### A. Dimensi Teknisi (`dim_technician`)
-Memperbaiki anomali ID negatif menggunakan `ABS()`:
-
+### A. Dimensi Mitra Asuransi (`dim_insurance_partners`)
 ```sql
-DROP TABLE IF EXISTS dim_technician CASCADE;
+DROP TABLE IF EXISTS dim_insurance_partners CASCADE;
 
-CREATE TABLE dim_technician AS
-SELECT DISTINCT
-    ABS(technician_id::INT) AS technician_id,
-    technician_name,
-    is_certified::INT AS is_certified
-FROM staging_technician;
-
-ALTER TABLE dim_technician ADD PRIMARY KEY (technician_id);
-```
-
-### B. Tabel Fakta Tiket Perbaikan (`fact_tickets`)
-Menghapus duplikat dan menyaring tiket completed tanpa tanggal penyelesaian:
-
-```sql
-DROP TABLE IF EXISTS fact_tickets CASCADE;
-
-CREATE TABLE fact_tickets AS
-SELECT DISTINCT
-    ticket_id::INT AS ticket_id,
-    device_id::INT AS device_id,
-    ABS(technician_id::INT) AS technician_id,
-    status,
-    completion_date::DATE AS completion_date
-FROM staging_ticket
-WHERE status = 'Completed' AND completion_date IS NOT NULL AND completion_date != '';
-
-ALTER TABLE fact_tickets ADD PRIMARY KEY (ticket_id);
-```
-
-### C. Tabel Fakta Klaim Garansi Ulang (`fact_warranties`)
-Mengkoreksi anomali di mana `claim_date` mendahului `completion_date` tiket perbaikan:
-
-```sql
-DROP TABLE IF EXISTS fact_warranties CASCADE;
-
-CREATE TABLE fact_warranties AS
+CREATE TABLE dim_insurance_partners AS
 SELECT 
-    w.warranty_id::INT AS warranty_id,
-    w.device_id::INT AS device_id,
+    ROW_NUMBER() OVER(ORDER BY insurance_partner) AS partner_id,
+    insurance_partner AS partner_name,
+    7 AS sla_target_days
+FROM (SELECT DISTINCT insurance_partner FROM staging_claims_sla WHERE insurance_partner IS NOT NULL AND insurance_partner != 'insurance_partner') sub;
+
+ALTER TABLE dim_insurance_partners ADD PRIMARY KEY (partner_id);
+```
+
+### B. Dimensi Service Center (`dim_service_centers`)
+```sql
+DROP TABLE IF EXISTS dim_service_centers CASCADE;
+
+CREATE TABLE dim_service_centers AS
+SELECT 
+    ROW_NUMBER() OVER(ORDER BY service_center) AS center_id,
+    service_center AS center_name,
+    SPLIT_PART(service_center, '- ', 2) AS city
+FROM (SELECT DISTINCT service_center FROM staging_claims_sla WHERE service_center IS NOT NULL AND service_center != 'service_center') sub;
+
+ALTER TABLE dim_service_centers ADD PRIMARY KEY (center_id);
+```
+
+### C. Tabel Fakta Klaim & SLA (`fact_claims_sla`)
+Pembersihan string `Rp 1,500,000`, safe cast tanggal, dan penghitungan ulang otomatis TAT & SLA Adherence:
+
+```sql
+DROP TABLE IF EXISTS fact_claims_sla CASCADE;
+
+CREATE TABLE fact_claims_sla AS
+SELECT 
+    s.claim_id,
+    p.partner_id,
+    c.center_id,
+    s.brand AS device_brand,
+    s.model AS device_model,
+    s.claim_date::DATE AS claim_date,
+    NULLIF(s.approval_date, '')::DATE AS approval_date,
+    NULLIF(s.completion_date, '')::DATE AS completion_date,
+    
+    -- Hitung Ulang Turnaround Time (TAT) dalam Hari
     CASE 
-        WHEN w.claim_date::DATE < t.completion_date THEN (t.completion_date + INTERVAL '7 days')::DATE
-        ELSE w.claim_date::DATE
-    END AS claim_date
-FROM staging_warranty w
-JOIN fact_tickets t ON w.device_id = t.device_id;
+        WHEN NULLIF(s.completion_date, '') IS NOT NULL THEN (NULLIF(s.completion_date, '')::DATE - s.claim_date::DATE)
+        ELSE NULL 
+    END AS turnaround_time_days,
+    
+    7 AS sla_target_days,
+    
+    -- Cleaning String Mata Uang 'Rp 1,250,000' -> 1250000.00
+    COALESCE(NULLIF(REGEXP_REPLACE(s.repair_cost, '[^\d.]', '', 'g'), '')::NUMERIC, 0.0) AS repair_cost_idr,
+    ROUND(COALESCE(NULLIF(REGEXP_REPLACE(s.repair_cost, '[^\d.]', '', 'g'), '')::NUMERIC, 0.0) * 0.65, 2) AS sparepart_cost_idr,
+    
+    s.status,
+    
+    -- Penentuan Status SLA (Met SLA vs Breached SLA)
+    CASE 
+        WHEN s.status = 'Pending' THEN 'In Progress'
+        WHEN s.status = 'Rejected' THEN 'Rejected Claim'
+        WHEN (NULLIF(s.completion_date, '')::DATE - s.claim_date::DATE) <= 7 THEN 'Met SLA'
+        ELSE 'Breached SLA'
+    END AS sla_status,
+    
+    COALESCE(NULLIF(s.csat_rating, '')::INT, 4) AS csat_rating
 
-ALTER TABLE fact_warranties ADD PRIMARY KEY (warranty_id);
+FROM staging_claims_sla s
+JOIN dim_insurance_partners p ON s.insurance_partner = p.partner_name
+JOIN dim_service_centers c ON s.service_center = c.center_name
+WHERE s.claim_id IS NOT NULL AND s.claim_id != 'claim_id';
+
+ALTER TABLE fact_claims_sla ADD PRIMARY KEY (claim_id);
 ```
 
 ---
 
-## 3. Kueri Analisis First Fix Rate (FFR) SQL
+## 3. Kueri Analisis Performa SLA & Turnaround Time (TAT)
 
-### Query: Perbandingan First Fix Rate % Antara Teknisi Bersertifikasi vs Non-Sertifikasi
+### Query 1: Analisis Ringkasan SLA per Mitra Asuransi (Rata-Rata TAT 5-6 Hari)
 
 ```sql
-WITH RepeatRepairAnalysis AS (
-    SELECT 
-        t.ticket_id,
-        t.technician_id,
-        t.completion_date,
-        COUNT(w.warranty_id) AS repeat_claims_30d
-    FROM fact_tickets t
-    LEFT JOIN fact_warranties w 
-        ON t.device_id = w.device_id 
-       AND w.claim_date BETWEEN t.completion_date AND (t.completion_date + INTERVAL '30 days')
-    GROUP BY t.ticket_id, t.technician_id, t.completion_date
-)
 SELECT 
-    tn.is_certified,
-    CASE WHEN tn.is_certified = 1 THEN 'Bersertifikasi' ELSE 'Belum Sertifikasi' END AS cert_status,
-    COUNT(ra.ticket_id) AS total_repairs,
-    SUM(CASE WHEN ra.repeat_claims_30d = 0 THEN 1 ELSE 0 END) AS first_fix_completed,
-    ROUND(SUM(CASE WHEN ra.repeat_claims_30d = 0 THEN 1 ELSE 0 END) * 100.0 / COUNT(ra.ticket_id), 2) AS first_fix_rate_pct,
-    ROUND(SUM(CASE WHEN ra.repeat_claims_30d > 0 THEN 1 ELSE 0 END) * 100.0 / COUNT(ra.ticket_id), 2) AS repeat_repair_rate_pct
-FROM RepeatRepairAnalysis ra
-JOIN dim_technician tn ON ra.technician_id = tn.technician_id
-GROUP BY tn.is_certified;
+    p.partner_name,
+    COUNT(f.claim_id) AS total_claims,
+    COUNT(CASE WHEN f.status = 'Resolved' THEN 1 END) AS resolved_claims,
+    
+    -- Resolution Rate %
+    ROUND(COUNT(CASE WHEN f.status = 'Resolved' THEN 1 END) * 100.0 / COUNT(f.claim_id), 1) AS resolution_rate_pct,
+    
+    -- Rata-rata Turnaround Time (TAT)
+    ROUND(AVG(f.turnaround_time_days), 2) AS avg_tat_days,
+    
+    -- SLA Adherence % (Persentase Klaim Selesai <= 7 Hari)
+    ROUND(
+        COUNT(CASE WHEN f.sla_status = 'Met SLA' THEN 1 END) * 100.0 / 
+        NULLIF(COUNT(CASE WHEN f.status = 'Resolved' THEN 1 END), 0), 
+        1
+    ) AS sla_adherence_pct,
+    
+    -- Total Nilai Perbaikan Klaim
+    ROUND(SUM(f.repair_cost_idr), 0) AS total_repair_payout_idr
+FROM dim_insurance_partners p
+JOIN fact_claims_sla f ON p.partner_id = f.partner_id
+GROUP BY p.partner_name
+ORDER BY avg_tat_days ASC;
+```
+
+### Query 2: Evaluasi Bulanan SLA Breach & Kepuasan Pelanggan (CSAT)
+
+```sql
+SELECT 
+    TO_CHAR(f.claim_date, 'YYYY-MM') AS claim_month,
+    COUNT(f.claim_id) AS monthly_claim_volume,
+    ROUND(AVG(f.turnaround_time_days), 2) AS avg_monthly_tat_days,
+    COUNT(CASE WHEN f.sla_status = 'Breached SLA' THEN 1 END) AS breached_claims_count,
+    ROUND(AVG(f.csat_rating), 2) AS avg_csat_score
+FROM fact_claims_sla f
+GROUP BY TO_CHAR(f.claim_date, 'YYYY-MM')
+ORDER BY claim_month ASC;
 ```

@@ -1,190 +1,126 @@
-# Tutorial SQL Complete (Pure PostgreSQL ELT) - Project 01: Enterprise Sales Analytics
+# Tutorial SQL Complete (Pure PostgreSQL ELT) - Project 01: Multi-Channel P&L Analytics
 
-Tutorial ini memandu Anda melakukan seluruh proses **Extract, Load, dan Transform (ELT)** serta analisis data Penjualan Enterprise **100% menggunakan kueri SQL di PostgreSQL** (tanpa mengandalkan Python).
+Tutorial ini memandu Anda melakukan **ELT & Analisis Profit & Loss (P&L)** murni menggunakan kueri SQL di PostgreSQL.
+Fokus analisis: **Memantau performa Laba/Rugi (P&L) Harian, Bulanan, dan Tahunan di 16 Brand Partners, 9 Infinix Service Centers, dan 50 Retail Partners.**
 
 ---
 
-## 1. Tahap Staging: Import Data Mentah ke PostgreSQL
-
-Buat tabel penampung sementara (*Staging Table*) untuk menampung file dataset `amazon.csv` mentah:
+## 1. Staging Table: Impor Data Mentah P&L (`pl_multi_channel_raw.csv`)
 
 ```sql
--- Hapus tabel jika sudah ada (Reset)
-DROP TABLE IF EXISTS staging_amazon_sales CASCADE;
+DROP TABLE IF EXISTS staging_pl_multi_channel CASCADE;
 
--- Buat Tabel Staging (Seluruh kolom menggunakan tipe VARCHAR/TEXT agar tidak gagal impor)
-CREATE TABLE staging_amazon_sales (
-    product_id VARCHAR(50),
-    product_name TEXT,
-    category TEXT,
-    discounted_price VARCHAR(50),
-    actual_price VARCHAR(50),
-    discount_percentage VARCHAR(20),
-    rating VARCHAR(10),
-    rating_count VARCHAR(50),
-    about_product TEXT,
-    user_id TEXT,
-    user_name TEXT,
-    review_id TEXT,
-    review_title TEXT,
-    review_content TEXT,
-    img_link TEXT,
-    product_link TEXT
+CREATE TABLE staging_pl_multi_channel (
+    partner_id TEXT,
+    partner_name TEXT,
+    channel_type TEXT,
+    month_date TEXT,
+    gross_revenue TEXT,       -- Masih string 'Rp 2,500,000,000'
+    cogs TEXT,                -- Masih string 'Rp 1,600,000,000'
+    gross_profit TEXT,
+    operating_expenses TEXT,  -- Masih string 'Rp 300,000,000'
+    net_profit TEXT,
+    net_profit_margin_pct TEXT
 );
+
+-- Impor file data/raw/pl_multi_channel_raw.csv ke staging_pl_multi_channel lewat pgAdmin Import / COPY command
 ```
 
-> **Cara Impor di pgAdmin 4:**
-> 1. Klik kanan pada tabel `staging_amazon_sales` $\rightarrow$ pilih **Import/Export Data...**
-> 2. Set Format ke **CSV**, Header ke **Yes**, Encoding ke **UTF8**.
-> 3. Pilih file `amazon.csv` dari folder proyek, lalu klik **OK**.
-
 ---
 
-## 2. Pembersihan & Normalisasi Data (Murni SQL)
+## 2. Pembersihan & Transformasi Relasional Murni SQL
 
-### A. Membuat Tabel Dimensi Produk (`dim_products`)
-Kueri SQL ini membersihkan karakter non-numerik seperti simbol mata uang (`₹1,099` $\rightarrow$ `1099.00`), mengisi *cost_price* otomatis, serta mengambil kategori utama:
-
+### A. Dimensi Mitra Usaha (`dim_partners`)
 ```sql
-DROP TABLE IF EXISTS dim_products CASCADE;
+DROP TABLE IF EXISTS dim_partners CASCADE;
 
-CREATE TABLE dim_products AS
+CREATE TABLE dim_partners AS
 SELECT DISTINCT
-    product_id,
-    LEFT(product_name, 100) AS product_name,
-    SPLIT_PART(category, '|', 1) AS category,
-    -- Transformasi String Mata Uang ke Numeric
-    COALESCE(NULLIF(REGEXP_REPLACE(discounted_price, '[^\d.]', '', 'g'), '')::NUMERIC, 500.00) AS unit_price,
-    COALESCE(NULLIF(REGEXP_REPLACE(actual_price, '[^\d.]', '', 'g'), '')::NUMERIC, 1000.00) AS actual_price,
-    -- Hitung Estimasi Cost Price (65% dari Harga Diskon)
-    ROUND(COALESCE(NULLIF(REGEXP_REPLACE(discounted_price, '[^\d.]', '', 'g'), '')::NUMERIC, 500.00) * 0.65, 2) AS cost_price,
-    COALESCE(NULLIF(rating, '')::NUMERIC, 4.0) AS rating
-FROM staging_amazon_sales;
+    partner_id,
+    partner_name,
+    channel_type
+FROM staging_pl_multi_channel
+WHERE partner_id IS NOT NULL AND partner_id != 'partner_id';
 
-ALTER TABLE dim_products ADD PRIMARY KEY (product_id);
+ALTER TABLE dim_partners ADD PRIMARY KEY (partner_id);
 ```
 
-### B. Membuat Tabel Dimensi Toko (`dim_stores`)
-Gunakan SQL untuk men-generate 500 toko cabang regional di Indonesia:
+### B. Tabel Fakta P&L Bulanan (`fact_pl_monthly`)
+Membersihkan string mata uang `Rp 2,500,000,000` menjadi angka `NUMERIC` dan menghitung kalkulasi finansial P&L otomatis:
 
 ```sql
-DROP TABLE IF EXISTS dim_stores CASCADE;
+DROP TABLE IF EXISTS fact_pl_monthly CASCADE;
 
-CREATE TABLE dim_stores (
-    store_id INT PRIMARY KEY,
-    store_name VARCHAR(100),
-    city VARCHAR(100),
-    region VARCHAR(50)
-);
-
-INSERT INTO dim_stores (store_id, store_name, city, region)
+CREATE TABLE fact_pl_monthly AS
 SELECT 
-    i AS store_id,
-    'Toko ' || (ARRAY['Jakarta', 'Surabaya', 'Medan', 'Bandung', 'Semarang', 'Makassar', 'Palembang', 'Denpasar'])[FLOOR(RANDOM()*8 + 1)] || ' #' || i AS store_name,
-    (ARRAY['Jakarta', 'Surabaya', 'Medan', 'Bandung', 'Semarang', 'Makassar', 'Palembang', 'Denpasar'])[FLOOR(RANDOM()*8 + 1)] AS city,
-    (ARRAY['North', 'South', 'East', 'West'])[FLOOR(RANDOM()*4 + 1)] AS region
-FROM GENERATE_SERIES(1, 500) i;
-```
-
-### C. Generasi Tabel Transaksi Order (`fact_orders` & `fact_order_items`)
-Tulis SQL untuk men-generate 50.000 transaksi order historis (2022–2025) dengan lonjakan musiman Q4 (Nov-Des):
-
-```sql
-DROP TABLE IF EXISTS fact_orders CASCADE;
-DROP TABLE IF EXISTS fact_order_items CASCADE;
-
--- 1. Tabel Header Order
-CREATE TABLE fact_orders AS
-SELECT 
-    i AS order_id,
-    -- Generasi Tanggal Transaksi 2022 - 2025 (Dengan Musiman Q4)
-    (DATE '2022-01-01' + (RANDOM() * 1450)::INT * INTERVAL '1 day')::DATE AS order_date,
-    FLOOR(RANDOM() * 150000 + 1)::INT AS customer_id,
-    FLOOR(RANDOM() * 500 + 1)::INT AS store_id,
-    FLOOR(RANDOM() * 2000 + 1)::INT AS salesperson_id
-FROM GENERATE_SERIES(1, 50000) i;
-
-ALTER TABLE fact_orders ADD PRIMARY KEY (order_id);
-
--- 2. Tabel Detail Order Items
-CREATE TABLE fact_order_items AS
-SELECT 
-    ROW_NUMBER() OVER() AS item_id,
-    o.order_id,
-    p.product_id,
-    FLOOR(RANDOM() * 5 + 1)::INT AS quantity
-FROM fact_orders o
-CROSS JOIN LATERAL (
-    SELECT product_id FROM dim_products ORDER BY RANDOM() LIMIT FLOOR(RANDOM() * 3 + 1)
-) p;
-
-ALTER TABLE fact_order_items ADD PRIMARY KEY (item_id);
-```
-
----
-
-## 3. Kueri Analisis SQL Lanjutan (Advanced Analytics)
-
-### Query 1: Top 5 Produk Paling Menguntungkan per Kategori (Window Function `DENSE_RANK`)
-
-```sql
-WITH ProductRevenue AS (
-    SELECT 
-        p.category,
-        p.product_name,
-        SUM(oi.quantity * p.unit_price) AS total_revenue,
-        SUM(oi.quantity * (p.unit_price - p.cost_price)) AS total_profit,
-        DENSE_RANK() OVER (
-            PARTITION BY p.category 
-            ORDER BY SUM(oi.quantity * (p.unit_price - p.cost_price)) DESC
-        ) AS profit_rank
-    FROM fact_order_items oi
-    JOIN dim_products p ON oi.product_id = p.product_id
-    GROUP BY p.category, p.product_name
-)
-SELECT 
-    category,
-    profit_rank,
-    product_name,
-    total_revenue,
-    total_profit
-FROM ProductRevenue
-WHERE profit_rank <= 5
-ORDER BY category, profit_rank;
-```
-
-### Query 2: Pertumbuhan Penjualan Bulanan YoY (Year-over-Year Growth dengan `LAG()`)
-
-```sql
-WITH MonthlySales AS (
-    SELECT 
-        DATE_TRUNC('month', o.order_date)::DATE AS sales_month,
-        EXTRACT(YEAR FROM o.order_date) AS sales_year,
-        EXTRACT(MONTH FROM o.order_date) AS month_num,
-        SUM(oi.quantity * p.unit_price) AS current_revenue
-    FROM fact_orders o
-    JOIN fact_order_items oi ON o.order_id = oi.order_id
-    JOIN dim_products p ON oi.product_id = p.product_id
-    GROUP BY 1, 2, 3
-)
-SELECT 
-    m1.sales_month,
-    m1.current_revenue,
-    LAG(m1.current_revenue, 12) OVER (ORDER BY m1.sales_month) AS revenue_same_month_prev_year,
+    ROW_NUMBER() OVER() AS pl_id,
+    partner_id,
+    month_date::DATE AS month_date,
+    
+    -- Cleaning String Revenue, COGS, OpEx
+    COALESCE(NULLIF(REGEXP_REPLACE(gross_revenue, '[^\d.]', '', 'g'), '')::NUMERIC, 0.0) AS gross_revenue_idr,
+    COALESCE(NULLIF(REGEXP_REPLACE(cogs, '[^\d.]', '', 'g'), '')::NUMERIC, 0.0) AS cogs_idr,
+    
+    -- Gross Profit = Revenue - COGS
+    (COALESCE(NULLIF(REGEXP_REPLACE(gross_revenue, '[^\d.]', '', 'g'), '')::NUMERIC, 0.0) - 
+     COALESCE(NULLIF(REGEXP_REPLACE(cogs, '[^\d.]', '', 'g'), '')::NUMERIC, 0.0)) AS gross_profit_idr,
+     
+    COALESCE(NULLIF(REGEXP_REPLACE(operating_expenses, '[^\d.]', '', 'g'), '')::NUMERIC, 0.0) AS operating_expenses_idr,
+    
+    -- Net Profit = Gross Profit - OpEx
+    ((COALESCE(NULLIF(REGEXP_REPLACE(gross_revenue, '[^\d.]', '', 'g'), '')::NUMERIC, 0.0) - 
+      COALESCE(NULLIF(REGEXP_REPLACE(cogs, '[^\d.]', '', 'g'), '')::NUMERIC, 0.0)) - 
+      COALESCE(NULLIF(REGEXP_REPLACE(operating_expenses, '[^\d.]', '', 'g'), '')::NUMERIC, 0.0)) AS net_profit_idr,
+      
+    -- Net Profit Margin %
     ROUND(
-        (m1.current_revenue - LAG(m1.current_revenue, 12) OVER (ORDER BY m1.sales_month)) * 100.0 / 
-        NULLIF(LAG(m1.current_revenue, 12) OVER (ORDER BY m1.sales_month), 0), 
+        (((COALESCE(NULLIF(REGEXP_REPLACE(gross_revenue, '[^\d.]', '', 'g'), '')::NUMERIC, 0.0) - 
+           COALESCE(NULLIF(REGEXP_REPLACE(cogs, '[^\d.]', '', 'g'), '')::NUMERIC, 0.0)) - 
+           COALESCE(NULLIF(REGEXP_REPLACE(operating_expenses, '[^\d.]', '', 'g'), '')::NUMERIC, 0.0)) * 100.0) /
+        NULLIF(COALESCE(NULLIF(REGEXP_REPLACE(gross_revenue, '[^\d.]', '', 'g'), '')::NUMERIC, 0.0), 0), 
         2
-    ) AS yoy_growth_percentage
-FROM MonthlySales m1
-ORDER BY m1.sales_month DESC;
+    ) AS net_profit_margin_pct
+
+FROM staging_pl_multi_channel
+WHERE partner_id IS NOT NULL AND partner_id != 'partner_id';
+
+ALTER TABLE fact_pl_monthly ADD PRIMARY KEY (pl_id);
 ```
 
 ---
 
-## 4. Hubungkan ke Power BI
+## 3. Kueri Analisis P&L Multi-Channel SQL
 
-1. Buka **Power BI Desktop** $\rightarrow$ **Get Data** $\rightarrow$ **PostgreSQL database**.
-2. Masukkan Server (`localhost`) dan Database (`enterprise_sales`).
-3. Impor tabel bersih: `dim_products`, `dim_stores`, `fact_orders`, dan `fact_order_items`.
-4. Buat relasi $1:\infty$ pada skema bintang (*Star Schema*).
+### Query 1: Perbandingan Ringkasan P&L Antar 3 Channel Utama
+
+```sql
+SELECT 
+    p.channel_type,
+    COUNT(DISTINCT p.partner_id) AS total_partners,
+    ROUND(SUM(f.gross_revenue_idr) / 1000000000.0, 2) AS total_revenue_miliar_idr,
+    ROUND(SUM(f.cogs_idr) / 1000000000.0, 2) AS total_cogs_miliar_idr,
+    ROUND(SUM(f.gross_profit_idr) / 1000000000.0, 2) AS total_gross_profit_miliar_idr,
+    ROUND(SUM(f.operating_expenses_idr) / 1000000000.0, 2) AS total_opex_miliar_idr,
+    ROUND(SUM(f.net_profit_idr) / 1000000000.0, 2) AS total_net_profit_miliar_idr,
+    ROUND(SUM(f.net_profit_idr) * 100.0 / NULLIF(SUM(f.gross_revenue_idr), 0), 2) AS net_margin_pct
+FROM dim_partners p
+JOIN fact_pl_monthly f ON p.partner_id = f.partner_id
+GROUP BY p.channel_type
+ORDER BY total_net_profit_miliar_idr DESC;
+```
+
+### Query 2: Top 5 Brand Partners & Top 3 Infinix Service Centers Berdasarkan Margin Keuntungan Bersih
+
+```sql
+SELECT 
+    p.partner_name,
+    p.channel_type,
+    ROUND(SUM(f.gross_revenue_idr) / 1000000.0, 0) AS total_revenue_juta,
+    ROUND(SUM(f.net_profit_idr) / 1000000.0, 0) AS net_profit_juta,
+    ROUND(SUM(f.net_profit_idr) * 100.0 / NULLIF(SUM(f.gross_revenue_idr), 0), 2) AS net_margin_pct
+FROM dim_partners p
+JOIN fact_pl_monthly f ON p.partner_id = f.partner_id
+GROUP BY p.partner_name, p.channel_type
+ORDER BY net_margin_pct DESC
+LIMIT 10;
+```
