@@ -54,8 +54,8 @@ const certificates = [
         title: 'Data Analytics for Project Management',
         issuer: 'Udemy (Start-Tech Academy)',
         date: 'March 2025',
-        id: 'Credential ID: UC-d038276d-3de4-48cb-a6e7-67128fb5e6f2',
-        link: 'https://ude.my/UC-d038276d-3de4-48cb-a6e7-67128fb5e6f2',
+        id: 'Credential ID: UC-d038276d-3de4-4bcb-a6e7-67128fb5e6f2',
+        link: 'https://www.udemy.com/certificate/UC-d038276d-3de4-4bcb-a6e7-67128fb5e6f2/',
         image: '/images/certificates/data-analytics-pm.png',
         skills: ['Business Analytics', 'Project KPIs', 'Decision Science', 'Data Modeling']
     },
