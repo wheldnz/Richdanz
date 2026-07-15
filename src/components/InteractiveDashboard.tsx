@@ -29,7 +29,7 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
   const [hrSalaryIncrease, setHrSalaryIncrease] = useState<number>(0);
 
   // 5. Repair Service Analytics State
-  const [repairTech, setRepairTech] = useState<'All' | 'Senior' | 'Junior'>('All');
+  const [repairTech, setRepairTech] = useState<string>('All');
   const [activeStep, setActiveStep] = useState<string>('Diagnosis');
 
   // 6. Insurance Analytics State
