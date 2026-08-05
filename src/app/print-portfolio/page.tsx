@@ -34,7 +34,7 @@ const experiences = [
     {
         role: 'Database Management (Intern)',
         company: 'PT. ASABRI (Persero) KC Malang',
-        period: 'June – July 2024',
+        period: 'June – August 2024',
         points: [
             'Managed and audited 1,000+ sensitive participants\' records within the internal CMS, ensuring zero data-loss workflows and resolving inconsistencies to hit a 98% data accuracy rate.',
             'Programmed document archiving and scanning logic to replace legacy manual input setups, successfully reducing daily processing time by 40%.'
