@@ -9,10 +9,13 @@ const journeyItems = [
         title: 'Data & Business Analyst',
         company: 'PT. Sukses Multi Servis',
         points: [
-            'Engineered a Python statistical bidding algorithm, driving a 12% increase in gross profit margins.',
-            'Automated BigQuery ETL pipelines using Apps Script and Python, improving reporting accessibility by 50%.',
-            'Developed scalable Power BI architectures tracking KPIs for 10,000+ monthly transactions.',
-            'Optimized data models for 1,000+ SKUs to achieve 98% inventory accuracy and 25% faster picking times.'
+            'Claims & SLA Analytics: Tracked ~300 monthly service claims across 9 insurance partners (SQL, Excel), monitoring resolution rate and turnaround time, averaging 5–6 days against a 7-day SLA.',
+            'P&L Dashboard: Built Power BI dashboards for daily, monthly, and yearly P&L across 16 brand partners, 9 official service centers, and 50 retail partners.',
+            'Retail Marketplace Analytics: Analyzed marketplace retail P&L over 5 months, identifying top-selling products for restocking and dead stock for discount/bundling, lifting net profit margin from ~5% to over 32%.',
+            'ETL & Automation: Built SQL/Python ETL pipelines pulling claims, P&L, and service data from 16 brand systems into BigQuery, plus an n8n-based WhatsApp chatbot automating customer data retrieval, cutting reporting time by 50%.',
+            'Pricing Model: Built a Python pricing model across 500+ operational units, contributing to a 12% margin gain over a 3-quarter pilot.',
+            'Data Modeling: Restructured relational data models for 5,000+ SKUs across brand partners, improving data accuracy to 95%.',
+            'Cross-functional Collaboration: Collaborated with Finance, Warehouse, and Insurance partner teams to validate P&L figures, reconcile SKU data against physical stock, and support monthly SLA/claims reporting.'
         ],
         icon: LineChart,
         color: '#00ff88',
