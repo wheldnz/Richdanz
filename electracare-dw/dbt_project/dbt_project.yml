@@ -1,0 +1,38 @@
+name: 'electracare_dw'
+version: '1.0.0'
+config-version: 2
+
+profile: 'electracare_dw'
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  electracare_dw:
+    staging:
+      +schema: stg
+      +materialized: view
+    intermediate:
+      +schema: ods
+      +materialized: view
+    marts:
+      core:
+        +schema: dwh
+        +materialized: table
+      sales:
+        +schema: mart
+        +materialized: view
+      operations:
+        +schema: mart
+        +materialized: view
+      finance:
+        +schema: mart
+        +materialized: view

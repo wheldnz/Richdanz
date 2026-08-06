@@ -1,0 +1,23 @@
+electracare_dw:
+  outputs:
+    dev_postgres:
+      type: postgres
+      host: 127.0.0.1
+      port: 5432
+      user: postgres
+      password: admin123
+      dbname: db_electracare_dw
+      schema: dwh
+      threads: 4
+
+    dev_bigquery:
+      type: bigquery
+      method: service-account
+      project: electracare-dw
+      dataset: electracare_dwh
+      keyfile: ../keys/gcp_key.json
+      threads: 4
+      timeout_seconds: 300
+      location: US
+
+  target: dev_bigquery

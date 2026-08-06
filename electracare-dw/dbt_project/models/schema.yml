@@ -1,0 +1,34 @@
+version: 2
+
+models:
+  - name: stg_service_orders
+    description: "Staging model for service orders"
+    columns:
+      - name: service_order_key
+        description: "Primary Key for service order"
+        tests:
+          - not_null
+
+  - name: mart_service_revenue_summary
+    description: "Monthly revenue and P&L summary per service center"
+    columns:
+      - name: year_month
+        tests:
+          - not_null
+      - name: center_name
+        tests:
+          - not_null
+
+  - name: mart_operations_kpi
+    description: "Monthly SLA and warranty claim KPIs"
+    columns:
+      - name: year_month
+        tests:
+          - not_null
+
+  - name: mart_customer_360
+    description: "Customer 360 unified view"
+    columns:
+      - name: customer_key
+        tests:
+          - not_null

@@ -30,7 +30,7 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files
 .env*
 
 # vercel
@@ -44,3 +44,17 @@ next-env.d.ts
 *.csv
 data/
 **/data/
+
+# Data Engineering & Security Ignores
+keys/
+**/keys/
+*gcp_key*.json
+*electracare-dw*.json
+electracare-dw/data_lake/
+electracare-dw/dbt_project/target/
+electracare-dw/dbt_project/dbt_packages/
+electracare-dw/dbt_project/logs/
+__pycache__/
+**/__pycache__/
+venv/
+**/venv/
