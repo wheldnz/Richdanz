@@ -4,10 +4,15 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowDown, Download, Github, Linkedin, Printer } from 'lucide-react';
 import LiveStats from '../components/LiveStats';
+import { TabId } from '../components/Navigation';
 
 const words = ["AI Engineer", "Data Analytics", "Full Stack Developer"];
 
-export default function Hero() {
+interface HeroProps {
+    onSelectTab?: (tab: TabId) => void;
+}
+
+export default function Hero({ onSelectTab }: HeroProps) {
     const [text, setText] = useState('');
     const [isDeleting, setIsDeleting] = useState(false);
     const [loopNum, setLoopNum] = useState(0);
@@ -100,15 +105,15 @@ export default function Hero() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: 0.3 }}
                 >
-                    <motion.a
-                        href="#projects"
-                        className="btn-primary flex items-center gap-2"
+                    <motion.button
+                        onClick={() => onSelectTab && onSelectTab('projects')}
+                        className="btn-primary flex items-center gap-2 cursor-pointer"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                     >
                         View Projects
                         <ArrowDown className="w-4 h-4" />
-                    </motion.a>
+                    </motion.button>
 
                     <motion.a
                         href="/resume.pdf"
