@@ -14,7 +14,7 @@ const projects = [
         category: 'data' as const,
         metric: '5.88M Rows',
         metricLabel: 'BigQuery EDW',
-        image: '/images/projects/enterprise-sales.png',
+        image: '/images/projects/enterprise-data-warehouse.png',
         tags: ['BigQuery', 'Airflow', 'dbt', 'Python', 'WSL2'],
         link: '/projects/enterprise-data-warehouse-gcp',
     },
