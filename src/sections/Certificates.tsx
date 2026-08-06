@@ -72,7 +72,7 @@ const certificates = [
 
 export default function Certificates() {
     return (
-        <section id="certificates" className="py-24 px-6 relative overflow-hidden">
+        <section id="certificates" className="py-8 md:py-12 px-6 relative overflow-hidden">
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
                 <motion.div

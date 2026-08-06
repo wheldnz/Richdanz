@@ -9,6 +9,16 @@ type Category = 'all' | 'data' | 'math' | 'fullstack';
 
 const projects = [
     {
+        title: 'Enterprise Data Warehouse (GCP BigQuery & Airflow)',
+        description: 'Perancangan dan pembangunan Enterprise Data Warehouse (EDW) terpadu PT ElectraCare Indonesia mengolah 5.88+ juta baris data di Google BigQuery dengan orkestrasi Airflow di WSL2 Ubuntu dan dbt Core.',
+        category: 'data' as const,
+        metric: '5.88M Rows',
+        metricLabel: 'BigQuery EDW',
+        image: '/images/projects/enterprise-sales.png',
+        tags: ['BigQuery', 'Airflow', 'dbt', 'Python', 'WSL2'],
+        link: '/projects/enterprise-data-warehouse-gcp',
+    },
+    {
         title: 'Analisis Sentimen RUU TNI',
         description: 'Analisis sentimen publik di platform X (Twitter) terhadap revisi Undang-Undang TNI menggunakan Natural Language Processing dan klasifikasi Naive Bayes.',
         category: 'data' as const,
@@ -145,7 +155,7 @@ export default function Projects() {
         : projects.filter(p => p.category === activeCategory);
 
     return (
-        <section id="projects" className="py-24 px-6">
+        <section id="projects" className="py-8 md:py-12 px-6">
             <div className="max-w-6xl mx-auto">
                 {/* Section Header */}
                 <motion.div

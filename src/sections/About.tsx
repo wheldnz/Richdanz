@@ -35,7 +35,7 @@ const techStack = [
 
 export default function About() {
     return (
-        <section id="about" className="py-24 px-6 bg-background-secondary/50">
+        <section id="about" className="py-8 md:py-12 px-6 bg-background-secondary/50">
             <div className="max-w-6xl mx-auto">
                 {/* Section Header */}
                 <motion.div

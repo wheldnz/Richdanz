@@ -50,7 +50,7 @@ export default function Hero({ onSelectTab }: HeroProps) {
     }, [text, isDeleting, loopNum, typingSpeed]);
 
     return (
-        <section className="relative min-h-screen flex flex-col items-center justify-center px-6 pt-32 overflow-hidden">
+        <section className="relative min-h-[calc(100vh-80px)] flex flex-col items-center justify-center px-6 pt-4 md:pt-8 pb-12 overflow-hidden">
 
 
             {/* Main Content */}

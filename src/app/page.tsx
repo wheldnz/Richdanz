@@ -31,7 +31,7 @@ export default function Home() {
       <Navigation activeTab={activeTab} onSelectTab={setActiveTab} />
 
       {/* Main Content View Switcher */}
-      <main className="relative z-10 pt-20">
+      <main className="relative z-10 pt-16">
         <AnimatePresence mode="wait">
           {activeTab === 'hero' && (
             <motion.div
@@ -52,7 +52,7 @@ export default function Home() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -15, scale: 0.98 }}
               transition={{ duration: 0.3 }}
-              className="py-12 px-6 max-w-6xl mx-auto"
+              className="px-6 max-w-6xl mx-auto"
             >
               <Projects />
             </motion.div>
@@ -65,7 +65,7 @@ export default function Home() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -15, scale: 0.98 }}
               transition={{ duration: 0.3 }}
-              className="py-12 px-6 max-w-6xl mx-auto"
+              className="px-6 max-w-6xl mx-auto"
             >
               <About />
             </motion.div>
@@ -78,7 +78,7 @@ export default function Home() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -15, scale: 0.98 }}
               transition={{ duration: 0.3 }}
-              className="py-12 px-6 max-w-6xl mx-auto"
+              className="px-6 max-w-6xl mx-auto"
             >
               <Certificates />
             </motion.div>
@@ -91,7 +91,7 @@ export default function Home() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -15, scale: 0.98 }}
               transition={{ duration: 0.3 }}
-              className="py-12 px-6 max-w-6xl mx-auto"
+              className="px-6 max-w-6xl mx-auto"
             >
               <Contact />
             </motion.div>
