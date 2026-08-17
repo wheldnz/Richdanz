@@ -12,6 +12,7 @@ export default function DashboardContainer({ slug }: DashboardContainerProps) {
   const [activeTab, setActiveTab] = useState<'interactive' | 'screenshot'>('screenshot');
 
   const imageUrls: Record<string, string> = {
+    'enterprise-data-warehouse-gcp': '/images/projects/enterprise-data-warehouse.png',
     'analisis-sentimen-ruu-tni': '/images/projects/analisis-sentimen-ruu-tni.png',
     'toko-online': '/images/projects/toko-online.png',
     'klasifikasi-diabetes-dna': '/images/projects/klasifikasi-diabetes-dna.png',

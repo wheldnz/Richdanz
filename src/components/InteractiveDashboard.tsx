@@ -34,6 +34,12 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
 
   // 6. Insurance Analytics State
   const [insExcludeUnder25, setInsExcludeUnder25] = useState<boolean>(false);
+  const [slaPartner, setSlaPartner] = useState<string>('Igloo');
+  const [slaCategory, setSlaCategory] = useState<string>('Smartphone');
+  const [slaDamage, setSlaDamage] = useState<string>('Screen / LCD Replacement');
+  const [slaDocCompleteness, setSlaDocCompleteness] = useState<number>(70);
+  const [slaSparepartLatency, setSlaSparepartLatency] = useState<number>(4);
+  const [slaClaimAmount, setSlaClaimAmount] = useState<number>(3500000);
 
   // ==========================================
   // NEW 6 PROJECTS STATE VARIABLES
@@ -103,6 +109,11 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
   const [peFilter, setPeFilter] = useState<number>(18);
   const [pbvFilter, setPbvFilter] = useState<number>(2.5);
   const [minRoe, setMinRoe] = useState<boolean>(true);
+
+  // 13. Enterprise Data Warehouse State
+  const [edwDagFilter, setEdwDagFilter] = useState<'all' | 'success' | 'failed'>('all');
+  const [edwRefreshing, setEdwRefreshing] = useState<boolean>(false);
+  const [edwLineageView, setEdwLineageView] = useState<'staging' | 'marts'>('staging');
 
   // ==========================================
   // HELPER FUNCTIONS & CALCULATIONS FOR NEW PROJECTS
@@ -219,6 +230,230 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
     const passRoe = minRoe ? s.roe >= 10 : true;
     return passPe && passPbv && passRoe;
   });
+
+  // ----------------------------------------------------
+  // RENDER DASHBOARD 0: Enterprise Data Warehouse & Modern Data Stack
+  // ----------------------------------------------------
+  if (slug === 'enterprise-data-warehouse-gcp') {
+    const dagPipelines = [
+      { name: 'dag_etl_daily_sales', schedule: 'daily', runTime: '49 Mins', tasks: 34, status: 'success' as const },
+      { name: 'dag_ingest_insurance_claims', schedule: 'daily', runTime: '12 Mins', tasks: 18, status: 'success' as const },
+      { name: 'dag_inventory_snapshot', schedule: 'hourly', runTime: '8 Mins', tasks: 12, status: 'success' as const },
+      { name: 'dbt_transformation_prod', schedule: 'daily', runTime: '20 Mins', tasks: 34, status: 'failed' as const },
+      { name: 'dag_customer_interaction_sync', schedule: '6h', runTime: '15 Mins', tasks: 22, status: 'success' as const },
+      { name: 'dag_weekly_pl_aggregation', schedule: 'weekly', runTime: '35 Mins', tasks: 28, status: 'success' as const },
+    ];
+
+    const filteredDags = edwDagFilter === 'all' ? dagPipelines : dagPipelines.filter(d => d.status === edwDagFilter);
+
+    const dbtModels = edwLineageView === 'staging'
+      ? [
+          { from: 'raw_service_orders', to: 'stg_orders', status: 'success', time: '15 min' },
+          { from: 'raw_customer_data', to: 'stg_customers', status: 'success', time: '8 min' },
+          { from: 'raw_inventory_csv', to: 'stg_inventory', status: 'success', time: '12 min' },
+          { from: 'raw_insurance_api', to: 'stg_claims', status: 'success', time: '6 min' },
+          { from: 'raw_spare_parts', to: 'stg_parts', status: 'warning', time: '22 min' },
+        ]
+      : [
+          { from: 'stg_orders', to: 'mart_service_revenue', status: 'success', time: '18 min' },
+          { from: 'stg_customers', to: 'mart_customer_360', status: 'success', time: '10 min' },
+          { from: 'stg_inventory', to: 'mart_operations_kpi', status: 'warning', time: '14 min' },
+          { from: 'stg_claims', to: 'mart_sla_dashboard', status: 'failed', time: '1:32 min' },
+          { from: 'stg_parts', to: 'mart_parts_usage', status: 'success', time: '9 min' },
+        ];
+
+    const handleRefresh = () => {
+      setEdwRefreshing(true);
+      setTimeout(() => setEdwRefreshing(false), 2000);
+    };
+
+    return (
+      <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 space-y-5 text-white font-sans text-sm w-full">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-base font-bold text-white flex items-center gap-2">
+              <Database className="w-5 h-5 text-emerald-400" />
+              Enterprise Data Platform Overview
+            </h3>
+            <p className="text-xs text-slate-400 mt-0.5">Google BigQuery EDW &middot; Apache Airflow &middot; dbt Core</p>
+          </div>
+          <button
+            onClick={handleRefresh}
+            className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 hover:bg-slate-700 transition-all cursor-pointer ${edwRefreshing ? 'animate-pulse' : ''}`}
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${edwRefreshing ? 'animate-spin text-emerald-400' : 'text-slate-400'}`} />
+            {edwRefreshing ? 'Syncing...' : 'Refresh'}
+          </button>
+        </div>
+
+        {/* BigQuery Metrics Row */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {[
+            { label: 'Daily Query Costs', value: '$2.4k', color: 'text-emerald-400' },
+            { label: 'Total Data Stored', value: '1.8 PB', color: 'text-cyan-400' },
+            { label: 'Active Projects', value: '14', color: 'text-amber-400' },
+            { label: 'Slot Usage', value: '3,200 slots', color: 'text-purple-400' },
+          ].map((m, i) => (
+            <div key={i} className="bg-slate-900/80 border border-slate-800 rounded-xl p-3">
+              <span className="text-[10px] text-slate-500 uppercase tracking-wider">{m.label}</span>
+              <p className={`text-xl font-bold mt-1 ${m.color}`}>{m.value}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Data Warehouse Stats */}
+        <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider">Data Warehouse Schema — Kimball Star Schema</h4>
+            <span className="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full">5.88M+ rows synced</span>
+          </div>
+          <div className="grid grid-cols-3 md:grid-cols-5 gap-2">
+            {[
+              { label: 'Dimension Tables', value: '13', color: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20' },
+              { label: 'Fact Tables', value: '10', color: 'bg-amber-500/10 text-amber-400 border-amber-500/20' },
+              { label: 'Total Tables', value: '23', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' },
+              { label: 'Customers', value: '250K', color: 'bg-purple-500/10 text-purple-400 border-purple-500/20' },
+              { label: 'Service Centers', value: '25', color: 'bg-rose-500/10 text-rose-400 border-rose-500/20' },
+            ].map((s, i) => (
+              <div key={i} className={`${s.color} border rounded-lg p-2.5 text-center`}>
+                <p className="text-lg font-bold">{s.value}</p>
+                <span className="text-[10px]">{s.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Two-column: Airflow DAG + dbt Lineage */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Airflow DAG Pipeline Status */}
+          <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider">Apache Airflow DAG Status</h4>
+              <div className="flex gap-1">
+                {(['all', 'success', 'failed'] as const).map(f => (
+                  <button
+                    key={f}
+                    onClick={() => setEdwDagFilter(f)}
+                    className={`text-[10px] px-2 py-0.5 rounded cursor-pointer transition-all ${
+                      edwDagFilter === f
+                        ? f === 'failed' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                        : 'bg-slate-800 text-slate-500 border border-slate-700 hover:bg-slate-750'
+                    }`}
+                  >
+                    {f === 'all' ? 'All' : f === 'success' ? '✓ Pass' : '✗ Failed'}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-2 max-h-[240px] overflow-y-auto">
+              {filteredDags.map((dag, i) => (
+                <div key={i} className="flex items-center justify-between bg-slate-950 border border-slate-800 rounded-lg p-2.5">
+                  <div className="flex items-center gap-2">
+                    <span className={`w-2 h-2 rounded-full ${dag.status === 'success' ? 'bg-emerald-400' : 'bg-red-400'}`} />
+                    <div>
+                      <p className="text-xs font-mono font-semibold text-slate-200">{dag.name}</p>
+                      <span className="text-[10px] text-slate-500">Schedule: {dag.schedule}</span>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs font-bold text-slate-300">{dag.runTime}</p>
+                    <span className="text-[10px] text-slate-500">{dag.tasks} tasks</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* dbt Model Lineage */}
+          <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider">dbt Model Lineage</h4>
+              <div className="flex gap-1">
+                {(['staging', 'marts'] as const).map(v => (
+                  <button
+                    key={v}
+                    onClick={() => setEdwLineageView(v)}
+                    className={`text-[10px] px-2 py-0.5 rounded cursor-pointer transition-all ${
+                      edwLineageView === v
+                        ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
+                        : 'bg-slate-800 text-slate-500 border border-slate-700 hover:bg-slate-750'
+                    }`}
+                  >
+                    {v === 'staging' ? 'Raw → Staging' : 'Staging → Marts'}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-2">
+              {dbtModels.map((m, i) => (
+                <div key={i} className="flex items-center gap-2 bg-slate-950 border border-slate-800 rounded-lg p-2.5">
+                  <div className="flex-1">
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">{m.from}</span>
+                  </div>
+                  <ArrowRight className={`w-3.5 h-3.5 flex-shrink-0 ${
+                    m.status === 'success' ? 'text-emerald-400' : m.status === 'warning' ? 'text-amber-400' : 'text-red-400'
+                  }`} />
+                  <div className="flex-1">
+                    <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded border ${
+                      m.status === 'success' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                      : m.status === 'warning' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                      : 'bg-red-500/10 text-red-400 border-red-500/20'
+                    }`}>{m.to}</span>
+                  </div>
+                  <span className="text-[10px] text-slate-500 ml-1 flex-shrink-0">{m.time}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Data Ingestion Throughput */}
+        <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider">Data Ingestion Throughput</h4>
+            <span className="text-[10px] bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-2 py-0.5 rounded-full">Peak Status</span>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {[
+              { label: 'Avg Daily Ingestion', value: '14.2 TB/day', icon: '📥' },
+              { label: 'Peak Throughput', value: '165 MB/sec', icon: '⚡' },
+              { label: 'Sources Connected', value: '16 brands', icon: '🔗' },
+              { label: 'Data Quality Score', value: '95.2%', icon: '✅' },
+            ].map((t, i) => (
+              <div key={i} className="bg-slate-950 border border-slate-800 rounded-lg p-3 text-center">
+                <span className="text-lg">{t.icon}</span>
+                <p className="text-sm font-bold text-white mt-1">{t.value}</p>
+                <span className="text-[10px] text-slate-500">{t.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* dbt Test Results */}
+        <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-4">
+          <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-3">dbt Test Results (Latest Run)</h4>
+          <div className="grid grid-cols-4 gap-2">
+            {[
+              { label: 'PASS', value: '5', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' },
+              { label: 'WARN', value: '0', color: 'bg-amber-500/10 text-amber-400 border-amber-500/20' },
+              { label: 'ERROR', value: '0', color: 'bg-red-500/10 text-red-400 border-red-500/20' },
+              { label: 'TOTAL', value: '5', color: 'bg-slate-800 text-slate-300 border-slate-700' },
+            ].map((r, i) => (
+              <div key={i} className={`${r.color} border rounded-lg p-2.5 text-center`}>
+                <p className="text-xl font-bold">{r.value}</p>
+                <span className="text-[10px]">{r.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="text-[10px] text-slate-400 bg-slate-900 border border-slate-800 p-2.5 rounded-lg">
+          <strong>Pipeline Logic:</strong> Data dari POS Kasir, CRM CS, API Asuransi, dan ERP Gudang di-ingest via Python → BigQuery EDW (Kimball Star Schema: 13 Dims, 10 Facts) → dbt Core transforms (staging → marts) → Airflow DAG orchestrates daily at 06:00 WIB.
+        </div>
+      </div>
+    );
+  }
 
   // ----------------------------------------------------
   // RENDER DASHBOARD 1: Enterprise Sales & Multi-Channel P&L
@@ -827,115 +1062,197 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
   // RENDER DASHBOARD 6: Insurance
   // ----------------------------------------------------
   if (slug === 'insurance-analytics') {
-    const baseLossRatio = insExcludeUnder25 ? 58 : 64;
+    // Dynamic ML Prediction Calculation for PT ElectraCare SLA Predictor
+    const partnerBaseDelay = (slaPartner === 'Igloo' || slaPartner === 'Sunday') ? 3.4 : (slaPartner === 'Allianz' ? 2.2 : 1.2);
+    const damageDelay = (slaDamage === 'Motherboard Repair') ? 3.8 : (slaDamage === 'Screen / LCD Replacement') ? 2.5 : (slaDamage === 'Water Damage') ? 3.0 : 1.0;
+    const docDelay = ((100 - slaDocCompleteness) / 100) * 2.8;
+    const partDelay = slaSparepartLatency * 0.75;
+    const costFactor = slaClaimAmount > 5000000 ? 1.5 : 0;
+
+    const estTatDays = parseFloat((partnerBaseDelay + damageDelay + docDelay + partDelay + costFactor).toFixed(1));
+    const isBreach = estTatDays > 7.0;
+    const breachProb = Math.min(99, Math.max(8, Math.round((estTatDays / 10.5) * 100)));
 
     return (
-      <div className="glass-card p-6 bg-emerald-950/40 text-slate-100 border-emerald-900/50 rounded-2xl w-full">
+      <div className="glass-card p-6 bg-slate-950 text-slate-100 border-emerald-900/40 rounded-2xl w-full">
         {/* Header */}
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-6 border-b border-emerald-900/40 pb-4">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-6 border-b border-slate-800 pb-4">
           <div>
             <h4 className="text-lg font-bold flex items-center gap-2 text-emerald-400">
-              <ShieldCheck className="w-5 h-5" /> Underwriting Analytics Dashboard
+              <ShieldCheck className="w-5 h-5" /> PT ElectraCare Indonesia — SLA & Claim Breach Predictor
             </h4>
-            <p className="text-xs text-emerald-300/60">Risk Modelling & Claims Ratio Analysis</p>
+            <p className="text-xs text-slate-400">Google BigQuery EDW (`electracare-dw`) & BigQuery ML Logistic Regression Classifier</p>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-300">Exclude &lt; 25yo Driver:</span>
-            <button
-              onClick={() => setInsExcludeUnder25(!insExcludeUnder25)}
-              className={`w-12 h-6 rounded-full p-1 cursor-pointer transition-all duration-300 ${
-                insExcludeUnder25 ? 'bg-emerald-600' : 'bg-slate-800'
-              }`}
-            >
-              <div
-                className={`w-4 h-4 rounded-full bg-white transition-all duration-300 ${
-                  insExcludeUnder25 ? 'translate-x-6' : 'translate-x-0'
-                }`}
+          <span className="text-[10px] font-mono bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded-full border border-emerald-500/20">
+            Target SLA: &le; 7 Hari
+          </span>
+        </div>
+
+        {/* Dashboard Visual KPIs */}
+        <div className="grid grid-cols-4 gap-3 mb-6">
+          <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
+            <span className="text-[11px] text-slate-400 block font-semibold">Total Claims Logged</span>
+            <span className="text-xl font-black mt-1 block text-slate-100">200,000</span>
+            <span className="text-[10px] text-emerald-400 block mt-0.5">BigQuery EDW Sync</span>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
+            <span className="text-[11px] text-slate-400 block font-semibold">Overall SLA Adherence</span>
+            <span className="text-xl font-black mt-1 block text-emerald-400">81.5%</span>
+            <span className="text-[10px] text-slate-500 block mt-0.5">Target: &ge; 92%</span>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
+            <span className="text-[11px] text-slate-400 block font-semibold">Avg Turnaround Time</span>
+            <span className="text-xl font-black mt-1 block text-slate-100">5.4 Hari</span>
+            <span className="text-[10px] text-amber-400 block mt-0.5">Max Latency: 12.8 Hari</span>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
+            <span className="text-[11px] text-slate-400 block font-semibold">At Risk Claim Payout</span>
+            <span className="text-xl font-black mt-1 block text-rose-400">Rp 4.2B</span>
+            <span className="text-[10px] text-slate-500 block mt-0.5">18.5% Breach Rate</span>
+          </div>
+        </div>
+
+        {/* Interactive ML Simulator Form */}
+        <div className="grid md:grid-cols-5 gap-6">
+          {/* Controls Form (3 Cols) */}
+          <div className="md:col-span-3 bg-slate-900/70 border border-slate-800 rounded-xl p-4 space-y-3.5">
+            <h5 className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
+              <Filter className="w-4 h-4 text-emerald-400" /> Simulasi Input Klaim Baru
+            </h5>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-[10px] text-slate-400 block mb-1 font-semibold">Mitra Asuransi Perangkat:</label>
+                <select
+                  value={slaPartner}
+                  onChange={(e) => setSlaPartner(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 px-2.5 py-1.5 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
+                >
+                  <option value="Igloo">Igloo (Reimbursement Manual)</option>
+                  <option value="Sunday">Sunday Insurance</option>
+                  <option value="Qoala">Qoala Protection</option>
+                  <option value="Chubb">Chubb Device Protection</option>
+                  <option value="Allianz">Allianz Care</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-[10px] text-slate-400 block mb-1 font-semibold">Kategori Perangkat:</label>
+                <select
+                  value={slaCategory}
+                  onChange={(e) => setSlaCategory(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 px-2.5 py-1.5 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
+                >
+                  <option value="Smartphone">Smartphone Flagship</option>
+                  <option value="Laptop">Laptop / Notebook</option>
+                  <option value="Tablet">Tablet PC</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="text-[10px] text-slate-400 block mb-1 font-semibold">Sub-Tipe Kerusakan:</label>
+              <select
+                value={slaDamage}
+                onChange={(e) => setSlaDamage(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-800 px-2.5 py-1.5 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
+              >
+                <option value="Screen / LCD Replacement">Screen / LCD Replacement (Inden Impor)</option>
+                <option value="Motherboard Repair">Motherboard Repair (Perbaikan Level 3)</option>
+                <option value="Battery Replacement">Battery Replacement (Fast-Track)</option>
+                <option value="Water Damage">Water Damage Cleanup & IC Replacement</option>
+              </select>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <div className="flex justify-between text-[10px] text-slate-400 mb-1">
+                  <span className="font-semibold">Kelengkapan Dokumen Awal:</span>
+                  <span className="font-bold text-emerald-400 font-mono">{slaDocCompleteness}%</span>
+                </div>
+                <input
+                  type="range"
+                  min="30"
+                  max="100"
+                  step="5"
+                  value={slaDocCompleteness}
+                  onChange={(e) => setSlaDocCompleteness(parseInt(e.target.value))}
+                  className="w-full accent-emerald-500 h-1.5 bg-slate-950 rounded-lg cursor-pointer"
+                />
+              </div>
+
+              <div>
+                <div className="flex justify-between text-[10px] text-slate-400 mb-1">
+                  <span className="font-semibold">Procurement Latency Suku Cadang:</span>
+                  <span className="font-bold text-amber-400 font-mono">{slaSparepartLatency} Hari</span>
+                </div>
+                <input
+                  type="range"
+                  min="1"
+                  max="7"
+                  value={slaSparepartLatency}
+                  onChange={(e) => setSlaSparepartLatency(parseInt(e.target.value))}
+                  className="w-full accent-amber-500 h-1.5 bg-slate-950 rounded-lg cursor-pointer"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-[10px] text-slate-400 block mb-1 font-semibold">Estimasi Nominal Klaim (Rp):</label>
+              <input
+                type="number"
+                value={slaClaimAmount}
+                onChange={(e) => setSlaClaimAmount(parseInt(e.target.value) || 0)}
+                className="w-full bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-lg text-xs text-slate-200 font-mono"
               />
-            </button>
-          </div>
-        </div>
-
-        {/* Dashboard visual KPIs */}
-        <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-900/30">
-            <span className="text-xs text-slate-400 block">Gross Earned Premiums</span>
-            <span className="text-xl font-bold mt-1 block text-slate-100">$48.2M</span>
-            <span className="text-[10px] text-emerald-400 font-semibold block mt-1">+14.2% YoY</span>
-          </div>
-
-          <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-900/30">
-            <span className="text-xs text-slate-400 block">Incurred Claims</span>
-            <span className="text-xl font-bold mt-1 block text-slate-100">
-              {insExcludeUnder25 ? '$27.9M' : '$30.8M'}
-            </span>
-            <span className="text-[10px] text-slate-500 block mt-1">Paid & Reserved</span>
-          </div>
-
-          <div className="p-4 rounded-xl bg-slate-950/80 border border-emerald-900/30">
-            <span className="text-xs text-slate-400 block">Portfolio Loss Ratio</span>
-            <span className={`text-xl font-bold mt-1 block ${baseLossRatio > 60 ? 'text-amber-400' : 'text-emerald-400'}`}>
-              {baseLossRatio}%
-            </span>
-            <span className="text-[10px] text-slate-500 block mt-1">Target: &lt; 65% LR</span>
-          </div>
-        </div>
-
-        {/* Visual Line charts */}
-        <div className="bg-slate-950/60 border border-emerald-900/30 rounded-xl p-4">
-          <div className="flex justify-between items-center mb-3">
-            <span className="text-xs font-semibold text-slate-300">Cumulative Performance Chart ($ Millions)</span>
-            <div className="flex gap-3 text-[9px] text-slate-400">
-              <span className="flex items-center gap-1"><span className="w-2.5 h-0.5 bg-emerald-400 inline-block"></span> Premium</span>
-              <span className="flex items-center gap-1"><span className="w-2.5 h-0.5 bg-amber-400 inline-block"></span> Claims</span>
             </div>
           </div>
 
-          <div className="h-32 w-full flex items-end justify-between gap-1 pt-6 relative px-2">
-            {/* Custom dual line chart via simple SVG */}
-            <svg className="absolute inset-0 h-full w-full pointer-events-none" preserveAspectRatio="none">
-              {/* Premium line */}
-              <path
-                d="M 0% 80% L 20% 70% L 40% 55% L 60% 40% L 80% 25% L 100% 10%"
-                fill="none"
-                stroke="#34d399"
-                strokeWidth="2"
-              />
-              {/* Claims line */}
-              <path
-                d={insExcludeUnder25 
-                  ? "M 0% 90% L 20% 85% L 40% 75% L 60% 68% L 80% 58% L 100% 45%"
-                  : "M 0% 90% L 20% 85% L 40% 70% L 60% 60% L 80% 48% L 100% 35%"}
-                fill="none"
-                stroke="#fbbf24"
-                strokeWidth="2"
-                className="transition-all duration-500"
-              />
-            </svg>
-
-            {['Q1', 'Q2', 'Q3', 'Q4'].map((q, idx) => (
-              <span key={idx} className="text-[9px] text-slate-500 w-full text-center z-10 select-none">
-                {q}
+          {/* Machine Learning Output Terminal (2 Cols) */}
+          <div className="md:col-span-2 bg-slate-900/70 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+            <div>
+              <span className="text-xs font-bold text-slate-300 block mb-3 flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4 text-emerald-400" /> BigQuery ML Prediction Result
               </span>
-            ))}
+
+              <div className={`p-4 rounded-xl border mb-4 text-center transition-all ${
+                isBreach 
+                  ? 'bg-rose-950/40 border-rose-900/80 text-rose-400' 
+                  : 'bg-emerald-950/40 border-emerald-900/80 text-emerald-400'
+              }`}>
+                <span className="text-[10px] uppercase font-bold tracking-wider block mb-1 text-slate-400">Prediksi Status SLA (Batas 7 Hari)</span>
+                <span className="text-base font-black block">
+                  {isBreach ? 'CRITICAL: SLA BREACH RISK (>7 Hari)' : 'SLA SAFE (<= 7 Hari)'}
+                </span>
+                <div className="flex justify-center gap-4 mt-3 text-xs font-semibold">
+                  <div>
+                    <span className="text-slate-400 block text-[10px]">Estimasi TAT:</span>
+                    <span className="text-lg font-black text-slate-100">{estTatDays} Hari</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 block text-[10px]">Probabilitas Breach:</span>
+                    <span className={`text-lg font-black ${isBreach ? 'text-rose-400' : 'text-emerald-400'}`}>{breachProb}%</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-1.5 text-[10px] text-slate-300 border-t border-slate-800 pt-3">
+                <span className="font-bold text-slate-400 block mb-1">Faktor Utama Penyebab Delay:</span>
+                {slaPartner === 'Igloo' && <div className="text-amber-400">• Verifikasi polis manual mitra Igloo (+3.4 hari)</div>}
+                {slaDamage === 'Motherboard Repair' && <div className="text-amber-400">• Keterbatasan kuota teknisi Level 3 (+3.8 hari)</div>}
+                {slaDocCompleteness < 80 && <div className="text-amber-400">• Dokumen tidak lengkap saat submit (+{docDelay.toFixed(1)} hari)</div>}
+                {slaClaimAmount > 5000000 && <div className="text-rose-400">• Pemicu audit fraud manual klaim &gt; Rp 5M (+1.5 hari)</div>}
+              </div>
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-slate-800 text-[10px] text-slate-400">
+              <strong>Rekomendasi Operasional:</strong> {isBreach ? 'Aktifkan notifikasi proaktif WhatsApp ke konsumen & teruskan tiket ke Senior Adjuster Desk.' : 'Klaim dapat diproses langsung melalui jalur reguler fast-track.'}
+            </div>
           </div>
         </div>
-
-        {insExcludeUnder25 ? (
-          <div className="mt-4 text-xs text-emerald-400 bg-emerald-950/60 border border-emerald-800 p-3 rounded-lg flex items-start gap-2">
-            <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
-            <span>
-              <strong>Aktuaria Teroptimasi:</strong> Pengecualian pengemudi muda di bawah 25 tahun menurunkan rasio kerugian sebesar 6% ke angka 58%. Loss Ratio berada di bawah batas target underwriting asuransi.
-            </span>
-          </div>
-        ) : (
-          <div className="mt-4 text-xs text-amber-400 bg-amber-950/20 border border-amber-900/50 p-3 rounded-lg flex items-start gap-2">
-            <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
-            <span>
-              <strong>Peringatan Risiko:</strong> Segmen pengemudi di bawah 25 tahun menyumbangkan volatilitas klaim tinggi. Rasio kerugian total 64% mendekati ambang batas toleransi profitabilitas (65%).
-            </span>
-          </div>
-        )}
       </div>
     );
   }
