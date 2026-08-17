@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { LayoutGrid, BarChart3, PieChart, Brain } from 'lucide-react';
 import ProjectCard from '../components/ProjectCard';
 
-type Category = 'all' | 'data' | 'bi' | 'ml';
+type Category = 'all' | 'data' | 'ml' | 'other';
 
 const projects = [
     {
@@ -31,7 +31,7 @@ const projects = [
     {
         title: 'E-Commerce Toko Online PHP',
         description: 'Aplikasi e-commerce toko online lengkap dengan database relational MySQL, fitur keranjang belanja, proses checkout, dan panel administrasi.',
-        category: 'ml' as const,
+        category: 'other' as const,
         metric: '100ms',
         metricLabel: 'Waktu Respons',
         image: '/images/projects/toko-online.png',
@@ -61,7 +61,7 @@ const projects = [
     {
         title: 'Kalkulator Average Down Saham IDX',
         description: 'Kalkulator investasi interaktif untuk mensimulasikan perhitungan rata-rata beli bawah (average down) saham di Bursa Efek Indonesia (IDX).',
-        category: 'ml' as const,
+        category: 'other' as const,
         metric: '0.02s',
         metricLabel: 'Kalkulasi Latensi',
         image: '/images/projects/avg-down-idx.png',
@@ -142,9 +142,9 @@ const projects = [
 
 const categories = [
     { id: 'all', label: 'All Projects', icon: LayoutGrid },
-    { id: 'data', label: 'Data Analytics', icon: BarChart3 },
-    { id: 'bi', label: 'Business Intelligence', icon: PieChart },
+    { id: 'data', label: 'Data & BI', icon: BarChart3 },
     { id: 'ml', label: 'Machine Learning', icon: Brain },
+    { id: 'other', label: 'Other', icon: PieChart },
 ];
 
 export default function Projects() {

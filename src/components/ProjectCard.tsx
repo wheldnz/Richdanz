@@ -6,7 +6,7 @@ import { ArrowUpRight } from 'lucide-react';
 interface ProjectCardProps {
     title: string;
     description: string;
-    category: 'data' | 'bi' | 'ml';
+    category: 'data' | 'ml' | 'other';
     metric: string;
     metricLabel: string;
     image?: string;
@@ -15,9 +15,9 @@ interface ProjectCardProps {
 }
 
 const categoryLabels = {
-    data: 'Data Analytics',
-    bi: 'Business Intelligence',
+    data: 'Data & BI',
     ml: 'Machine Learning',
+    other: 'Other',
 };
 
 export default function ProjectCard({
