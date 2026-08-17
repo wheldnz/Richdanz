@@ -7,7 +7,7 @@ import { Send, Download, CheckCircle, Github, Linkedin, Mail, Instagram, Printer
 const contactReasons = [
     { value: 'hire', label: 'Hire you', emoji: '' },
     { value: 'collaborate', label: 'Collaborate', emoji: '' },
-    { value: 'ihsg', label: 'Discuss IHSG strategies', emoji: '' },
+    { value: 'ihsg', label: 'Discuss data & BI projects', emoji: '' },
     { value: 'hello', label: 'Just say hi', emoji: '' },
 ];
 
@@ -73,7 +73,7 @@ export default function Contact() {
                         Let&apos;s <span className="gradient-text">Connect</span>
                     </h2>
                     <p className="text-foreground-muted mt-4 max-w-xl mx-auto">
-                        Whether you want to collaborate, hire, or just chat about IHSG strategies—
+                        Whether you need a dashboard, an ML model, or a data pipeline—
                         I&apos;d love to hear from you.
                     </p>
                 </motion.div>
@@ -306,7 +306,7 @@ export default function Contact() {
                         Built with <span className="text-accent">Next.js</span> & <span className="text-accent">Framer Motion</span>
                     </p>
                     <p className="mt-2 font-mono text-xs">
-                        © 2026 • Made with ∑ rigor and caffeine
+                        © 2026 • Built with data-driven precision
                     </p>
                 </motion.footer>
             </div>

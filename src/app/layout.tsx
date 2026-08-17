@@ -14,13 +14,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Portfolio | Mathematics × Machine Learning",
-  description: "Data Analyst & ML Engineer with a Mathematics background. From proofs to predictions—bridging rigorous logic with real-world impact.",
-  keywords: ["Data Analyst", "Machine Learning", "Mathematics", "Portfolio", "Python", "Data Science"],
-  authors: [{ name: "Your Name" }],
+  title: "M. Wildan Nuril Akmal | Data Analyst • Power BI • ML Engineer",
+  description: "Data Analyst & Machine Learning Engineer specializing in Power BI dashboards, ETL pipelines, and predictive modeling. Mathematics graduate with 1+ years of experience.",
+  keywords: ["Data Analyst", "Power BI", "Machine Learning", "Business Intelligence", "Python", "BigQuery", "DAX", "ETL", "Portfolio"],
+  authors: [{ name: "M. Wildan Nuril Akmal" }],
   openGraph: {
-    title: "Portfolio | Mathematics × Machine Learning",
-    description: "Data Analyst & ML Engineer with a Mathematics background.",
+    title: "M. Wildan Nuril Akmal | Data Analyst • Power BI • ML Engineer",
+    description: "Data Analyst & Machine Learning Engineer specializing in Power BI dashboards, ETL pipelines, and predictive modeling. Mathematics graduate with 1+ years of experience.",
     type: "website",
   },
 };

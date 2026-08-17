@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { LayoutGrid, BarChart3, Sigma, Layers } from 'lucide-react';
+import { LayoutGrid, BarChart3, PieChart, Brain } from 'lucide-react';
 import ProjectCard from '../components/ProjectCard';
 
-type Category = 'all' | 'data' | 'math' | 'fullstack';
+type Category = 'all' | 'data' | 'bi' | 'ml';
 
 const projects = [
     {
@@ -31,7 +31,7 @@ const projects = [
     {
         title: 'E-Commerce Toko Online PHP',
         description: 'Aplikasi e-commerce toko online lengkap dengan database relational MySQL, fitur keranjang belanja, proses checkout, dan panel administrasi.',
-        category: 'fullstack' as const,
+        category: 'ml' as const,
         metric: '100ms',
         metricLabel: 'Waktu Respons',
         image: '/images/projects/toko-online.png',
@@ -41,7 +41,7 @@ const projects = [
     {
         title: 'Klasifikasi Diabetes Sekuens DNA',
         description: 'Deteksi dini risiko diabetes melitus berdasarkan pola sekuens DNA manusia menggunakan ekstraksi fitur K-mers dan klasifikasi K-Nearest Neighbors.',
-        category: 'math' as const,
+        category: 'ml' as const,
         metric: '93.2%',
         metricLabel: 'Akurasi KNN',
         image: '/images/projects/klasifikasi-diabetes-dna.png',
@@ -51,7 +51,7 @@ const projects = [
     {
         title: 'CS-AI-Agent Customer Service',
         description: 'Agen Customer Service otonom berbasis LLM yang dibekali kemampuan menggunakan peralatan (tool-use) untuk melacak paket dan refund otomatis.',
-        category: 'fullstack' as const,
+        category: 'ml' as const,
         metric: '88%',
         metricLabel: 'Resolusi Otomatis',
         image: '/images/projects/cs-ai-agent.png',
@@ -61,7 +61,7 @@ const projects = [
     {
         title: 'Kalkulator Average Down Saham IDX',
         description: 'Kalkulator investasi interaktif untuk mensimulasikan perhitungan rata-rata beli bawah (average down) saham di Bursa Efek Indonesia (IDX).',
-        category: 'fullstack' as const,
+        category: 'ml' as const,
         metric: '0.02s',
         metricLabel: 'Kalkulasi Latensi',
         image: '/images/projects/avg-down-idx.png',
@@ -141,10 +141,10 @@ const projects = [
 ];
 
 const categories = [
-    { id: 'all', label: 'General', icon: LayoutGrid },
-    { id: 'data', label: 'Data', icon: BarChart3 },
-    { id: 'math', label: 'Math', icon: Sigma },
-    { id: 'fullstack', label: 'Full Stack', icon: Layers },
+    { id: 'all', label: 'All Projects', icon: LayoutGrid },
+    { id: 'data', label: 'Data Analytics', icon: BarChart3 },
+    { id: 'bi', label: 'Business Intelligence', icon: PieChart },
+    { id: 'ml', label: 'Machine Learning', icon: Brain },
 ];
 
 export default function Projects() {
@@ -176,8 +176,8 @@ export default function Projects() {
                         Featured <span className="gradient-text">Projects</span>
                     </h2>
                     <p className="text-foreground-muted mt-4 max-w-xl mx-auto">
-                        Explore my work across data analysis, machine learning, and mathematical foundations.
-                        Each project tells a story of problem-solving and impact.
+                        Explore my work across data analytics, business intelligence, and machine learning.
+                        Each project demonstrates real-world problem-solving and measurable impact.
                     </p>
                 </motion.div>
 

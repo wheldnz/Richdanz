@@ -5,16 +5,16 @@ import { Printer, ArrowLeft, Mail, Phone, MapPin, Linkedin, Github, Globe, Award
 
 const personalInfo = {
     name: 'M. WILDAN NURIL AKMAL',
-    title: 'Data & Business Analyst',
+    title: 'Data Analyst | Power BI Engineer | ML Engineer',
     location: 'North Jakarta, Indonesia',
     email: 'wildanuril99@gmail.com',
     phone: '+6285225990234',
     linkedin: 'https://www.linkedin.com/in/wildan-nuril/',
     github: 'https://github.com/wheldnz',
-    portfolio: 'https://portofolio-muhammad-wildan-99.vercel.app/'
+    portfolio: 'https://portofolio-tau-lemon-87.vercel.app/'
 };
 
-const summary = `Data Analyst with 1+ years of experience transforming multi-source operational data into actionable business insights. Skilled in SQL, Python, BigQuery, Advanced Excel, reporting automation, and dashboard development using Power BI and Tableau. Mathematics graduate bringing rigorous logical and statistical frameworks to machine learning pipelines, predictive modeling, and quantitative research.`;
+const summary = `Data Analyst with 1+ years of experience transforming multi-source operational data into actionable business insights. Specializing in Power BI dashboard development, ETL pipeline automation, and machine learning model deployment. Proficient in SQL, Python, BigQuery, DAX, and Advanced Excel. Mathematics graduate applying rigorous statistical frameworks to predictive modeling, data validation, and quantitative analysis.`;
 
 const experiences = [
     {
@@ -51,9 +51,9 @@ const education = {
 };
 
 const skills = {
-    technical: ['SQL (BigQuery, MySQL, PostgreSQL)', 'Python (Pandas, NumPy, Scikit-learn, NLP)', 'Tableau & Power BI', 'Advanced Excel (XLOOKUP, ARRAYFORMULA, VSTACK)'],
-    analytics: ['Predictive Modeling', 'ETL Pipelines & Automation', 'Business Intelligence (BI)', 'Data Validation & Auditing'],
-    frameworks: ['Google Cloud Platform (GCP)', 'Google Apps Script', 'Next.js & React', 'PHP & Laravel', 'Git & GitHub']
+    technical: ['SQL (BigQuery, MySQL, PostgreSQL)', 'Python (Pandas, NumPy, Scikit-learn)', 'Power BI & DAX', 'Advanced Excel (XLOOKUP, Power Query, Pivot)'],
+    analytics: ['Predictive Modeling & ML', 'ETL Pipelines & Automation', 'Business Intelligence (BI)', 'Data Validation & Quality Assurance'],
+    frameworks: ['Google Cloud Platform (BigQuery)', 'Apache Airflow & dbt Core', 'TensorFlow / Scikit-Learn', 'Tableau & Looker Studio', 'Git & GitHub']
 };
 
 const topProjects = [

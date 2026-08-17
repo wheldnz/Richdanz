@@ -6,7 +6,7 @@ import { ArrowDown, Download, Github, Linkedin, Printer } from 'lucide-react';
 import LiveStats from '../components/LiveStats';
 import { TabId } from '../components/Navigation';
 
-const words = ["AI Engineer", "Data Analytics", "Full Stack Developer"];
+const words = ["Data Analyst", "Power BI Engineer", "ML Engineer"];
 
 interface HeroProps {
     onSelectTab?: (tab: TabId) => void;
@@ -75,10 +75,9 @@ export default function Hero({ onSelectTab }: HeroProps) {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: 0.1 }}
                 >
-                    <span className="block mb-2">Mathematics</span>
+                    <span className="block mb-2">M. Wildan Nuril Akmal</span>
                     <span className="flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1">
-                        <span>×</span>
-                        <span className="gradient-text inline-block">
+                        <span className="gradient-text inline-block text-3xl md:text-5xl lg:text-6xl">
                             {text}
                             <span className="animate-pulse ml-1 text-accent">|</span>
                         </span>
@@ -92,9 +91,9 @@ export default function Hero({ onSelectTab }: HeroProps) {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: 0.2 }}
                 >
-                    From proofs to predictions — bridging rigorous logic with real-world impact.
+                    Transforming raw data into actionable business insights through analytics, dashboards, and machine learning.
                     <span className="block mt-2 text-accent font-mono text-base">
-                        Data Analyst | BI &amp; Analytics Engineer
+                        Data Analyst | Power BI Engineer | Machine Learning Engineer
                     </span>
                 </motion.p>
 

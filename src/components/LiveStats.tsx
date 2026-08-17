@@ -11,9 +11,9 @@ interface StatItem {
 }
 
 const stats: StatItem[] = [
-    { label: 'Projects', value: 15, suffix: '+', icon: '' },
-    { label: 'Models Trained', value: 42, suffix: '+', icon: '' },
-    { label: 'Unlimited', value: '∞', suffix: '', icon: '' },
+    { label: 'Dashboards Built', value: 20, suffix: '+', icon: '' },
+    { label: 'ML Models Deployed', value: 15, suffix: '+', icon: '' },
+    { label: 'Data Processed', value: '5M', suffix: '+', icon: '' },
 ];
 
 function AnimatedNumber({ value, suffix }: { value: number | string; suffix: string }) {

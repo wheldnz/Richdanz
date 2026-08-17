@@ -5,31 +5,31 @@
    ============================================ */
 
 :root {
-  /* Light Mode - Clean Paper Theme */
+  /* Light Mode - Clean Professional Theme */
   --background: #ffffff;
-  --background-secondary: #fafafa;
-  --foreground: #111111;
-  --foreground-muted: #555555;
-  --accent: #ca8a04;
-  --accent-secondary: #eab308;
-  --accent-gradient: linear-gradient(135deg, #ca8a04 0%, #eab308 100%);
-  --card-bg: rgba(255, 255, 255, 0.8);
-  --card-border: rgba(0, 0, 0, 0.08);
-  --glow: rgba(202, 138, 4, 0.2);
+  --background-secondary: #f8fafc;
+  --foreground: #0f172a;
+  --foreground-muted: #475569;
+  --accent: #0284c7;
+  --accent-secondary: #0369a1;
+  --accent-gradient: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  --card-bg: rgba(255, 255, 255, 0.85);
+  --card-border: rgba(15, 23, 42, 0.08);
+  --glow: rgba(2, 132, 199, 0.15);
 }
 
 .dark {
-  /* Dark Mode - Terminal Theme */
-  --background: #111111;
-  --background-secondary: #1a1a1a;
-  --foreground: #ffffff;
-  --foreground-muted: #a3a3a3;
-  --accent: #facc15;
-  --accent-secondary: #eab308;
-  --accent-gradient: linear-gradient(135deg, #facc15 0%, #eab308 100%);
-  --card-bg: rgba(26, 26, 26, 0.8);
-  --card-border: rgba(255, 255, 255, 0.08);
-  --glow: rgba(250, 204, 21, 0.15);
+  /* Dark Mode - Professional Analyst Theme */
+  --background: #0a0f1a;
+  --background-secondary: #111827;
+  --foreground: #f1f5f9;
+  --foreground-muted: #94a3b8;
+  --accent: #38bdf8;
+  --accent-secondary: #0ea5e9;
+  --accent-gradient: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
+  --card-bg: rgba(17, 24, 39, 0.85);
+  --card-border: rgba(148, 163, 184, 0.1);
+  --glow: rgba(56, 189, 248, 0.12);
 }
 
 @theme inline {
@@ -293,54 +293,34 @@ body {
   letter-spacing: 0.05em;
 }
 
-.category-badge.analyst {
+.category-badge.data {
+  background: rgba(2, 132, 199, 0.15);
+  color: #0284c7;
+}
+
+.category-badge.bi {
   background: rgba(202, 138, 4, 0.15);
   color: #ca8a04;
 }
 
 .category-badge.ml {
-  background: rgba(234, 179, 8, 0.15);
-  color: #eab308;
+  background: rgba(5, 150, 105, 0.15);
+  color: #059669;
 }
 
-.category-badge.math {
-  background: rgba(161, 98, 7, 0.15);
-  color: #a16207;
+.dark .category-badge.data {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
 }
 
-.category-badge.fullstack {
+.dark .category-badge.bi {
   background: rgba(250, 204, 21, 0.15);
   color: #facc15;
-}
-
-.dark .category-badge.analyst {
-  background: rgba(234, 179, 8, 0.15);
-  color: #eab308;
 }
 
 .dark .category-badge.ml {
-  background: rgba(250, 204, 21, 0.15);
-  color: #facc15;
-}
-
-.dark .category-badge.math {
-  background: rgba(253, 224, 71, 0.15);
-  color: #fde047;
-}
-
-.dark .category-badge.fullstack {
-  background: rgba(254, 240, 138, 0.15);
-  color: #fef08a;
-}
-
-/* Project Category Data Badge */
-.category-badge.data {
-  background: rgba(59, 130, 246, 0.15);
-  color: var(--accent);
-}
-.dark .category-badge.data {
-  background: rgba(59, 130, 246, 0.2);
-  color: var(--accent);
+  background: rgba(52, 211, 153, 0.15);
+  color: #34d399;
 }
 
 /* Custom Prose Styling for Markdown Content */

@@ -15,22 +15,23 @@ import {
     Palette,
     FileCode2,
     Cloud,
-    Terminal
+    Terminal,
+    Sparkles
 } from 'lucide-react';
 
 const techStack = [
     { icon: Braces, label: 'Python', color: '#3776ab' },
-    { icon: Database, label: 'SQL (Postgres/MySQL)', color: '#f29111' },
-    { icon: BarChart3, label: 'Power BI', color: '#f2c811' },
-    { icon: Cloud, label: 'AWS', color: '#ff9900' },
-    { icon: Database, label: 'Google BigQuery', color: '#4285f4' },
-    { icon: FileCode2, label: 'PHP', color: '#777BB4' },
-    { icon: Binary, label: 'TypeScript', color: '#3178c6' },
-    { icon: Binary, label: 'React / Next.js', color: '#00D8FF' },
-    { icon: Code2, label: 'Google Apps Script', color: '#34a853' },
+    { icon: Database, label: 'SQL (BigQuery, MySQL, Postgres)', color: '#f29111' },
+    { icon: BarChart3, label: 'Power BI & DAX', color: '#f2c811' },
+    { icon: Cloud, label: 'Google Cloud Platform', color: '#4285f4' },
+    { icon: Table2, label: 'Advanced Excel', color: '#217346' },
     { icon: Sigma, label: 'Pandas & NumPy', color: '#150458' },
-    { icon: Table2, label: 'Excel', color: '#217346' },
-    { icon: Palette, label: 'HTML & CSS', color: '#E34F26' },
+    { icon: Binary, label: 'Scikit-Learn', color: '#f7931e' },
+    { icon: Sparkles, label: 'TensorFlow / Keras', color: '#ff6f00' },
+    { icon: Code2, label: 'Google Apps Script', color: '#34a853' },
+    { icon: BarChart3, label: 'Tableau', color: '#e97627' },
+    { icon: Database, label: 'Apache Airflow & dbt', color: '#017cee' },
+    { icon: FileCode2, label: 'Git & GitHub', color: '#181717' },
 ];
 
 export default function About() {
@@ -72,7 +73,7 @@ export default function About() {
                                 <div>
                                     <h3 className="text-2xl font-bold mb-1">M. Wildan Nuril Akmal</h3>
                                     <p className="text-accent font-mono text-sm">
-                                        Data Analyst & Machine Learning Engineer
+                                        Data Analyst | Power BI Engineer | ML Engineer
                                     </p>
                                     <p className="text-foreground-muted text-sm mt-1">
                                         Jakarta • Mathematics Background
@@ -83,16 +84,16 @@ export default function About() {
                             {/* The Story */}
                             <div className="space-y-4 text-foreground-muted leading-relaxed">
                                 <p>
-                                    <span className="text-foreground font-semibold">The Hybrid Journey:</span>{' '}
-                                    I didn&apos;t start in tech, I started in pure <span className="text-accent">Mathematics</span>.
-                                    I fell in love with logic and patterns, which naturally pulled me toward Data.
-                                    For me, it&apos;s not just about using libraries it&apos;s about seeing the math come to life to solve actual problems.
+                                    <span className="text-foreground font-semibold">The Data Journey:</span>{' '}
+                                    I started with a strong foundation in <span className="text-accent">Mathematics</span>,
+                                    which naturally evolved into a passion for turning raw data into business impact.
+                                    From building Power BI dashboards to deploying machine learning models, I bridge the gap between data and decision-making.
                                 </p>
                                 <p>
                                     <span className="text-foreground font-semibold">The Edge:</span>{' '}
-                                    I don&apos;t just trust the &quot;black box&quot;. Because I understand the math underneath from
-                                    eigenvalues to gradient descent I can fix broken models and optimize messy pipelines
-                                    when the standard tools fail.
+                                    With a math background, I don&apos;t just build dashboards or train models — I understand the
+                                    statistics underneath. From hypothesis testing to gradient descent, I optimize pipelines
+                                    and validate insights with rigor.
                                 </p>
 
                             </div>
@@ -105,8 +106,8 @@ export default function About() {
                                 whileHover={{ scale: 1.02 }}
                             >
                                 <div className="text-3xl mb-2"></div>
-                                <div className="text-sm font-medium">Mathematics</div>
-                                <div className="text-xs text-foreground-muted">Degree</div>
+                                <div className="text-sm font-medium">Dashboards</div>
+                                <div className="text-xs text-foreground-muted">Built 20+</div>
                             </motion.div>
 
                             <motion.div
@@ -115,15 +116,15 @@ export default function About() {
                             >
                                 <div className="text-3xl mb-2"></div>
                                 <div className="text-sm font-medium">ML Models</div>
-                                <div className="text-xs text-foreground-muted">Built 15+</div>
+                                <div className="text-xs text-foreground-muted">Deployed 15+</div>
                             </motion.div>
                             <motion.div
                                 className="glass-card p-4 text-center"
                                 whileHover={{ scale: 1.02 }}
                             >
                                 <div className="text-3xl mb-2"></div>
-                                <div className="text-sm font-medium">Impact Driven</div>
-                                <div className="text-xs text-foreground-muted">Always</div>
+                                <div className="text-sm font-medium">Data Pipelines</div>
+                                <div className="text-xs text-foreground-muted">Automated 10+</div>
                             </motion.div>
                         </div>
                     </motion.div>

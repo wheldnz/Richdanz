@@ -6,7 +6,7 @@ import { ArrowUpRight } from 'lucide-react';
 interface ProjectCardProps {
     title: string;
     description: string;
-    category: 'data' | 'math' | 'fullstack';
+    category: 'data' | 'bi' | 'ml';
     metric: string;
     metricLabel: string;
     image?: string;
@@ -15,9 +15,9 @@ interface ProjectCardProps {
 }
 
 const categoryLabels = {
-    data: 'Data Focus', // Merged Analyst+ML
-    math: 'Mathematics',
-    fullstack: 'Full Stack',
+    data: 'Data Analytics',
+    bi: 'Business Intelligence',
+    ml: 'Machine Learning',
 };
 
 export default function ProjectCard({
