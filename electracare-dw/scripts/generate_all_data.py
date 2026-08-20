@@ -456,9 +456,33 @@ def generate_fact_service_orders_and_parts(conn):
             sfee = random.choice([150000, 250000, 350000, 500000]) if scat != "Warranty Repair" else 0
             prevenue = random.randint(200000, 2500000) if "Replace" in scat or "Paid" in scat else 0
             tot_rev = sfee + prevenue
-            tot_cost = int(tot_rev * random.uniform(0.55, 0.75))
+            
+            # --- ANOMALY INJECTION 1: Harbolnas Spikes & Outage Drops ---
+            odate_str = str(odate_key)
+            if odate_str.endswith("1111") or odate_str.endswith("1212"):
+                tot_rev = int(tot_rev * random.uniform(3.5, 5.0))
+                sfee = int(sfee * random.uniform(3.5, 5.0))
+                prevenue = int(prevenue * random.uniform(3.5, 5.0))
+            elif 20240810 <= odate_key <= 20240817:
+                tot_rev = int(tot_rev * 0.20)
+                sfee = int(sfee * 0.20)
+                prevenue = int(prevenue * 0.20)
+
+            # --- ANOMALY INJECTION 2: Data Quality Noise (0.5% Negative Refund, 0.2% Fat-Finger Error) ---
+            rand_noise = random.random()
+            if rand_noise < 0.005:
+                tot_rev = -abs(tot_rev)
+            elif rand_noise < 0.007:
+                tot_rev = tot_rev * 100
+
+            tot_cost = int(abs(tot_rev) * random.uniform(0.55, 0.75))
             profit = tot_rev - tot_cost
+
+            # --- ANOMALY INJECTION 3: Operational SLA Bottleneck in ISC Jakarta Selatan (center_key == 3) ---
             tat_hrs = random.randint(4, 96)
+            if center_key == 3 and 20240601 <= odate_key <= 20240930:
+                if random.random() < 0.38:
+                    tat_hrs = random.randint(14 * 24, 21 * 24) # 14-21 Days Severe Delay
 
             row = [
                 oid, str(odate_key), str(cdate_key), str(ckey), str(dkey),
@@ -503,7 +527,13 @@ def generate_fact_inventory_and_others(conn):
             sdate = get_random_date_key()
             wh = random.randint(1, 5)
             part = random.randint(1, 8000)
-            qoh = random.randint(15, 300)
+            
+            # --- ANOMALY INJECTION 4: Regional Stockout Alert in Surabaya Hub (wh == 2) ---
+            if wh == 2 and part <= 1200 and random.random() < 0.35:
+                qoh = random.randint(0, 5) # Stockout below ROP (20)
+            else:
+                qoh = random.randint(15, 300)
+
             qres = random.randint(0, 20)
             qtrans = random.randint(0, 50)
             rop = 20
@@ -580,8 +610,15 @@ def generate_fact_inventory_and_others(conn):
             scost = random.randint(300000, 1500000)
             totcost = rcost + scost
             status = "Resolved" if random.random() > 0.08 else "Pending"
-            sla_status = "Met SLA" if tat <= sla_target else "Breached SLA"
-            csat = random.randint(3, 5)
+            
+            # --- ANOMALY INJECTION 5: SLA Breach Bottleneck in ISC Jaksel (centerkey == 3) ---
+            if centerkey == 3 and 20240601 <= cdate <= 20240930 and random.random() < 0.38:
+                tat = random.randint(14, 22)
+                csat = random.randint(1, 2)
+            else:
+                csat = random.randint(3, 5)
+
+            sla_status = "Met SLA" if tat <= sla_target else "SLA Breached"
 
             row = [
                 cid, str(cdate), str(adate), str(compdate), str(ckey), str(dkey),
@@ -597,20 +634,33 @@ def generate_fact_inventory_and_others(conn):
     print("Generating dwh.fact_device_protection (80,000 rows)...")
     cols_dp = ["claim_date_key", "policy_key", "customer_key", "device_key", "insurance_key", "geo_key", "junk_key", "claim_amount_idr", "premium_snapshot_idr", "deductible_paid_idr", "claim_status", "loss_ratio", "fraud_score"]
     buf_dp = StringIO()
+
+    # Fraud suspicious customers
+    fraud_customers = [101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115]
+
     for i in range(1, 80001):
         cdate = get_random_date_key()
         polkey = random.randint(1, 100000)
-        ckey = random.randint(1, 250000)
+        
+        # --- ANOMALY INJECTION 6: High Risk Insurance Fraud Claims ---
+        if i <= 300: # First 300 claims targeted for rapid multi-claim fraud testing
+            ckey = random.choice(fraud_customers)
+            camt = random.randint(25000000, 45000000) # Extremely high claim amount
+            status = "Under Investigation"
+            fscore = round(random.uniform(0.78, 0.96), 2)
+        else:
+            ckey = random.randint(1, 250000)
+            camt = random.randint(500000, 3000000)
+            status = "Approved"
+            fscore = round(random.uniform(0.01, 0.25), 2)
+
         dkey = random.randint(1, 2500)
         inskey = random.randint(1, 9)
         gkey = random.randint(1, 30)
         jkey = random.randint(1, 32)
-        camt = random.randint(500000, 3000000)
         prem = 79000 * 12
         ded = 100000
-        status = "Approved"
         lratio = round(camt / prem, 2)
-        fscore = round(random.uniform(0.01, 0.25), 2)
         buf_dp.write("\t".join([str(cdate), str(polkey), str(ckey), str(dkey), str(inskey), str(gkey), str(jkey), str(camt), str(prem), str(ded), status, str(lratio), str(fscore)]) + "\n")
         if i % 40000 == 0:
             bulk_insert_copy(conn, "dwh.fact_device_protection", cols_dp, buf_dp)
@@ -663,6 +713,16 @@ def generate_fact_inventory_and_others(conn):
         pdate, actarr, delay_days = get_random_date_pair(max_duration_days=10)
         estarr = pdate
         supkey = random.randint(1, 20)
+        
+        # --- ANOMALY INJECTION 7: Severe Supplier Lead Time Delay (OEM Display Tech - supkey == 4) ---
+        if supkey == 4:
+            delay_days = random.randint(20, 45) # 20 to 45 Days Delay
+            ontime = "FALSE"
+            is_in_full = "FALSE"
+        else:
+            ontime = "TRUE" if actarr <= estarr else "FALSE"
+            is_in_full = "TRUE"
+
         whkey = random.randint(1, 5)
         partkey = random.randint(1, 8000)
         gkey = random.randint(1, 30)
@@ -670,8 +730,12 @@ def generate_fact_inventory_and_others(conn):
         rqty = oqty
         ucost = random.randint(100000, 800000)
         totpo = oqty * ucost
-        ontime = "TRUE" if actarr <= estarr else "FALSE"
-        buf_po.write("\t".join([poid, str(pdate), str(supkey), str(whkey), str(partkey), str(gkey), str(oqty), str(rqty), str(ucost), str(totpo), str(estarr), str(actarr), ontime, "TRUE", str(delay_days)]) + "\n")
+        buf_po.write("\t".join([poid, str(pdate), str(supkey), str(whkey), str(partkey), str(gkey), str(oqty), str(rqty), str(ucost), str(totpo), str(estarr), str(actarr), ontime, is_in_full, str(delay_days)]) + "\n")
+        if i % 30000 == 0:
+            bulk_insert_copy(conn, "dwh.fact_spare_part_orders", cols_po, buf_po)
+            buf_po = StringIO()
+    if buf_po.getvalue():
+        bulk_insert_copy(conn, "dwh.fact_spare_part_orders", cols_po, buf_po)
         if i % 30000 == 0:
             bulk_insert_copy(conn, "dwh.fact_spare_part_orders", cols_po, buf_po)
             buf_po = StringIO()

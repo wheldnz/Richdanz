@@ -96,12 +96,13 @@ KPI: Inventory Turnover, Fill Rate, OTIF, Stockout, Lead Time.
 
 ------------------------------------------------------------------------
 
-# Project 4 --- HR Analytics
+# Project 4 --- E-Commerce & Embedded Insurtech BI Analytics (TokoAman.id)
 
-Dummy: - employee - attendance - payroll - performance - promotion -
-resignation
+Business Problem: Marketplace e-commerce yang menjual produk asuransi mikro langsung di checkout (gadget protection, shipping insurance, travel insurance).
 
-KPI: Attrition, Headcount, Overtime, Promotion, Salary.
+Tables/Datasets: - customers - products - campaigns - orders - order_items - insurance_policies - claims - ab_test_sessions
+
+KPI: Revenue Forecasting, Customer Churn Rate, RFM Customer Segment, Marketing Channel ROAS/ROI, A/B Testing Uplift.
 
 ------------------------------------------------------------------------
 
