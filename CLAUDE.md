@@ -107,16 +107,11 @@ const bigquery = new BigQuery({
 
 ```text
 potrfolio/
-├── CLAUDE.md                           # This guideline document
-├── Data_Analyst_Portfolio_Master_PRD.md # Master specifications for 6 projects
-├── electracare-dw/                     # Data Warehouse & dbt project
+├── CLAUDE.md                           # Guidelines & BigQuery context for Claude
+├── Data_Analyst_Portfolio_Master_PRD.md # Master specifications document
+├── electracare-dw/                     # Enterprise Data Warehouse (dbt, BigQuery & Airflow)
 │   └── keys/gcp_key.json               # BigQuery Service Account credentials
-├── project-01-sales/                   # Enterprise Sales Analytics
-├── project-02-churn/                   # Customer Churn Analytics
-├── project-03-supply-chain/            # Supply Chain Analytics
-├── project-04-ecommerce-insurtech-bi/  # TokoAman.id E-Commerce & Insurtech BI
-├── project-05-repair/                  # Repair Service Analytics
-├── project-06-insurance/               # Insurance Analytics
+├── project-04-ecommerce-insurtech-bi/  # TokoAman.id E-Commerce & Insurtech BI Project
 ├── src/                                # Next.js 16 Web Portfolio App
 │   ├── app/                            # App Router Pages & API Routes
 │   ├── components/                     # React UI Components
