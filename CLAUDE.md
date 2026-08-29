@@ -2,15 +2,26 @@
 
 This document provides context, coding standards, UI/UX directives, and BigQuery integration details for Claude when working on this project repository.
 
+## 📌 Introduction & Project Scope
+
+Project ini bertujuan untuk membangun dan mengembangkan **Web Portfolio Visualisasi Data & BI (Next.js 16 + Tailwind CSS v4)** yang modern, interaktif, dan berstandar enterprise.
+
+Seluruh studi kasus proyek analytics (seperti **Enterprise Sales Analytics, Customer Churn, Supply Chain, Repair Service, dan Insurance Analytics**) menggunakan satu sumber data utama yaitu **Enterprise Data Warehouse (`electracare-dw`)** di Google BigQuery. Selain itu, terdapat studi kasus khusus **E-Commerce & Insurtech BI (TokoAman.id)**.
+
+### Fokus Utama Claude:
+1. **Pengembangan UI/UX**: Merancang tampilan antarmuka portofolio yang futuristik, bersih, interaktif, dan responsif dengan visualisasi grafik, kartu KPI, skema data, serta penjelasan insight bisnis.
+2. **Koneksi BigQuery Live**: Mengatur integrasi langsung antara frontend web dengan dataset BigQuery `electracare-dw` melalui API routes Next.js atau query SDK.
+3. **Penyempurnaan Portfolio**: Menyajikan studi kasus analitis secara elegan (Executive Summary, Problem Statement, SQL Playground, DAX & Metrics, serta Recommendations).
+
 ---
 
 ## 🚀 Project Overview & Objectives
 
 - **Repository**: `wheldnz/richdanz` (GitHub)
-- **Goal**: High-impact Data Analyst, BI, and Data Engineering Portfolio Web Application featuring 6 enterprise-grade projects and a modern UI/UX interface.
+- **Goal**: High-impact Data Analyst, BI, and Data Engineering Portfolio Web Application powered by `electracare-dw` (BigQuery) and modern UI/UX interface.
 - **Current Development Focus**:
-  1. **UI/UX Enhancement**: Redesign and elevate the visual aesthetics, interactive dashboards, case study presentations, micro-animations, and mobile responsiveness.
-  2. **Data Integration**: Connect live BigQuery datasets, SQL query playgrounds, and interactive metric cards into the web interface.
+  1. **UI/UX Enhancement**: Redesign and elevate visual aesthetics, interactive dashboards, case study presentations, micro-animations, and mobile responsiveness.
+  2. **Data Integration**: Connect live BigQuery datasets (`electracare-dw`), SQL query playgrounds, and interactive metric cards into the web interface.
   3. **Performance & Code Quality**: Ensure clean Next.js App Router component architecture and TypeScript safety.
 
 ---
