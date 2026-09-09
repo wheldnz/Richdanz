@@ -61,9 +61,13 @@ Claude can query or connect to BigQuery using the embedded GCP Service Account k
 ### GCP Credentials
 - **GCP Project ID**: `electracare-dw`
 - **Service Account Email**: `airflow-bigquery-sa@electracare-dw.iam.gserviceaccount.com`
-- **Key File Path (Relative)**: `./electracare-dw/keys/gcp_key.json`
-- **Key File Path (Absolute Windows)**: `c:\Users\USER\Documents\present\potrfolio\electracare-dw\keys\gcp_key.json`
-- **Alternative Key File**: `./electracare-dw/electracare-dw-42556543e741.json`
+- **Local Key Path (Absolute Windows)**: `C:\Users\USER\Documents\present\potrfolio\electracare-dw\keys\gcp_key.json`
+- **Relative Key Path**: `./electracare-dw/keys/gcp_key.json`
+
+> [!IMPORTANT]
+> File `gcp_key.json` secara default ada di komputer lokal tetapi **diabaikan oleh `.gitignore`** agar tidak bocor ke GitHub publik.
+> - Jika memakai **Claude Code CLI (Lokal)**: Set env `$env:GOOGLE_APPLICATION_CREDENTIALS="C:\Users\USER\Documents\present\potrfolio\electracare-dw\keys\gcp_key.json"`.
+> - Jika memakai **Claude.ai (Web)**: Unggah file `gcp_key.json` secara manual ke dalam **Project Knowledge** di Claude Web.
 
 ### 1. Claude MCP (Model Context Protocol) Integration Setup
 To enable Claude (Claude Desktop / Claude Code) to directly read BigQuery schemas and execute SQL queries, use the following MCP configuration:
