@@ -2,59 +2,49 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
+import { LucideIcon, LineChart, Award } from 'lucide-react';
+import { projects } from '../sections/Projects';
+import { certificates } from '../sections/Certificates';
 
 interface StatItem {
     label: string;
-    value: number | string;
-    suffix: string;
-    icon: string;
+    value: number;
+    icon: LucideIcon;
 }
 
+// Counted directly from the Projects and Certificates sections below,
+// not invented round numbers.
 const stats: StatItem[] = [
-    { label: 'Dashboards Built', value: 20, suffix: '+', icon: '' },
-    { label: 'ML Models Deployed', value: 15, suffix: '+', icon: '' },
-    { label: 'Data Processed', value: '5M', suffix: '+', icon: '' },
+    { label: 'Projects Shipped', value: projects.length, icon: LineChart },
+    { label: 'Certifications Earned', value: certificates.length, icon: Award },
 ];
 
-function AnimatedNumber({ value, suffix }: { value: number | string; suffix: string }) {
-    const [displayValue, setDisplayValue] = useState<number | string>(0);
+function AnimatedNumber({ value }: { value: number }) {
+    const [displayValue, setDisplayValue] = useState(0);
     const ref = useRef<HTMLSpanElement>(null);
     const isInView = useInView(ref, { once: true });
 
     useEffect(() => {
         if (!isInView) return;
 
-        if (typeof value === 'string') {
-            setDisplayValue(value);
-            return;
-        }
-
-        const duration = 2000;
-        const steps = 60;
-        const stepValue = value / steps;
+        const duration = 1200;
+        const steps = Math.max(value, 1);
+        const stepDuration = duration / steps;
         let current = 0;
-        let step = 0;
 
         const timer = setInterval(() => {
-            step++;
-            current = Math.min(Math.round(stepValue * step), value);
-            setDisplayValue(current);
+            current++;
+            setDisplayValue(Math.min(current, value));
 
-            if (step >= steps) {
+            if (current >= value) {
                 clearInterval(timer);
-                setDisplayValue(value);
             }
-        }, duration / steps);
+        }, stepDuration);
 
         return () => clearInterval(timer);
     }, [value, isInView]);
 
-    return (
-        <span ref={ref} className="stat-number">
-            {displayValue}
-            <span className="text-lg">{suffix}</span>
-        </span>
-    );
+    return <span ref={ref} className="stat-number">{displayValue}</span>;
 }
 
 export default function LiveStats() {
@@ -68,15 +58,15 @@ export default function LiveStats() {
             {stats.map((stat, index) => (
                 <motion.div
                     key={stat.label}
-                    className="glass-card px-6 py-4 flex items-center gap-3"
+                    className="surface-card px-6 py-4 flex items-center gap-3"
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.9 + index * 0.1 }}
-                    whileHover={{ scale: 1.05 }}
+                    whileHover={{ scale: 1.03 }}
                 >
-                    <span className="text-2xl">{stat.icon}</span>
+                    <stat.icon className="w-5 h-5 text-accent shrink-0" />
                     <div className="flex flex-col">
-                        <AnimatedNumber value={stat.value} suffix={stat.suffix} />
+                        <AnimatedNumber value={stat.value} />
                         <span className="text-xs text-foreground-muted font-mono uppercase tracking-wider">
                             {stat.label}
                         </span>

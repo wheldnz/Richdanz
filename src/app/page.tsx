@@ -21,11 +21,9 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen bg-background">
-      {/* Animated Particle Background */}
+      {/* Particle network background - the one recurring motif, standing in for the
+          connections between raw data points across this portfolio's projects */}
       <ParticleBackground />
-
-      {/* Grid Pattern Overlay */}
-      <div className="fixed inset-0 bg-grid pointer-events-none opacity-30 z-0" />
 
       {/* Navigation */}
       <Navigation activeTab={activeTab} onSelectTab={setActiveTab} />

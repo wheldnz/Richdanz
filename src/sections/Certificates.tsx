@@ -1,10 +1,10 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Award, ExternalLink, Calendar, CheckCircle2 } from 'lucide-react';
+import { ExternalLink, Calendar, CheckCircle2 } from 'lucide-react';
 
 // Certificates Data
-const certificates = [
+export const certificates = [
     {
         title: 'International Conference Author & Presenter',
         issuer: 'The 14th International Conference on Green Technology',
@@ -72,8 +72,9 @@ const certificates = [
 
 export default function Certificates() {
     return (
-        <section id="certificates" className="py-8 md:py-12 px-6 relative overflow-hidden">
-            <div className="max-w-6xl mx-auto">
+        <section id="certificates" className="relative overflow-hidden py-8 md:py-12 px-6">
+            <div className="ghost-num" aria-hidden="true">04</div>
+            <div className="relative max-w-6xl mx-auto">
                 {/* Header */}
                 <motion.div
                     className="text-center mb-16"
@@ -90,7 +91,7 @@ export default function Certificates() {
                         Credentials
                     </motion.span>
                     <h2 className="section-title mt-4">
-                        Licenses & <span className="gradient-text">Certifications</span>
+                        Licenses & <span className="mark-swipe">Certifications</span>
                     </h2>
                 </motion.div>
 
@@ -99,7 +100,7 @@ export default function Certificates() {
                     {certificates.map((cert, index) => (
                         <motion.div
                             key={index}
-                            className="glass-card p-6 group relative overflow-hidden"
+                            className="surface-card p-6 group relative overflow-hidden"
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
@@ -116,19 +117,21 @@ export default function Certificates() {
                                 <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                             </div>
 
-                            <div className="flex items-start justify-between mb-4">
+                            <div className="flex items-start justify-between gap-3 mb-4">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent">
-                                        <Award className="w-5 h-5" />
+                                    {/* Stamp: the Ledger motif for a real, checkable credential */}
+                                    <div className="stamp w-12 h-12 flex items-center justify-center shrink-0" aria-hidden="true">
+                                        <CheckCircle2 className="w-5 h-5" />
                                     </div>
                                     <div>
-                                        <h3 className="font-bold text-lg group-hover:text-accent transition-colors">
+                                        <h3 className="font-serif text-lg group-hover:text-accent transition-colors">
                                             {cert.title}
                                         </h3>
                                         <p className="text-sm text-foreground-muted">{cert.issuer}</p>
                                     </div>
                                 </div>
-                                <span className="text-xs font-mono text-foreground-muted bg-foreground/5 px-2 py-1 rounded">
+                                <span className="inline-flex items-center gap-1 text-xs font-mono text-foreground-muted shrink-0">
+                                    <Calendar className="w-3.5 h-3.5" aria-hidden="true" />
                                     {cert.date}
                                 </span>
                             </div>
@@ -142,7 +145,7 @@ export default function Certificates() {
                                 {cert.skills.map((skill) => (
                                     <span
                                         key={skill}
-                                        className="text-xs px-2 py-0.5 rounded-full border border-white/10 text-foreground-muted group-hover:border-accent/30 transition-colors"
+                                        className="text-xs px-2 py-0.5 rounded-full border border-card-border text-foreground-muted group-hover:border-accent/60 transition-colors"
                                     >
                                         {skill}
                                     </span>
@@ -154,18 +157,10 @@ export default function Certificates() {
                                 href={cert.link}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 text-sm font-medium text-accent hover:underline"
+                                className="inline-flex items-center gap-2 text-sm font-medium text-accent hover:underline py-3 -my-3"
                             >
                                 Show Credential <ExternalLink className="w-3 h-3" />
                             </a>
-
-                            {/* Decorative Gradient on Hover */}
-                            <div
-                                className="absolute inset-0 opacity-0 group-hover:opacity-10 pointer-events-none transition-opacity duration-500"
-                                style={{
-                                    background: 'linear-gradient(45deg, transparent, var(--accent), transparent)'
-                                }}
-                            />
                         </motion.div>
                     ))}
                 </div>

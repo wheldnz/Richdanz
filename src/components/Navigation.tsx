@@ -32,6 +32,16 @@ export default function Navigation({ activeTab, onSelectTab }: NavigationProps) 
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    // Escape closes the open mobile menu, same as any other dismissible panel.
+    useEffect(() => {
+        if (!isMobileMenuOpen) return;
+        const handleKey = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') setIsMobileMenuOpen(false);
+        };
+        window.addEventListener('keydown', handleKey);
+        return () => window.removeEventListener('keydown', handleKey);
+    }, [isMobileMenuOpen]);
+
     const handleNavClick = (tab: TabId) => {
         onSelectTab(tab);
         setIsMobileMenuOpen(false);
@@ -48,16 +58,16 @@ export default function Navigation({ activeTab, onSelectTab }: NavigationProps) 
         >
             <div className="max-w-6xl mx-auto px-6">
                 <div
-                    className={`grid grid-cols-3 items-center ${isScrolled ? 'glass-card px-6 py-3' : ''
+                    className={`grid grid-cols-3 items-center ${isScrolled ? 'nav-surface px-6 py-3' : ''
                         }`}
                 >
                     {/* Logo (Left) */}
                     <div className="flex justify-start">
                         <button
                             onClick={() => handleNavClick('hero')}
-                            className="flex items-center gap-2 font-bold text-lg focus:outline-none"
+                            className="flex items-center justify-center gap-2 font-bold text-lg w-11 h-11 -ml-2"
                         >
-                            <span className="text-3xl font-extrabold text-foreground hover:text-accent transition-colors">W</span>
+                            <span className="font-serif text-3xl text-foreground hover:text-accent transition-colors">W</span>
                         </button>
                     </div>
 
@@ -90,10 +100,13 @@ export default function Navigation({ activeTab, onSelectTab }: NavigationProps) 
                     <div className="flex justify-end items-center gap-4">
                         <ThemeToggle />
 
-                        {/* Mobile Menu Button */}
+                        {/* Mobile Menu Button - sized to the 44px tap-target minimum, not
+                            just the icon's own box */}
                         <motion.button
-                            className="md:hidden glass-card p-2"
+                            className="md:hidden surface-card w-11 h-11 flex items-center justify-center"
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                            aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+                            aria-expanded={isMobileMenuOpen}
                             whileTap={{ scale: 0.9 }}
                         >
                             {isMobileMenuOpen ? (
@@ -107,7 +120,7 @@ export default function Navigation({ activeTab, onSelectTab }: NavigationProps) 
 
                 {/* Mobile Menu */}
                 <motion.div
-                    className={`md:hidden mt-4 glass-card overflow-hidden ${isMobileMenuOpen ? 'block' : 'hidden'
+                    className={`md:hidden mt-4 surface-card overflow-hidden ${isMobileMenuOpen ? 'block' : 'hidden'
                         }`}
                     initial={{ height: 0, opacity: 0 }}
                     animate={{
@@ -121,7 +134,7 @@ export default function Navigation({ activeTab, onSelectTab }: NavigationProps) 
                             <button
                                 key={item.label}
                                 onClick={() => handleNavClick(item.tab)}
-                                className={`block w-full text-left transition-colors py-2 px-3 rounded-lg text-sm font-medium ${
+                                className={`block w-full text-left transition-colors py-3.5 px-3 rounded-lg text-sm font-medium ${
                                     activeTab === item.tab
                                         ? 'bg-accent/10 text-accent font-semibold'
                                         : 'text-foreground-muted hover:text-foreground'

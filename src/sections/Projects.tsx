@@ -2,12 +2,12 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { LayoutGrid, BarChart3, PieChart, Brain } from 'lucide-react';
+import { LayoutGrid, BarChart3, PieChart, Brain, ArrowUpRight } from 'lucide-react';
 import ProjectCard from '../components/ProjectCard';
 
 type Category = 'all' | 'data' | 'ml' | 'other';
 
-const projects = [
+export const projects = [
     {
         title: 'Enterprise Data Warehouse (GCP BigQuery & Airflow)',
         description: 'Perancangan dan pembangunan Enterprise Data Warehouse (EDW) terpadu PT ElectraCare Indonesia mengolah 5.88+ juta baris data di Google BigQuery dengan orkestrasi Airflow di WSL2 Ubuntu dan dbt Core.',
@@ -147,16 +147,21 @@ const categories = [
     { id: 'other', label: 'Other', icon: PieChart },
 ];
 
+// The lead project, pulled out of the grid into its own featured treatment.
+// Its real metric (5.88M rows processed) carries the emphasis, not a claim.
+const [featured, ...rest] = projects;
+
 export default function Projects() {
     const [activeCategory, setActiveCategory] = useState<Category>('all');
 
     const filteredProjects = activeCategory === 'all'
-        ? projects
-        : projects.filter(p => p.category === activeCategory);
+        ? rest
+        : rest.filter(p => p.category === activeCategory);
 
     return (
-        <section id="projects" className="py-8 md:py-12 px-6">
-            <div className="max-w-6xl mx-auto">
+        <section id="projects" className="relative overflow-hidden py-8 md:py-12 px-6">
+            <div className="ghost-num" aria-hidden="true">03</div>
+            <div className="relative max-w-6xl mx-auto">
                 {/* Section Header */}
                 <motion.div
                     className="text-center mb-16"
@@ -173,13 +178,60 @@ export default function Projects() {
                         The Lab
                     </motion.span>
                     <h2 className="section-title mt-4">
-                        Featured <span className="gradient-text">Projects</span>
+                        Featured <span className="mark-swipe">Projects</span>
                     </h2>
                     <p className="text-foreground-muted mt-4 max-w-xl mx-auto">
                         Explore my work across data analytics, business intelligence, and machine learning.
                         Each project demonstrates real-world problem-solving and measurable impact.
                     </p>
                 </motion.div>
+
+                {/* Featured Project: pulled out of the grid, torn-card treatment,
+                    shown only on the unfiltered view so the metric it leads with
+                    always matches the category the visitor asked to see. */}
+                {activeCategory === 'all' && (
+                    <motion.a
+                        href={featured.link}
+                        className="featured-block group block mb-12"
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                    >
+                        <div>
+                            <span className={`category-badge ${featured.category}`}>
+                                {categories.find((c) => c.id === featured.category)?.label}
+                            </span>
+                            <h3 className="font-serif text-2xl md:text-3xl font-normal mt-4 mb-3 group-hover:text-accent transition-colors">
+                                {featured.title}
+                            </h3>
+                            <p className="text-foreground-muted max-w-xl leading-relaxed">
+                                {featured.description}
+                            </p>
+                            <div className="mt-5 flex flex-wrap gap-2">
+                                {featured.tags.map((tag) => (
+                                    <span
+                                        key={tag}
+                                        className="text-xs font-mono px-2 py-1 rounded-md bg-foreground/5 text-foreground-muted"
+                                    >
+                                        {tag}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="text-left md:text-right shrink-0">
+                            <div className="font-mono text-4xl md:text-5xl font-bold text-accent leading-none">
+                                {featured.metric}
+                            </div>
+                            <div className="text-xs text-foreground-muted uppercase tracking-widest mt-2">
+                                {featured.metricLabel}
+                            </div>
+                            <span className="inline-flex items-center gap-1 mt-5 text-sm font-mono text-accent group-hover:underline">
+                                View case study
+                                <ArrowUpRight className="w-4 h-4" />
+                            </span>
+                        </div>
+                    </motion.a>
+                )}
 
                 {/* Category Filter */}
                 <motion.div
@@ -193,9 +245,9 @@ export default function Projects() {
                         <motion.button
                             key={cat.id}
                             onClick={() => setActiveCategory(cat.id as Category)}
-                            className={`px-5 py-2.5 rounded-full font-medium text-sm transition-all cursor-pointer ${activeCategory === cat.id
+                            className={`px-5 py-3 rounded-full font-medium text-sm transition-all cursor-pointer ${activeCategory === cat.id
                                 ? 'bg-accent text-background'
-                                : 'glass-card hover:bg-accent/10'
+                                : 'surface-card hover:bg-accent/10'
                                 }`}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}

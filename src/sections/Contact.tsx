@@ -5,17 +5,20 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Download, CheckCircle, Github, Linkedin, Mail, Instagram, Printer } from 'lucide-react';
 
 const contactReasons = [
-    { value: 'hire', label: 'Hire you', emoji: '' },
-    { value: 'collaborate', label: 'Collaborate', emoji: '' },
-    { value: 'ihsg', label: 'Discuss data & BI projects', emoji: '' },
-    { value: 'hello', label: 'Just say hi', emoji: '' },
+    { value: 'hire', label: 'Hire you' },
+    { value: 'collaborate', label: 'Collaborate' },
+    { value: 'ihsg', label: 'Discuss data & BI projects' },
+    { value: 'hello', label: 'Just say hi' },
 ];
 
+// Monochrome ink icons, not brand colors - keeps every icon at a verified
+// contrast ratio in both themes instead of four one-off hex values that
+// only happened to work on a white background.
 const socialLinks = [
-    { icon: Github, label: 'GitHub', href: 'https://github.com/wheldnz', color: '#333' },
-    { icon: Linkedin, label: 'LinkedIn', href: 'https://www.linkedin.com/in/wildan-nuril/', color: '#0077b5' },
-    { icon: Instagram, label: 'Instagram', href: 'https://instagram.com/wheldnz', color: '#E1306C' },
-    { icon: Mail, label: 'Email', href: 'mailto:wildanuril99@gmail.com', color: '#ea4335' },
+    { icon: Github, label: 'GitHub', href: 'https://github.com/wheldnz' },
+    { icon: Linkedin, label: 'LinkedIn', href: 'https://www.linkedin.com/in/wildan-nuril/' },
+    { icon: Instagram, label: 'Instagram', href: 'https://instagram.com/wheldnz' },
+    { icon: Mail, label: 'Email', href: 'mailto:wildanuril99@gmail.com' },
 ];
 
 export default function Contact() {
@@ -57,8 +60,9 @@ export default function Contact() {
     };
 
     return (
-        <section id="contact" className="py-8 md:py-12 px-6">
-            <div className="max-w-6xl mx-auto">
+        <section id="contact" className="relative overflow-hidden py-8 md:py-12 px-6">
+            <div className="ghost-num" aria-hidden="true">05</div>
+            <div className="relative max-w-6xl mx-auto">
                 {/* Section Header */}
                 <motion.div
                     className="text-center mb-16"
@@ -70,10 +74,10 @@ export default function Contact() {
                         The Vault
                     </span>
                     <h2 className="section-title mt-4">
-                        Let&apos;s <span className="gradient-text">Connect</span>
+                        Let&apos;s <span className="mark-swipe">Connect</span>
                     </h2>
                     <p className="text-foreground-muted mt-4 max-w-xl mx-auto">
-                        Whether you need a dashboard, an ML model, or a data pipeline—
+                        Whether you need a dashboard, an ML model, or a data pipeline,
                         I&apos;d love to hear from you.
                     </p>
                 </motion.div>
@@ -86,7 +90,7 @@ export default function Contact() {
                         viewport={{ once: true }}
                         transition={{ duration: 0.6 }}
                     >
-                        <div className="glass-card p-8">
+                        <div className="surface-card p-8">
                             <AnimatePresence mode="wait">
                                 {isSubmitted ? (
                                     <motion.div
@@ -127,7 +131,7 @@ export default function Contact() {
                                                 required
                                                 value={formState.name}
                                                 onChange={(e) => setFormState({ ...formState, name: e.target.value })}
-                                                className="w-full px-4 py-3 rounded-xl bg-background border border-card-border focus:border-accent focus:outline-none transition-colors"
+                                                className="w-full px-4 py-3 rounded-xl bg-background border border-input-border focus:border-accent transition-colors"
                                                 placeholder="Your name"
                                             />
                                         </div>
@@ -142,7 +146,7 @@ export default function Contact() {
                                                 required
                                                 value={formState.email}
                                                 onChange={(e) => setFormState({ ...formState, email: e.target.value })}
-                                                className="w-full px-4 py-3 rounded-xl bg-background border border-card-border focus:border-accent focus:outline-none transition-colors"
+                                                className="w-full px-4 py-3 rounded-xl bg-background border border-input-border focus:border-accent transition-colors"
                                                 placeholder="you@example.com"
                                             />
                                         </div>
@@ -156,7 +160,7 @@ export default function Contact() {
                                                 required
                                                 value={formState.reason}
                                                 onChange={(e) => setFormState({ ...formState, reason: e.target.value })}
-                                                className="w-full px-4 py-3 rounded-xl bg-background border border-card-border focus:border-accent focus:outline-none transition-colors cursor-pointer"
+                                                className="w-full px-4 py-3 rounded-xl bg-background border border-input-border focus:border-accent transition-colors cursor-pointer"
                                             >
                                                 <option value="">Select a reason</option>
                                                 {contactReasons.map((reason) => (
@@ -177,7 +181,7 @@ export default function Contact() {
                                                 rows={4}
                                                 value={formState.message}
                                                 onChange={(e) => setFormState({ ...formState, message: e.target.value })}
-                                                className="w-full px-4 py-3 rounded-xl bg-background border border-card-border focus:border-accent focus:outline-none transition-colors resize-none"
+                                                className="w-full px-4 py-3 rounded-xl bg-background border border-input-border focus:border-accent transition-colors resize-none"
                                                 placeholder="Your message..."
                                             />
                                         </div>
@@ -221,9 +225,8 @@ export default function Contact() {
                         className="space-y-8"
                     >
                         {/* Resume Download */}
-                        <div className="glass-card p-8">
-                            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                                <span className="text-accent"></span>
+                        <div className="surface-card p-8">
+                            <h3 className="text-xl font-bold mb-4">
                                 Resume
                             </h3>
                             <p className="text-foreground-muted mb-6">
@@ -254,9 +257,8 @@ export default function Contact() {
                         </div>
 
                         {/* Social Links */}
-                        <div className="glass-card p-8">
-                            <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-                                <span className="text-accent"></span>
+                        <div className="surface-card p-8">
+                            <h3 className="text-xl font-bold mb-6">
                                 Connect Elsewhere
                             </h3>
                             <div className="grid grid-cols-2 gap-4">
@@ -266,30 +268,27 @@ export default function Contact() {
                                         href={social.href}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="glass-card p-4 flex items-center gap-3 hover:bg-accent/10 transition-colors"
+                                        className="group surface-card p-4 flex items-center gap-3 hover:bg-accent/10 transition-colors"
                                         whileHover={{ scale: 1.05, x: 5 }}
                                         whileTap={{ scale: 0.95 }}
                                     >
-                                        <social.icon
-                                            className="w-5 h-5"
-                                            style={{ color: social.color }}
-                                        />
+                                        <social.icon className="w-5 h-5 text-foreground-muted group-hover:text-accent transition-colors" />
                                         <span className="font-medium text-sm">{social.label}</span>
                                     </motion.a>
                                 ))}
                             </div>
                         </div>
 
-                        {/* Fun Fact */}
+                        {/* Fun Fact - a self-aware joke, not a metrics claim. The one
+                            sticky-note aside on this page, per the Ledger motif. */}
                         <motion.div
-                            className="glass-card p-6 text-center"
-                            whileHover={{ scale: 1.02 }}
+                            className="pin-note text-center mx-auto max-w-xs rotate-[-1deg]"
+                            whileHover={{ scale: 1.02, rotate: 0 }}
                         >
-                            <p className="text-sm text-foreground-muted">
-                                <span className="text-2xl block mb-2"></span>
-                                Probability of me replying: <span className="text-accent font-mono font-bold">0.98</span>
+                            <p>
+                                Probability of me replying: <span className="text-accent font-mono not-italic font-bold">0.98</span>
                                 <br />
-                                <span className="text-xs">(The other 0.02 is when I&apos;m debugging)</span>
+                                <span className="text-xs">(the other 0.02 is when I&apos;m debugging)</span>
                             </p>
                         </motion.div>
                     </motion.div>

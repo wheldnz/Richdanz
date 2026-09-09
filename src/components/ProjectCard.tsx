@@ -33,11 +33,11 @@ export default function ProjectCard({
     return (
         <motion.a
             href={link}
-            className="group relative block glass-card p-6 overflow-hidden"
+            className="group relative block surface-card p-6 overflow-hidden"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            whileHover={{ y: -8 }}
+            whileHover={{ y: -6 }}
             transition={{ duration: 0.4 }}
         >
             {/* Project Image */}
@@ -52,23 +52,20 @@ export default function ProjectCard({
                 </div>
             )}
 
-            {/* Hover Metric Popup */}
-            <motion.div
-                className="absolute top-4 right-4 glass-card px-4 py-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
-                initial={{ scale: 0.8, opacity: 0 }}
-                whileHover={{ scale: 1 }}
-            >
-                <div className="text-lg font-bold gradient-text">{metric}</div>
-                <div className="text-xs text-foreground-muted">{metricLabel}</div>
-            </motion.div>
-
-            {/* Category Badge */}
-            <span className={`category-badge ${category} mt-2 inline-block`}>
-                {categoryLabels[category]}
-            </span>
+            {/* Category + headline metric: always visible, not hidden behind hover
+                so keyboard and touch users see it too, not just mouse hover */}
+            <div className="flex items-start justify-between gap-3">
+                <span className={`category-badge ${category}`}>
+                    {categoryLabels[category]}
+                </span>
+                <div className="text-right shrink-0">
+                    <div className="text-lg font-mono font-bold text-accent leading-none">{metric}</div>
+                    <div className="text-[11px] text-foreground-muted mt-1">{metricLabel}</div>
+                </div>
+            </div>
 
             {/* Content */}
-            <h3 className="mt-4 text-xl font-bold tracking-tight group-hover:gradient-text transition-all duration-300">
+            <h3 className="mt-4 font-serif text-xl font-normal tracking-tight group-hover:text-accent transition-colors duration-300">
                 {title}
             </h3>
 
@@ -88,25 +85,15 @@ export default function ProjectCard({
                 ))}
             </div>
 
-            {/* Arrow Icon */}
+            {/* Arrow Icon: signals the card is a real link to the case study.
+                Also revealed on keyboard focus, not hover alone, so keyboard
+                users get the same affordance as mouse users. */}
             <motion.div
-                className="absolute bottom-4 right-4 w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300"
-                whileHover={{ scale: 1.1, rotate: 45 }}
+                className="absolute bottom-4 right-4 w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-all duration-300"
+                whileHover={{ scale: 1.1 }}
             >
                 <ArrowUpRight className="w-5 h-5 text-accent" />
             </motion.div>
-
-            {/* Gradient border on hover */}
-            <motion.div
-                className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                style={{
-                    background: 'linear-gradient(135deg, transparent 0%, var(--glow) 50%, transparent 100%)',
-                    padding: '1px',
-                    mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-                    maskComposite: 'xor',
-                    WebkitMaskComposite: 'xor',
-                }}
-            />
         </motion.a>
     );
 }

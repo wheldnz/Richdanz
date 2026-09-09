@@ -5,31 +5,40 @@
    ============================================ */
 
 :root {
-  /* Light Mode - Clean Professional Theme */
-  --background: #ffffff;
-  --background-secondary: #f8fafc;
-  --foreground: #0f172a;
-  --foreground-muted: #475569;
-  --accent: #0284c7;
-  --accent-secondary: #0369a1;
-  --accent-gradient: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
-  --card-bg: rgba(255, 255, 255, 0.85);
-  --card-border: rgba(15, 23, 42, 0.08);
-  --glow: rgba(2, 132, 199, 0.15);
+  /* Light Mode - "Ledger": paper and ink, one terracotta accent.
+     Chosen for a Math/Data Analyst portfolio: reads as a real working
+     notebook of verifiable numbers, not a generic SaaS gradient theme.
+     Every pairing below is checked against WCAG AA with the antislop-human
+     contrast checker before use - see the PR/commit notes for the ratios. */
+  --background: #f5f2ea;
+  --background-secondary: #ece7d9;
+  --foreground: #1c1a16;
+  --foreground-muted: #6b6558;
+  --accent: #a8460e;
+  --accent-secondary: #7a3308;
+  --accent-gradient: linear-gradient(135deg, #a8460e 0%, #7a3308 100%);
+  --card-bg: #fbf9f3;
+  --card-border: #d9d2c2;
+  --input-border: #8a8066;
+  --mark-highlight: #f6d878;
+  --glow: rgba(28, 26, 22, 0.1);
 }
 
 .dark {
-  /* Dark Mode - Professional Analyst Theme */
-  --background: #0a0f1a;
-  --background-secondary: #111827;
-  --foreground: #f1f5f9;
-  --foreground-muted: #94a3b8;
-  --accent: #38bdf8;
-  --accent-secondary: #0ea5e9;
-  --accent-gradient: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
-  --card-bg: rgba(17, 24, 39, 0.85);
-  --card-border: rgba(148, 163, 184, 0.1);
-  --glow: rgba(56, 189, 248, 0.12);
+  /* Dark Mode - same ledger identity, ink turned to paper-under-lamplight
+     instead of the generic near-black/blue "developer dark mode" default. */
+  --background: #16130f;
+  --background-secondary: #1f1a14;
+  --foreground: #ece6d8;
+  --foreground-muted: #a89f8c;
+  --accent: #e08a3e;
+  --accent-secondary: #c06a1f;
+  --accent-gradient: linear-gradient(135deg, #e08a3e 0%, #c06a1f 100%);
+  --card-bg: #241f18;
+  --card-border: #3a332a;
+  --input-border: #7a6f5c;
+  --mark-highlight: #6b4a1a;
+  --glow: rgba(224, 138, 62, 0.18);
 }
 
 @theme inline {
@@ -39,6 +48,10 @@
   --color-foreground-muted: var(--foreground-muted);
   --color-accent: var(--accent);
   --color-accent-secondary: var(--accent-secondary);
+  --color-card-bg: var(--card-bg);
+  --color-card-border: var(--card-border);
+  --color-input-border: var(--input-border);
+  --color-mark-highlight: var(--mark-highlight);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -56,7 +69,43 @@ body {
   overflow-x: hidden;
 }
 
-/* Glassmorphism Card */
+/* Explicit focus-visible ring on every interactive element, in both themes.
+   Never removed without this replacement (WCAG 2.4.7 / antislop R-32). */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Nav Surface - the navbar, once it lifts off scroll, is the one element
+   that visibly detaches from the page (a lifted card, not blurred glass -
+   paper does not glassmorph). Every other card uses .surface-card flat. */
+.nav-surface {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 1.5rem;
+  box-shadow: 0 12px 30px -10px var(--glow);
+  transition: all 0.3s ease;
+}
+
+/* Surface Card - default card surface across the site: solid paper, not blur. */
+.surface-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 1.5rem;
+  transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.surface-card-hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -20px var(--glow);
+  border-color: var(--accent);
+}
+
+/* Glassmorphism Card - kept only for the project-detail dashboard components
+   (InteractiveDashboard, BacktestWidget, DashboardContainer), which are out
+   of scope for this redesign and still reference this class name. The
+   landing page itself no longer uses blur anywhere; see .nav-surface above. */
 .glass-card {
   background: var(--card-bg);
   backdrop-filter: blur(20px);
@@ -72,36 +121,136 @@ body {
   border-color: var(--accent);
 }
 
-/* Gradient Text */
+/* Gradient Text - kept for the rare case a heading needs it; the primary
+   emphasis device is .mark-swipe below (see hero). */
 .gradient-text {
   background: var(--accent-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  /* Fix descender clipping - aggressive values */
   padding-bottom: 0.5em;
   line-height: 1.5;
   display: inline-block;
 }
 
-/* Animated Background Grid */
-.bg-grid {
-  background-image:
-    linear-gradient(var(--card-border) 1px, transparent 1px),
-    linear-gradient(90deg, var(--card-border) 1px, transparent 1px);
-  background-size: 60px 60px;
-  animation: gridMove 20s linear infinite;
+/* ============================================
+   LEDGER MOTIF - the identity system carried through every section:
+   a marker swipe under one emphasized word, a hand-drawn underline,
+   numbered figures, a torn/rotated featured block, round verification
+   stamps, and a giant ghost numeral marking each section. One family
+   of gestures, reused deliberately, not scattered decoration.
+   ============================================ */
+
+/* Marker swipe: a highlighter stroke behind one word in a headline. */
+.mark-swipe {
+  position: relative;
+  white-space: nowrap;
+  font-style: italic;
+}
+.mark-swipe::before {
+  content: "";
+  position: absolute;
+  left: -6px;
+  right: -8px;
+  bottom: 2px;
+  top: 38%;
+  background: var(--mark-highlight);
+  transform: rotate(-1deg);
+  z-index: -1;
+  border-radius: 2px 6px 3px 8px / 4px 2px 6px 3px;
 }
 
-@keyframes gridMove {
-  0% {
-    background-position: 0 0;
-  }
+.underline-doodle {
+  display: block;
+}
+.underline-doodle path {
+  stroke: var(--accent);
+  stroke-width: 2.5;
+  fill: none;
+  stroke-linecap: round;
+}
 
-  100% {
-    background-position: 60px 60px;
+/* Pin note: a sticky-note aside, used sparingly (at most once per page). */
+.pin-note {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  padding: 12px 14px;
+  font-style: italic;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--foreground-muted);
+  box-shadow: 3px 4px 10px var(--glow);
+}
+
+/* Ghost numeral: a large, faint section number, the recurring wayfinding
+   device that replaces a generic "01 / 02 / 03" eyebrow label. */
+.ghost-num {
+  position: absolute;
+  top: -0.15em;
+  right: -0.02em;
+  font-size: clamp(96px, 16vw, 168px);
+  font-weight: 700;
+  color: var(--foreground);
+  opacity: 0.06;
+  line-height: 1;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Featured block: one project pulled out of the grid, torn-clipping style.
+   A fixed "1fr auto" track crammed the large metric number into whatever
+   space was left over on a phone; below the breakpoint it stacks to a
+   single column instead, with tighter padding to match the mobile rhythm. */
+.featured-block {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  align-items: start;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  padding: 22px;
+  transform: rotate(-0.4deg);
+  box-shadow: 0 10px 24px var(--glow);
+}
+
+@media (min-width: 768px) {
+  .featured-block {
+    grid-template-columns: 1fr auto;
+    gap: 28px;
+    padding: 32px;
   }
 }
+
+/* Ticket: a torn-stub stat card (hero, real counts only). */
+.ticket {
+  background: var(--card-bg);
+  border: 2px dashed var(--foreground);
+  padding: 26px 22px;
+  position: relative;
+  box-shadow: 0 14px 30px var(--glow);
+}
+.ticket::before,
+.ticket::after {
+  content: "";
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  background: var(--background);
+  border-radius: 50%;
+  top: 50%;
+  margin-top: -11px;
+}
+.ticket::before { left: -11px; }
+.ticket::after { right: -11px; }
+
+/* Stamp: a round "verified" mark for real, checkable credentials. */
+.stamp {
+  border: 2px dashed var(--accent);
+  border-radius: 50%;
+  color: var(--accent-secondary);
+}
+.dark .stamp { color: var(--accent); }
 
 /* Floating Animation */
 @keyframes float {
@@ -205,12 +354,16 @@ body {
   transform: scale(1.05);
 }
 
-/* Section Title */
+/* Section Title - serif, matching the hero name treatment, not a bold sans default.
+   Fluid size: a fixed 2.75rem heading wrapped awkwardly on a narrow phone
+   (a two-word heading like "Licenses & Certifications" fighting a 327px
+   content width); clamp() gives mobile its own smaller step instead. */
 .section-title {
-  font-size: 3rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
+  font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-size: clamp(1.9rem, 5.5vw + 1rem, 2.75rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
 }
 
 /* Cursor Blink for Terminal Effect */
@@ -294,33 +447,33 @@ body {
 }
 
 .category-badge.data {
-  background: rgba(2, 132, 199, 0.15);
-  color: #0284c7;
-}
-
-.category-badge.bi {
-  background: rgba(202, 138, 4, 0.15);
-  color: #ca8a04;
+  background: #f3ded1;
+  color: #7a3308;
 }
 
 .category-badge.ml {
-  background: rgba(5, 150, 105, 0.15);
-  color: #059669;
+  background: #dbe8e1;
+  color: #1f4d3d;
+}
+
+.category-badge.other {
+  background: #e8e4d8;
+  color: #4a4436;
 }
 
 .dark .category-badge.data {
-  background: rgba(56, 189, 248, 0.15);
-  color: #38bdf8;
-}
-
-.dark .category-badge.bi {
-  background: rgba(250, 204, 21, 0.15);
-  color: #facc15;
+  background: #3a2416;
+  color: #f0a868;
 }
 
 .dark .category-badge.ml {
-  background: rgba(52, 211, 153, 0.15);
-  color: #34d399;
+  background: #16302a;
+  color: #7fd9b8;
+}
+
+.dark .category-badge.other {
+  background: #2a2620;
+  color: #c9c2ae;
 }
 
 /* Custom Prose Styling for Markdown Content */

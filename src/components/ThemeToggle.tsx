@@ -10,7 +10,7 @@ export default function ThemeToggle() {
     return (
         <motion.button
             onClick={toggleTheme}
-            className="relative flex items-center gap-2 px-4 py-2 rounded-full glass-card cursor-pointer overflow-hidden group"
+            className="relative flex items-center gap-2 px-4 py-3.5 rounded-full surface-card cursor-pointer overflow-hidden group"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
