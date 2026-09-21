@@ -52,3 +52,8 @@ ORDER BY avg_tat_days ASC;
 ## Key Insights
 1. **Performa SLA**: Rata-rata *Turnaround Time (TAT)* berhasil dijaga pada angka **5.4 hari**, secara konsisten memenuhi batas SLA 7 hari.
 2. **Resolution Rate**: Sebesar 90.2% klaim terselesaikan dengan tingkat kepuasan pelanggan (CSAT) rata-rata 4.4/5.0.
+
+---
+
+## Download Dataset & Dashboard Lengkap
+Data source (CSV hasil query langsung ke BigQuery `electracare-dw`) dan file dashboard tersedia untuk didownload di repo terpisah: **[github.com/wheldnz/electracare-repair-service-analytics](https://github.com/wheldnz/electracare-repair-service-analytics)**.

@@ -58,3 +58,8 @@ ORDER BY year_month DESC, total_gross_revenue DESC;
 ## Key Insights
 1. **Service Center Margin**: Service Center Jakarta Pusat & Surabaya mencatatkan Net Margin % tertinggi (22.5%) berkat tingginya volume penggantian suku cadang OEM.
 2. **Kategori Kontributor Omzet**: Penggantian LCD & Motherboard flagship menyumbangkan 58% dari total omzet kotor.
+
+---
+
+## Download Dataset & Dashboard Lengkap
+Data source (CSV hasil query langsung ke BigQuery `electracare-dw`) dan file dashboard tersedia untuk didownload di repo terpisah: **[github.com/wheldnz/electracare-enterprise-sales-analytics](https://github.com/wheldnz/electracare-enterprise-sales-analytics)**.

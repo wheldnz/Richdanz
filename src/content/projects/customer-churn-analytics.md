@@ -198,3 +198,8 @@ Import CSV ke PostgreSQL. Jalankan query deteksi aktivitas login terakhir dan id
    - Values: `% Retention Rate` (DAX calculation)
 4. Buat visualisasi yang menonjolkan zona bahaya keluhan teknis menggunakan warna Coral sesuai panduan mockup.
 
+
+---
+
+## Download Dataset & Dashboard Lengkap
+Data source (CSV hasil query langsung ke BigQuery `electracare-dw`) dan file dashboard tersedia untuk didownload di repo terpisah: **[github.com/wheldnz/electracare-customer-churn-analytics](https://github.com/wheldnz/electracare-customer-churn-analytics)**.

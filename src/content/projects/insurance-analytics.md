@@ -115,3 +115,8 @@ Dashboard-nya Tableau, bukan Power BI — koneksi & strategi refresh-nya beda da
 ## Data & File
 
 File dashboard (`.twbx`) dan 4 CSV data source (`mart_insurance_partner_performance`, `dim_insurance_partner`, `fraud_pattern_by_region_partner`, `policy_distribution_by_type`) tersedia untuk didownload di folder `project-06-insurance-partner-analytics/` pada repo GitHub — lengkap dengan README berisi insight & rekomendasi di atas beserta metodologinya.
+
+---
+
+## Download Dataset & Dashboard Lengkap
+Data source (CSV hasil query langsung ke BigQuery `electracare-dw`) dan file dashboard tersedia untuk didownload di repo terpisah: **[github.com/wheldnz/electracare-insurance-partner-analytics](https://github.com/wheldnz/electracare-insurance-partner-analytics)**.

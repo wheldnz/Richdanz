@@ -193,3 +193,8 @@ print("Data supply chain berhasil dibuat!")
 2. Buat visualisasi bertema industrial gelap (dark slate) dengan gauge chart untuk melacak kapasitas gudang.
 3. Rancang tombol parameter what-if dinamis untuk menguji keefektifan Safety Stock ROP yang telah Anda buat.
 
+
+---
+
+## Download Dataset & Dashboard Lengkap
+Data source (CSV hasil query langsung ke BigQuery `electracare-dw`) dan file dashboard tersedia untuk didownload di repo terpisah: **[github.com/wheldnz/electracare-supply-chain-analytics](https://github.com/wheldnz/electracare-supply-chain-analytics)**.

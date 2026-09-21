@@ -87,3 +87,8 @@ FROM rfm_calc;
 1. **Marketing Attribution**: Channel *Instagram Ads* dan *TikTok Ads* menyumbangkan lebih dari 65% total transaksi e-commerce dengan ROAS tertinggi 3.4x.
 2. **Embedded Insurance Uplift**: Pelanggan yang membeli bundling asuransi proteksi gadget memiliki tingkat retensi 2.2x lebih tinggi dibandingkan pelanggan reguler.
 3. **Churn Prevention**: Model prediksi *Machine Learning* berhasil mengidentifikasi 300 pelanggan *High-Risk Churn*, memungkinkan tim marketing mengirimkan voucher retensi otomatis sebelum terabaikan.
+
+---
+
+## Download Dataset & Dashboard Lengkap
+Script generator data, SQL schema/query, dan file dashboard tersedia untuk didownload di repo terpisah: **[github.com/wheldnz/tokoaman-ecommerce-insurtech-bi](https://github.com/wheldnz/tokoaman-ecommerce-insurtech-bi)**.
