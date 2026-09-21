@@ -33,13 +33,8 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
   const [activeStep, setActiveStep] = useState<string>('Diagnosis');
 
   // 6. Insurance Analytics State
-  const [insExcludeUnder25, setInsExcludeUnder25] = useState<boolean>(false);
-  const [slaPartner, setSlaPartner] = useState<string>('Igloo');
-  const [slaCategory, setSlaCategory] = useState<string>('Smartphone');
-  const [slaDamage, setSlaDamage] = useState<string>('Screen / LCD Replacement');
-  const [slaDocCompleteness, setSlaDocCompleteness] = useState<number>(70);
-  const [slaSparepartLatency, setSlaSparepartLatency] = useState<number>(4);
-  const [slaClaimAmount, setSlaClaimAmount] = useState<number>(3500000);
+  const [insPartner, setInsPartner] = useState<string>('Meridian Marine');
+  const [insRegion, setInsRegion] = useState<string>('All');
 
   // ==========================================
   // NEW 6 PROJECTS STATE VARIABLES
@@ -950,10 +945,10 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
   if (slug === 'repair-service-analytics') {
     const partnerKPIs: Record<string, { tat: string; resRate: string; sla: string; color: string }> = {
       All: { tat: '5.4 Hari', resRate: '90.2%', sla: '92.4%', color: 'text-emerald-400' },
-      Qoala: { tat: '5.1 Hari', resRate: '92.8%', sla: '95.1%', color: 'text-emerald-400' },
-      Igloo: { tat: '5.6 Hari', resRate: '89.4%', sla: '91.8%', color: 'text-amber-400' },
-      Chubb: { tat: '4.8 Hari', resRate: '94.2%', sla: '96.5%', color: 'text-blue-400' },
-      Allianz: { tat: '5.8 Hari', resRate: '87.9%', sla: '89.2%', color: 'text-amber-400' }
+      Proteka: { tat: '5.1 Hari', resRate: '92.8%', sla: '95.1%', color: 'text-emerald-400' },
+      'Meridian Marine': { tat: '5.6 Hari', resRate: '89.4%', sla: '91.8%', color: 'text-amber-400' },
+      'Cakra Assurance': { tat: '4.8 Hari', resRate: '94.2%', sla: '96.5%', color: 'text-blue-400' },
+      'Nusantara Bank Insurance': { tat: '5.8 Hari', resRate: '87.9%', sla: '89.2%', color: 'text-amber-400' }
     };
 
     const currentPartner = partnerKPIs[repairTech] || partnerKPIs['All'];
@@ -977,7 +972,7 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
             <p className="text-xs text-neutral-400">3,800+ Claims Monitored Across 9 Insurance Partners (7-Day SLA Target)</p>
           </div>
           <div className="flex flex-wrap gap-1 bg-neutral-900 p-1 rounded-lg">
-            {(['All', 'Qoala', 'Igloo', 'Chubb', 'Allianz'] as const).map((t) => (
+            {(['All', 'Proteka', 'Meridian Marine', 'Cakra Assurance', 'Nusantara Bank Insurance'] as const).map((t) => (
               <button
                 key={t}
                 onClick={() => setRepairTech(t)}
@@ -1062,16 +1057,96 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
   // RENDER DASHBOARD 6: Insurance
   // ----------------------------------------------------
   if (slug === 'insurance-analytics') {
-    // Dynamic ML Prediction Calculation for PT ElectraCare SLA Predictor
-    const partnerBaseDelay = (slaPartner === 'Igloo' || slaPartner === 'Sunday') ? 3.4 : (slaPartner === 'Allianz' ? 2.2 : 1.2);
-    const damageDelay = (slaDamage === 'Motherboard Repair') ? 3.8 : (slaDamage === 'Screen / LCD Replacement') ? 2.5 : (slaDamage === 'Water Damage') ? 3.0 : 1.0;
-    const docDelay = ((100 - slaDocCompleteness) / 100) * 2.8;
-    const partDelay = slaSparepartLatency * 0.75;
-    const costFactor = slaClaimAmount > 5000000 ? 1.5 : 0;
+    // Data sintetis — 9 mitra asuransi device-protection fiktif (bukan perusahaan asuransi sungguhan),
+    // ditarik dari view `mart_insurance_partner_performance` & tabel `fact_device_protection` di BigQuery.
+    const PARTNER_OVERALL: Record<string, { tier: string; approvalRate: number; lossRatio: number; fraudScore: number; totalClaims: number; flaggedClaims: number; anomaly: boolean }> = {
+      'Proteka': { tier: 'Platinum', approvalRate: 99.7, lossRatio: 2.093, fraudScore: 0.151, totalClaims: 9090, flaggedClaims: 25, anomaly: false },
+      'Naungan': { tier: 'Gold', approvalRate: 99.8, lossRatio: 2.078, fraudScore: 0.153, totalClaims: 8695, flaggedClaims: 18, anomaly: false },
+      'Sentra Polis': { tier: 'Gold', approvalRate: 99.6, lossRatio: 2.172, fraudScore: 0.152, totalClaims: 8844, flaggedClaims: 37, anomaly: false },
+      'Bastion Assurance': { tier: 'Platinum', approvalRate: 99.6, lossRatio: 2.111, fraudScore: 0.152, totalClaims: 8708, flaggedClaims: 31, anomaly: false },
+      'Lindap': { tier: 'Gold', approvalRate: 99.6, lossRatio: 2.123, fraudScore: 0.152, totalClaims: 8919, flaggedClaims: 35, anomaly: false },
+      'Meridian Marine': { tier: 'Gold', approvalRate: 97.1, lossRatio: 4.428, fraudScore: 0.169, totalClaims: 9075, flaggedClaims: 259, anomaly: true },
+      'Cakra Assurance': { tier: 'Gold', approvalRate: 99.7, lossRatio: 2.111, fraudScore: 0.153, totalClaims: 9020, flaggedClaims: 30, anomaly: false },
+      'Garda Sentosa': { tier: 'Platinum', approvalRate: 99.6, lossRatio: 2.133, fraudScore: 0.152, totalClaims: 8741, flaggedClaims: 33, anomaly: false },
+      'Nusantara Bank Insurance': { tier: 'Gold', approvalRate: 97.3, lossRatio: 4.376, fraudScore: 0.168, totalClaims: 8908, flaggedClaims: 241, anomaly: true },
+    };
+    // [region, partner, avgFraudScore, avgLossRatio, totalClaims, flaggedClaims] — 9 mitra x 7 region, dari fraud_pattern_by_region_partner.csv
+    const REGION_ROWS: [string, string, number, number, number, number][] = [
+      ['Bali & Nusa Tenggara','Bastion Assurance',0.158,2.136,823,3],
+      ['Bali & Nusa Tenggara','Cakra Assurance',0.158,2.109,871,3],
+      ['Bali & Nusa Tenggara','Garda Sentosa',0.151,2.115,886,3],
+      ['Bali & Nusa Tenggara','Lindap',0.149,2.047,876,1],
+      ['Bali & Nusa Tenggara','Meridian Marine',0.174,4.54,889,27],
+      ['Bali & Nusa Tenggara','Naungan',0.152,2.123,872,2],
+      ['Bali & Nusa Tenggara','Nusantara Bank Insurance',0.167,4.349,862,20],
+      ['Bali & Nusa Tenggara','Proteka',0.148,2.084,904,2],
+      ['Bali & Nusa Tenggara','Sentra Polis',0.151,2.183,880,3],
+      ['Jabodetabek','Bastion Assurance',0.149,2.107,2668,9],
+      ['Jabodetabek','Cakra Assurance',0.151,2.037,2696,4],
+      ['Jabodetabek','Garda Sentosa',0.153,2.097,2627,7],
+      ['Jabodetabek','Lindap',0.153,2.081,2646,7],
+      ['Jabodetabek','Meridian Marine',0.167,4.357,2751,72],
+      ['Jabodetabek','Naungan',0.151,2.062,2669,2],
+      ['Jabodetabek','Nusantara Bank Insurance',0.169,4.428,2640,75],
+      ['Jabodetabek','Proteka',0.151,2.063,2741,4],
+      ['Jabodetabek','Sentra Polis',0.153,2.13,2618,6],
+      ['Jawa','Bastion Assurance',0.157,2.195,1722,11],
+      ['Jawa','Cakra Assurance',0.155,2.213,1771,12],
+      ['Jawa','Garda Sentosa',0.153,2.228,1745,13],
+      ['Jawa','Lindap',0.149,2.117,1751,6],
+      ['Jawa','Meridian Marine',0.17,4.493,1830,57],
+      ['Jawa','Naungan',0.156,2.096,1691,6],
+      ['Jawa','Nusantara Bank Insurance',0.166,4.354,1870,50],
+      ['Jawa','Proteka',0.153,2.122,1790,8],
+      ['Jawa','Sentra Polis',0.153,2.267,1742,11],
+      ['Kalimantan','Bastion Assurance',0.151,1.949,1147,0],
+      ['Kalimantan','Cakra Assurance',0.15,2.108,1280,1],
+      ['Kalimantan','Garda Sentosa',0.153,2.061,1151,2],
+      ['Kalimantan','Lindap',0.15,2.017,1149,1],
+      ['Kalimantan','Meridian Marine',0.169,4.146,1191,25],
+      ['Kalimantan','Naungan',0.152,2.011,1159,0],
+      ['Kalimantan','Nusantara Bank Insurance',0.168,4.442,1179,33],
+      ['Kalimantan','Proteka',0.15,2.115,1218,3],
+      ['Kalimantan','Sentra Polis',0.152,2.118,1211,5],
+      ['Papua & Maluku','Bastion Assurance',0.155,2.135,574,3],
+      ['Papua & Maluku','Cakra Assurance',0.152,2.071,606,2],
+      ['Papua & Maluku','Garda Sentosa',0.151,1.999,601,0],
+      ['Papua & Maluku','Lindap',0.147,1.995,626,1],
+      ['Papua & Maluku','Meridian Marine',0.174,4.471,640,21],
+      ['Papua & Maluku','Naungan',0.161,2.145,577,2],
+      ['Papua & Maluku','Nusantara Bank Insurance',0.173,4.691,602,22],
+      ['Papua & Maluku','Proteka',0.151,2.183,608,3],
+      ['Papua & Maluku','Sentra Polis',0.144,1.99,613,1],
+      ['Sulawesi','Bastion Assurance',0.146,1.992,584,0],
+      ['Sulawesi','Cakra Assurance',0.15,2.046,626,1],
+      ['Sulawesi','Garda Sentosa',0.15,2.142,577,2],
+      ['Sulawesi','Lindap',0.154,2.17,651,3],
+      ['Sulawesi','Meridian Marine',0.164,4.507,586,17],
+      ['Sulawesi','Naungan',0.151,2.059,583,1],
+      ['Sulawesi','Nusantara Bank Insurance',0.171,4.212,572,14],
+      ['Sulawesi','Proteka',0.149,1.992,606,0],
+      ['Sulawesi','Sentra Polis',0.15,2.208,599,3],
+      ['Sumatera','Bastion Assurance',0.153,2.183,1190,5],
+      ['Sumatera','Cakra Assurance',0.155,2.184,1170,7],
+      ['Sumatera','Garda Sentosa',0.151,2.224,1154,6],
+      ['Sumatera','Lindap',0.159,2.421,1220,16],
+      ['Sumatera','Meridian Marine',0.169,4.631,1188,40],
+      ['Sumatera','Naungan',0.156,2.095,1144,5],
+      ['Sumatera','Nusantara Bank Insurance',0.164,4.168,1183,27],
+      ['Sumatera','Proteka',0.152,2.107,1223,5],
+      ['Sumatera','Sentra Polis',0.157,2.248,1181,8],
+    ];
+    const REGIONS = ['All', 'Jabodetabek', 'Jawa', 'Sumatera', 'Kalimantan', 'Sulawesi', 'Bali & Nusa Tenggara', 'Papua & Maluku'];
 
-    const estTatDays = parseFloat((partnerBaseDelay + damageDelay + docDelay + partDelay + costFactor).toFixed(1));
-    const isBreach = estTatDays > 7.0;
-    const breachProb = Math.min(99, Math.max(8, Math.round((estTatDays / 10.5) * 100)));
+    const overall = PARTNER_OVERALL[insPartner];
+    const regionRow = insRegion === 'All' ? null : REGION_ROWS.find((r) => r[0] === insRegion && r[1] === insPartner);
+    const displayFraudScore = regionRow ? regionRow[2] : overall.fraudScore;
+    const displayLossRatio = regionRow ? regionRow[3] : overall.lossRatio;
+    const displayTotalClaims = regionRow ? regionRow[4] : overall.totalClaims;
+    const displayFlaggedClaims = regionRow ? regionRow[5] : overall.flaggedClaims;
+    const flaggedRate = ((displayFlaggedClaims / displayTotalClaims) * 100).toFixed(2);
+    const healthyPartners = Object.entries(PARTNER_OVERALL).filter(([, v]) => !v.anomaly);
+    const avgHealthyLossRatio = (healthyPartners.reduce((s, [, v]) => s + v.lossRatio, 0) / healthyPartners.length).toFixed(2);
 
     return (
       <div className="glass-card p-6 bg-slate-950 text-slate-100 border-emerald-900/40 rounded-2xl w-full">
@@ -1079,178 +1154,97 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
         <div className="flex flex-wrap items-center justify-between gap-4 mb-6 border-b border-slate-800 pb-4">
           <div>
             <h4 className="text-lg font-bold flex items-center gap-2 text-emerald-400">
-              <ShieldCheck className="w-5 h-5" /> PT ElectraCare Indonesia — SLA & Claim Breach Predictor
+              <ShieldCheck className="w-5 h-5" /> ElectraCare — Insurance Partner Performance & Risk Monitoring
             </h4>
-            <p className="text-xs text-slate-400">Google BigQuery EDW (`electracare-dw`) & BigQuery ML Logistic Regression Classifier</p>
+            <p className="text-xs text-slate-400">Google BigQuery (`electracare-dw`) → Tableau · 9 mitra asuransi fiktif · 80.000 klaim · 100.000 polis</p>
           </div>
           <span className="text-[10px] font-mono bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded-full border border-emerald-500/20">
-            Target SLA: &le; 7 Hari
+            Baseline sehat: ~99.6% approval / ~2.1 loss ratio
           </span>
         </div>
 
-        {/* Dashboard Visual KPIs */}
-        <div className="grid grid-cols-4 gap-3 mb-6">
-          <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
-            <span className="text-[11px] text-slate-400 block font-semibold">Total Claims Logged</span>
-            <span className="text-xl font-black mt-1 block text-slate-100">200,000</span>
-            <span className="text-[10px] text-emerald-400 block mt-0.5">BigQuery EDW Sync</span>
+        {/* Selector */}
+        <div className="grid md:grid-cols-2 gap-3 mb-6">
+          <div>
+            <label className="text-[10px] text-slate-400 block mb-1 font-semibold">Pilih Mitra Asuransi:</label>
+            <select
+              value={insPartner}
+              onChange={(e) => setInsPartner(e.target.value)}
+              className="w-full bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
+            >
+              {Object.keys(PARTNER_OVERALL).map((p) => (
+                <option key={p} value={p}>{p}{PARTNER_OVERALL[p].anomaly ? ' ⚠' : ''}</option>
+              ))}
+            </select>
           </div>
-
-          <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
-            <span className="text-[11px] text-slate-400 block font-semibold">Overall SLA Adherence</span>
-            <span className="text-xl font-black mt-1 block text-emerald-400">81.5%</span>
-            <span className="text-[10px] text-slate-500 block mt-0.5">Target: &ge; 92%</span>
-          </div>
-
-          <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
-            <span className="text-[11px] text-slate-400 block font-semibold">Avg Turnaround Time</span>
-            <span className="text-xl font-black mt-1 block text-slate-100">5.4 Hari</span>
-            <span className="text-[10px] text-amber-400 block mt-0.5">Max Latency: 12.8 Hari</span>
-          </div>
-
-          <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
-            <span className="text-[11px] text-slate-400 block font-semibold">At Risk Claim Payout</span>
-            <span className="text-xl font-black mt-1 block text-rose-400">Rp 4.2B</span>
-            <span className="text-[10px] text-slate-500 block mt-0.5">18.5% Breach Rate</span>
+          <div>
+            <label className="text-[10px] text-slate-400 block mb-1 font-semibold">Filter Region:</label>
+            <select
+              value={insRegion}
+              onChange={(e) => setInsRegion(e.target.value)}
+              className="w-full bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
+            >
+              {REGIONS.map((r) => (
+                <option key={r} value={r}>{r}</option>
+              ))}
+            </select>
           </div>
         </div>
 
-        {/* Interactive ML Simulator Form */}
-        <div className="grid md:grid-cols-5 gap-6">
-          {/* Controls Form (3 Cols) */}
-          <div className="md:col-span-3 bg-slate-900/70 border border-slate-800 rounded-xl p-4 space-y-3.5">
-            <h5 className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
-              <Filter className="w-4 h-4 text-emerald-400" /> Simulasi Input Klaim Baru
-            </h5>
+        {overall.anomaly && (
+          <div className="mb-4 p-3 rounded-xl bg-rose-950/30 border border-rose-900/60 text-rose-300 text-xs flex items-start gap-2">
+            <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
+            <span>
+              <strong>{insPartner}</strong> terdeteksi anomali: loss ratio {displayLossRatio.toFixed ? displayLossRatio.toFixed(2) : displayLossRatio} — sekitar 2x baseline {avgHealthyLossRatio} dari 7 mitra sehat. Pola ini konsisten di ke-7 region operasional, bukan hanya di {insRegion === 'All' ? 'satu wilayah tertentu' : insRegion}.
+            </span>
+          </div>
+        )}
 
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-[10px] text-slate-400 block mb-1 font-semibold">Mitra Asuransi Perangkat:</label>
-                <select
-                  value={slaPartner}
-                  onChange={(e) => setSlaPartner(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 px-2.5 py-1.5 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
-                >
-                  <option value="Igloo">Igloo (Reimbursement Manual)</option>
-                  <option value="Sunday">Sunday Insurance</option>
-                  <option value="Qoala">Qoala Protection</option>
-                  <option value="Chubb">Chubb Device Protection</option>
-                  <option value="Allianz">Allianz Care</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="text-[10px] text-slate-400 block mb-1 font-semibold">Kategori Perangkat:</label>
-                <select
-                  value={slaCategory}
-                  onChange={(e) => setSlaCategory(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 px-2.5 py-1.5 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
-                >
-                  <option value="Smartphone">Smartphone Flagship</option>
-                  <option value="Laptop">Laptop / Notebook</option>
-                  <option value="Tablet">Tablet PC</option>
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <label className="text-[10px] text-slate-400 block mb-1 font-semibold">Sub-Tipe Kerusakan:</label>
-              <select
-                value={slaDamage}
-                onChange={(e) => setSlaDamage(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 px-2.5 py-1.5 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
-              >
-                <option value="Screen / LCD Replacement">Screen / LCD Replacement (Inden Impor)</option>
-                <option value="Motherboard Repair">Motherboard Repair (Perbaikan Level 3)</option>
-                <option value="Battery Replacement">Battery Replacement (Fast-Track)</option>
-                <option value="Water Damage">Water Damage Cleanup & IC Replacement</option>
-              </select>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <div className="flex justify-between text-[10px] text-slate-400 mb-1">
-                  <span className="font-semibold">Kelengkapan Dokumen Awal:</span>
-                  <span className="font-bold text-emerald-400 font-mono">{slaDocCompleteness}%</span>
-                </div>
-                <input
-                  type="range"
-                  min="30"
-                  max="100"
-                  step="5"
-                  value={slaDocCompleteness}
-                  onChange={(e) => setSlaDocCompleteness(parseInt(e.target.value))}
-                  className="w-full accent-emerald-500 h-1.5 bg-slate-950 rounded-lg cursor-pointer"
-                />
-              </div>
-
-              <div>
-                <div className="flex justify-between text-[10px] text-slate-400 mb-1">
-                  <span className="font-semibold">Procurement Latency Suku Cadang:</span>
-                  <span className="font-bold text-amber-400 font-mono">{slaSparepartLatency} Hari</span>
-                </div>
-                <input
-                  type="range"
-                  min="1"
-                  max="7"
-                  value={slaSparepartLatency}
-                  onChange={(e) => setSlaSparepartLatency(parseInt(e.target.value))}
-                  className="w-full accent-amber-500 h-1.5 bg-slate-950 rounded-lg cursor-pointer"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="text-[10px] text-slate-400 block mb-1 font-semibold">Estimasi Nominal Klaim (Rp):</label>
-              <input
-                type="number"
-                value={slaClaimAmount}
-                onChange={(e) => setSlaClaimAmount(parseInt(e.target.value) || 0)}
-                className="w-full bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-lg text-xs text-slate-200 font-mono"
-              />
-            </div>
+        {/* KPI Cards */}
+        <div className="grid grid-cols-4 gap-3 mb-6">
+          <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
+            <span className="text-[11px] text-slate-400 block font-semibold">Tier Kontrak</span>
+            <span className="text-xl font-black mt-1 block text-slate-100">{overall.tier}</span>
+            <span className="text-[10px] text-slate-500 block mt-0.5">Target SLA: 7 Hari (seragam semua mitra)</span>
           </div>
 
-          {/* Machine Learning Output Terminal (2 Cols) */}
-          <div className="md:col-span-2 bg-slate-900/70 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
-            <div>
-              <span className="text-xs font-bold text-slate-300 block mb-3 flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4 text-emerald-400" /> BigQuery ML Prediction Result
-              </span>
+          <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
+            <span className="text-[11px] text-slate-400 block font-semibold">Approval Rate</span>
+            <span className={`text-xl font-black mt-1 block ${overall.anomaly ? 'text-amber-400' : 'text-emerald-400'}`}>{overall.approvalRate}%</span>
+            <span className="text-[10px] text-slate-500 block mt-0.5">Baseline 7 mitra sehat: ~99.6%</span>
+          </div>
 
-              <div className={`p-4 rounded-xl border mb-4 text-center transition-all ${
-                isBreach 
-                  ? 'bg-rose-950/40 border-rose-900/80 text-rose-400' 
-                  : 'bg-emerald-950/40 border-emerald-900/80 text-emerald-400'
-              }`}>
-                <span className="text-[10px] uppercase font-bold tracking-wider block mb-1 text-slate-400">Prediksi Status SLA (Batas 7 Hari)</span>
-                <span className="text-base font-black block">
-                  {isBreach ? 'CRITICAL: SLA BREACH RISK (>7 Hari)' : 'SLA SAFE (<= 7 Hari)'}
-                </span>
-                <div className="flex justify-center gap-4 mt-3 text-xs font-semibold">
-                  <div>
-                    <span className="text-slate-400 block text-[10px]">Estimasi TAT:</span>
-                    <span className="text-lg font-black text-slate-100">{estTatDays} Hari</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 block text-[10px]">Probabilitas Breach:</span>
-                    <span className={`text-lg font-black ${isBreach ? 'text-rose-400' : 'text-emerald-400'}`}>{breachProb}%</span>
-                  </div>
-                </div>
-              </div>
+          <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
+            <span className="text-[11px] text-slate-400 block font-semibold">Avg Loss Ratio {regionRow ? `(${insRegion})` : '(Semua Region)'}</span>
+            <span className={`text-xl font-black mt-1 block ${overall.anomaly ? 'text-rose-400' : 'text-slate-100'}`}>{displayLossRatio}</span>
+            <span className="text-[10px] text-slate-500 block mt-0.5">Baseline 7 mitra sehat: ~{avgHealthyLossRatio}</span>
+          </div>
 
-              <div className="space-y-1.5 text-[10px] text-slate-300 border-t border-slate-800 pt-3">
-                <span className="font-bold text-slate-400 block mb-1">Faktor Utama Penyebab Delay:</span>
-                {slaPartner === 'Igloo' && <div className="text-amber-400">• Verifikasi polis manual mitra Igloo (+3.4 hari)</div>}
-                {slaDamage === 'Motherboard Repair' && <div className="text-amber-400">• Keterbatasan kuota teknisi Level 3 (+3.8 hari)</div>}
-                {slaDocCompleteness < 80 && <div className="text-amber-400">• Dokumen tidak lengkap saat submit (+{docDelay.toFixed(1)} hari)</div>}
-                {slaClaimAmount > 5000000 && <div className="text-rose-400">• Pemicu audit fraud manual klaim &gt; Rp 5M (+1.5 hari)</div>}
-              </div>
-            </div>
+          <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
+            <span className="text-[11px] text-slate-400 block font-semibold">Flagged Claims</span>
+            <span className={`text-xl font-black mt-1 block ${overall.anomaly ? 'text-rose-400' : 'text-slate-100'}`}>{displayFlaggedClaims}</span>
+            <span className="text-[10px] text-slate-500 block mt-0.5">{flaggedRate}% dari {displayTotalClaims.toLocaleString('id-ID')} klaim</span>
+          </div>
+        </div>
 
-            <div className="mt-4 pt-3 border-t border-slate-800 text-[10px] text-slate-400">
-              <strong>Rekomendasi Operasional:</strong> {isBreach ? 'Aktifkan notifikasi proaktif WhatsApp ke konsumen & teruskan tiket ke Senior Adjuster Desk.' : 'Klaim dapat diproses langsung melalui jalur reguler fast-track.'}
-            </div>
+        {/* Insight panel */}
+        <div className="bg-slate-900/70 border border-slate-800 rounded-xl p-4">
+          <span className="text-xs font-bold text-slate-300 block mb-3 flex items-center gap-1.5">
+            <Sparkles className="w-4 h-4 text-emerald-400" /> Insight
+          </span>
+          <div className="space-y-1.5 text-[11px] text-slate-300">
+            {overall.anomaly ? (
+              <>
+                <p>• {insPartner} adalah salah satu dari 2 mitra (dari total 9) dengan approval rate lebih rendah dan loss ratio ±2x lipat dibanding 7 mitra lainnya.</p>
+                <p>• 500 dari 709 klaim yang di-flag "Under Investigation" di seluruh dashboard (70,5%) berasal dari 2 mitra anomali ini — padahal volume klaim mereka cuma ~22,6% dari total.</p>
+                <p>• Pola ini tetap muncul di semua region yang dicek — indikasi akar masalah ada di proses/kontrak mitra itu sendiri, bukan faktor lapangan lokal.</p>
+              </>
+            ) : (
+              <>
+                <p>• {insPartner} berada di baseline performa sehat: approval rate {overall.approvalRate}%, loss ratio {overall.lossRatio} — konsisten dengan 6 mitra sehat lainnya.</p>
+                <p>• Komisi seragam 12% berlaku untuk semua 9 mitra tanpa membedakan performa — belum ada insentif finansial otomatis berbasis approval rate/loss ratio.</p>
+              </>
+            )}
           </div>
         </div>
       </div>

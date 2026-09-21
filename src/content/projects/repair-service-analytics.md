@@ -12,7 +12,9 @@ description: Insurance claims resolution & SLA performance monitoring pipeline, 
 ## Business Problem
 Operasional klaim perbaikan garansi asuransi perangkat keras (*hardware insurance claims*) membutuhkan pemantauan ketat terhadap batas waktu layanan (*Service Level Agreement / SLA*). Keterlambatan klaim meningkatkan angka pembatalan dan ketidakpuasan pelanggan. 
 
-Proyek ini bertujuan untuk mengukur **Resolution Rate**, memantau **Turnaround Time (TAT)** harian (target rata-rata 5–6 hari terhadap SLA 7 hari), serta mengevaluasi tingkat *SLA Breach* di **9 Mitra Asuransi** (*Qoala, Igloo, PasarPolis, Chubb, ACA, Tokio Marine, Zurich, Allianz, BCA Insurance*) dan jaringan **9 Infinix Service Centers**.
+Proyek ini bertujuan untuk mengukur **Resolution Rate**, memantau **Turnaround Time (TAT)** harian (target rata-rata 5–6 hari terhadap SLA 7 hari), serta mengevaluasi tingkat *SLA Breach* di **9 Mitra Asuransi fiktif** (*Proteka, Naungan, Sentra Polis, Bastion Assurance, Lindap, Meridian Marine, Cakra Assurance, Garda Sentosa, Nusantara Bank Insurance*) dan jaringan **9 Infinix Service Centers**.
+
+> **Catatan**: nama-nama mitra asuransi di atas seluruhnya fiktif — proyek portofolio ini berbasis data sintetis, tidak merujuk ke perusahaan asuransi sungguhan mana pun.
 
 ## Dataset & Raw Data
 * **Fact Table**: `fact_claims_sla` (3,840 baris klaim historis 2024–2025).

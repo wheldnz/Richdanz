@@ -59,7 +59,7 @@ Data Warehouse terdiri dari **13 Tabel Dimensi (Conformed & Subject)** dan **10 
 | `electracare_dwh.dim_service_center` | Subject Dim | 25 | Jaringan 25 service center resmi |
 | `electracare_dwh.dim_brand_partner` | Subject Dim | 15 | Mitra brand resmi (Samsung, Apple, Xiaomi, dll) |
 | `electracare_dwh.dim_employee` | Subject Dim (SCD2) | 2,000 | Teknisi & staff (Slowly Changing Dimension Type 2) |
-| `electracare_dwh.dim_insurance_partner` | Subject Dim | 9 | Mitra asuransi (Qoala, Igloo, PasarPolis, Chubb, dll) |
+| `electracare_dwh.dim_insurance_partner` | Subject Dim | 9 | Mitra asuransi fiktif (Proteka, Meridian Marine, Nusantara Bank Insurance, Cakra Assurance, dll) |
 | `electracare_dwh.dim_policy` | Subject Dim | 100,000 | Polis proteksi perangkat aktif |
 | `electracare_dwh.fact_service_orders` | Fact Header | 500,000 | Transaksi jasa perbaikan & revenue |
 | `electracare_dwh.fact_parts_usage` | Fact Detail | 750,000 | Penggunaan suku cadang per order |

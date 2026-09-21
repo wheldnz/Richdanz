@@ -376,9 +376,9 @@ def generate_other_dims(conn):
     # 6. Insurance Partners (9)
     buf = StringIO()
     cols = ["partner_id", "partner_name", "sla_target_days", "partner_tier", "commission_pct"]
-    ip_list = ["Qoala", "Igloo", "PasarPolis", "Chubb", "ACA", "Tokio Marine", "Zurich", "Allianz", "BCA Insurance"]
+    ip_list = ["Proteka", "Naungan", "Sentra Polis", "Bastion Assurance", "Lindap", "Meridian Marine", "Cakra Assurance", "Garda Sentosa", "Nusantara Bank Insurance"]  # fiktif, selaras dengan electracare-dw (BigQuery) live
     for i, ip in enumerate(ip_list, 1):
-        tier = "Platinum" if ip in ("Qoala", "Chubb", "Allianz") else "Gold"
+        tier = "Platinum" if ip in ("Proteka", "Bastion Assurance", "Garda Sentosa") else "Gold"
         buf.write("\t".join([str(i), f"{ip} Device Protection", "7", tier, "12.00"]) + "\n")
     bulk_insert_copy(conn, "dwh.dim_insurance_partner", cols, buf)
 
