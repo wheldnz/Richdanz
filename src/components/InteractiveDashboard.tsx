@@ -18,8 +18,7 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
   const [salesRegion, setSalesRegion] = useState<string>('All');
 
   // 2. Customer Churn Analytics State
-  const [churnSegment, setChurnSegment] = useState<'All' | 'Enterprise' | 'SMB'>('All');
-  const [churnView, setChurnView] = useState<'cohort' | 'risk'>('cohort');
+  const [churnRegion, setChurnRegion] = useState<string>('Jabodetabek');
 
   // 3. Supply Chain Analytics State
   const [scWarehouse, setScWarehouse] = useState<string>('Main Hub');
@@ -597,157 +596,117 @@ export default function InteractiveDashboard({ slug }: InteractiveDashboardProps
   // RENDER DASHBOARD 2: Customer Churn
   // ----------------------------------------------------
   if (slug === 'customer-churn-analytics') {
-    // Cohort data (All, Enterprise, SMB)
-    const cohortData = {
-      All: [
-        { m: 'M0', r: 100, color: 'bg-emerald-600/90' },
-        { m: 'M1', r: 68, color: 'bg-emerald-500/70' },
-        { m: 'M2', r: 54, color: 'bg-emerald-500/50' },
-        { m: 'M3', r: 42, color: 'bg-emerald-500/30' },
-        { m: 'M6', r: 28, color: 'bg-emerald-500/20' },
-        { m: 'M12', r: 8, color: 'bg-rose-500/20' },
-      ],
-      Enterprise: [
-        { m: 'M0', r: 100, color: 'bg-emerald-600/90' },
-        { m: 'M1', r: 94, color: 'bg-emerald-500/90' },
-        { m: 'M2', r: 91, color: 'bg-emerald-500/80' },
-        { m: 'M3', r: 88, color: 'bg-emerald-500/75' },
-        { m: 'M6', r: 82, color: 'bg-emerald-500/60' },
-        { m: 'M12', r: 75, color: 'bg-emerald-500/50' },
-      ],
-      SMB: [
-        { m: 'M0', r: 100, color: 'bg-emerald-600/90' },
-        { m: 'M1', r: 45, color: 'bg-emerald-500/40' },
-        { m: 'M2', r: 30, color: 'bg-rose-500/20' },
-        { m: 'M3', r: 21, color: 'bg-rose-500/30' },
-        { m: 'M6', r: 12, color: 'bg-rose-500/40' },
-        { m: 'M12', r: 3, color: 'bg-rose-600/60' },
-      ],
+    // Data real — 250.000 pelanggan, ditarik dari view `mart_customer_churn` di BigQuery `electracare-dw`.
+    // Dari 04_region_churn_vs_sla_breach.csv (7 region).
+    const REGION_ROWS: Record<string, { n: number; pctRisk: number; slaBreach: number | null; csat: number | null; centers: number }> = {
+      'Sumatera': { n: 33431, pctRisk: 73.54, slaBreach: 7.15, csat: 3.71, centers: 4 },
+      'Jawa': { n: 50251, pctRisk: 72.88, slaBreach: 7.47, csat: 3.70, centers: 6 },
+      'Bali & Nusa Tenggara': { n: 25068, pctRisk: 72.17, slaBreach: 7.37, csat: 3.71, centers: 1 },
+      'Sulawesi': { n: 16808, pctRisk: 71.95, slaBreach: 7.48, csat: 3.70, centers: 1 },
+      'Jabodetabek': { n: 74741, pctRisk: 71.91, slaBreach: 7.49, csat: 3.70, centers: 9 },
+      'Kalimantan': { n: 33084, pctRisk: 71.89, slaBreach: 6.92, csat: 3.71, centers: 4 },
+      'Papua & Maluku': { n: 16617, pctRisk: 71.49, slaBreach: null, csat: null, centers: 0 },
     };
+    const REGIONS = Object.keys(REGION_ROWS);
+    // Retensi rata-rata per bulan sejak akuisisi, dirata-ratakan lintas 12 cohort bulanan — dari 06_cohort_retention_matrix.csv
+    const RETENTION_CURVE = [100, 90.4, 72.5, 56.8, 46.1, 39.1, 33.1, 28.4, 23.1, 20.2, 17.2, 15.9];
 
-    const churnRate = churnSegment === 'All' ? '4.2%' : churnSegment === 'Enterprise' ? '1.5%' : '7.8%';
-    const activeCohort = cohortData[churnSegment];
+    const region = REGION_ROWS[churnRegion];
+    const maxRisk = Math.max(...Object.values(REGION_ROWS).map((r) => r.pctRisk));
 
     return (
-      <div className="glass-card p-6 bg-white text-slate-800 border-slate-200 rounded-2xl w-full shadow-sm">
+      <div className="glass-card p-6 bg-slate-950 text-slate-100 border-emerald-900/40 rounded-2xl w-full">
         {/* Header */}
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-6 border-b border-slate-100 pb-4">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-6 border-b border-slate-800 pb-4">
           <div>
-            <h4 className="text-lg font-bold flex items-center gap-2 text-rose-500">
-              <Users className="w-5 h-5" /> Customer Churn Analytics Dashboard
+            <h4 className="text-lg font-bold flex items-center gap-2 text-emerald-400">
+              <Users className="w-5 h-5" /> ElectraCare — Customer Churn Risk & Retention
             </h4>
-            <p className="text-xs text-slate-500">Cohort Retention Analysis Framework</p>
+            <p className="text-xs text-slate-400">Google BigQuery (`electracare-dw`) → Tableau Public · 250.000 pelanggan · 7 region</p>
           </div>
-          <div className="flex gap-1 bg-slate-100 p-1 rounded-lg">
-            {(['All', 'Enterprise', 'SMB'] as const).map((s) => (
-              <button
-                key={s}
-                onClick={() => setChurnSegment(s)}
-                className={`px-3 py-1 text-xs rounded-md cursor-pointer transition-all ${
-                  churnSegment === s ? 'bg-white text-slate-800 font-semibold shadow-sm' : 'text-slate-500 hover:text-slate-800'
-                }`}
-              >
-                {s}
-              </button>
+          <span className="text-[10px] font-mono bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded-full border border-emerald-500/20">
+            62,99% High Risk · 9,33% Already Churned
+          </span>
+        </div>
+
+        {/* Selector */}
+        <div className="mb-6">
+          <label className="text-[10px] text-slate-400 block mb-1 font-semibold">Filter Region:</label>
+          <select
+            value={churnRegion}
+            onChange={(e) => setChurnRegion(e.target.value)}
+            className="w-full md:w-64 bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-emerald-500"
+          >
+            {REGIONS.map((r) => (
+              <option key={r} value={r}>{r}</option>
+            ))}
+          </select>
+        </div>
+
+        {region.centers === 0 && (
+          <div className="mb-4 p-3 rounded-xl bg-amber-950/30 border border-amber-900/60 text-amber-300 text-xs flex items-start gap-2">
+            <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
+            <span>
+              {churnRegion} punya {region.n.toLocaleString('id-ID')} pelanggan tapi <strong>nol service center fisik ElectraCare</strong> di wilayah ini (dari 25 center yang ada) — data SLA/CSAT tidak tersedia untuk region ini.
+            </span>
+          </div>
+        )}
+
+        {/* KPI Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+          <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
+            <span className="text-[11px] text-slate-400 block font-semibold">Pelanggan di {churnRegion}</span>
+            <span className="text-xl font-black mt-1 block text-slate-100">{region.n.toLocaleString('id-ID')}</span>
+            <span className="text-[10px] text-slate-500 block mt-0.5">{region.centers} service center fisik</span>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
+            <span className="text-[11px] text-slate-400 block font-semibold">High Risk + Already Churned</span>
+            <span className={`text-xl font-black mt-1 block ${region.pctRisk === maxRisk ? 'text-amber-400' : 'text-slate-100'}`}>{region.pctRisk}%</span>
+            <span className="text-[10px] text-slate-500 block mt-0.5">Rentang nasional: 71,49%–73,54%</span>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
+            <span className="text-[11px] text-slate-400 block font-semibold">SLA Breach Rate Ops</span>
+            <span className="text-xl font-black mt-1 block text-slate-100">{region.slaBreach !== null ? `${region.slaBreach}%` : '—'}</span>
+            <span className="text-[10px] text-slate-500 block mt-0.5">Avg CSAT: {region.csat !== null ? region.csat : '—'}</span>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
+            <span className="text-[11px] text-slate-400 block font-semibold">Korelasi Satisfaction ↔ Churn</span>
+            <span className="text-xl font-black mt-1 block text-rose-400">≈ 0</span>
+            <span className="text-[10px] text-slate-500 block mt-0.5">r = 0,003 (skala -1 s/d 1)</span>
+          </div>
+        </div>
+
+        {/* Retention curve */}
+        <div className="bg-slate-900/70 border border-slate-800 rounded-xl p-4 mb-4">
+          <span className="text-xs font-bold text-slate-300 block mb-3">Rata-rata Retensi per Bulan Sejak Akuisisi (12 cohort bulanan)</span>
+          <div className="grid grid-cols-12 gap-1.5 items-end" style={{ height: '90px' }}>
+            {RETENTION_CURVE.map((pct, i) => (
+              <div key={i} className="flex flex-col items-center justify-end h-full gap-1">
+                <div
+                  className="w-full rounded-t bg-emerald-500/70"
+                  style={{ height: `${pct}%` }}
+                  title={`Bulan ke-${i}: ${pct}%`}
+                />
+                <span className="text-[9px] text-slate-500">{i}</span>
+              </div>
             ))}
           </div>
+          <span className="text-[10px] text-slate-500 block mt-2">Sumbu X = bulan sejak akuisisi (0-11). Drop-off paling tajam ada di bulan ke-1 (100% → 90,4%) dan bulan ke-2 (→ 72,5%).</span>
         </div>
 
-        {/* View Toggle */}
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex gap-4">
-            <div>
-              <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-semibold">Active Segment Churn</span>
-              <span className="text-2xl font-black text-slate-800">{churnRate}</span>
-            </div>
-            <div>
-              <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-semibold">Avg Cust Tenure</span>
-              <span className="text-2xl font-black text-slate-800">
-                {churnSegment === 'All' ? '8.4 Bln' : churnSegment === 'Enterprise' ? '24.1 Bln' : '3.6 Bln'}
-              </span>
-            </div>
-          </div>
-          <div className="flex gap-2 border border-slate-200 rounded-lg p-1 bg-slate-50">
-            <button
-              onClick={() => setChurnView('cohort')}
-              className={`px-3 py-1 text-xs rounded-md cursor-pointer ${
-                churnView === 'cohort' ? 'bg-slate-200 text-slate-800 font-semibold' : 'text-slate-500'
-              }`}
-            >
-              Retention Grid
-            </button>
-            <button
-              onClick={() => setChurnView('risk')}
-              className={`px-3 py-1 text-xs rounded-md cursor-pointer ${
-                churnView === 'risk' ? 'bg-slate-200 text-slate-800 font-semibold' : 'text-slate-500'
-              }`}
-            >
-              Risk Profile
-            </button>
-          </div>
-        </div>
-
-        {/* Visualizer Container */}
-        <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
-          {churnView === 'cohort' ? (
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-xs font-bold text-slate-600">Cohort Retention Over Time (%)</span>
-                <span className="text-[10px] text-emerald-600 font-semibold">Segment: {churnSegment}</span>
-              </div>
-              <div className="grid grid-cols-6 gap-2 text-center">
-                {activeCohort.map((c, i) => (
-                  <div key={i} className="flex flex-col gap-1 items-center">
-                    <span className="text-[10px] font-bold text-slate-500">{c.m}</span>
-                    <div
-                      className={`w-full py-4 rounded-lg font-bold text-sm text-slate-800 border border-slate-200/50 flex items-center justify-center transition-all duration-500 ${c.color}`}
-                    >
-                      {c.r}%
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold text-slate-600">Risk Scatter Plot (Support Tickets vs. Login Decrease)</span>
-                <span className="text-[10px] text-red-500 font-semibold">High Risk Zone Red</span>
-              </div>
-              <div className="h-32 border-l border-b border-slate-300 relative flex items-end justify-between px-4 pb-2">
-                {/* Simulated dots */}
-                <div
-                  className="absolute w-3 h-3 rounded-full bg-red-500 border border-white animate-pulse"
-                  style={{ bottom: '70%', left: '80%' }}
-                  title="Cust A: Support Tickets > 5, Churn Probability 95%"
-                />
-                <div
-                  className="absolute w-3 h-3 rounded-full bg-orange-500 border border-white"
-                  style={{ bottom: '45%', left: '50%' }}
-                  title="Cust B: Support Tickets 3, Churn Probability 50%"
-                />
-                <div
-                  className="absolute w-3 h-3 rounded-full bg-emerald-500 border border-white"
-                  style={{ bottom: '15%', left: '20%' }}
-                  title="Cust C: Support Tickets 0, Churn Probability 2%"
-                />
-                <div
-                  className="absolute w-3 h-3 rounded-full bg-emerald-500 border border-white"
-                  style={{ bottom: '25%', left: '10%' }}
-                />
-
-                <span className="absolute bottom-1 right-2 text-[8px] text-slate-400">Login Drop %</span>
-                <span className="absolute top-2 left-2 text-[8px] text-slate-400 rotate-90 origin-left">Tickets count</span>
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="mt-4 text-xs text-slate-600 bg-slate-100 border border-slate-200 p-3 rounded-lg flex items-start gap-2">
-          <Percent className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
-          <span>
-            <strong>Interactive Tip:</strong> Klik segment toggle (Enterprise vs SMB). Terlihat bahwa pelanggan SMB mengalami Churn ekstrem pada Month 1 (turun ke 45%), menyarankan fokus alokasi promosi retensi pada segmen SMB.
+        {/* Insight panel */}
+        <div className="bg-slate-900/70 border border-slate-800 rounded-xl p-4">
+          <span className="text-xs font-bold text-slate-300 block mb-3 flex items-center gap-1.5">
+            <Sparkles className="w-4 h-4 text-emerald-400" /> Insight
           </span>
+          <div className="space-y-1.5 text-[11px] text-slate-300">
+            <p>• Churn risk antar region relatif seragam (rentang cuma 71,49%–73,54%) — tidak ada satu region yang jadi outlier ekstrem, jadi program retensi sebaiknya nasional, bukan dipusatkan ke satu wilayah.</p>
+            <p>• Kepuasan interaksi (CSAT) TIDAK berkorelasi dengan churn risk (r ≈ 0,003) — recency (`days_since_last_order`) tetap sinyal churn paling kuat, bukan skor kepuasan.</p>
+            <p>• Drop-off retensi paling tajam terjadi di 60 hari pertama pasca akuisisi (bulan ke-1 dan ke-2) — window intervensi onboarding paling berdampak ada di sini.</p>
+          </div>
         </div>
       </div>
     );
