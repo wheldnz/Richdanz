@@ -88,7 +88,7 @@ export default async function ProjectPage({ params }: PageProps) {
             </span>
           </div>
           <p className="text-sm text-foreground-muted mb-6 leading-relaxed">
-            Berikut adalah tampilan real dashboard Power BI dan simulasinya. Klik tab di bawah untuk beralih antara melihat screenshot visual asli atau mencoba simulator interaktif secara langsung.
+            Ini tampilan asli dashboard-nya, lengkap dengan simulasi interaktifnya. Klik tab di bawah untuk beralih antara melihat screenshot dashboard asli atau mencoba versi simulasinya secara langsung.
           </p>
           
           <div className="w-full">
